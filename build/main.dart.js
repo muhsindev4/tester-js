@@ -3430,9 +3430,7 @@
     _CssStyleDeclaration_JavaScriptObject_CssStyleDeclarationBase: function _CssStyleDeclaration_JavaScriptObject_CssStyleDeclarationBase() {
     },
     main() {
-      var t3, t4, list, t5, t6, t7, t8,
-        _s8_ = "absolute",
-        _s4_ = "10px", t1 = {},
+      var t3, t4, list, t5, t6, t7, t8, t9, _s5_ = "click", t1 = {},
         t2 = document,
         link = t2.createElement("link");
       link.rel = "stylesheet";
@@ -3447,65 +3445,46 @@
       list = t4.classList;
       list.contains("custom-button").toString;
       list.add("custom-button");
-      t5 = t4.style;
-      t5.position = _s8_;
-      t5 = t4.style;
-      t5.top = _s4_;
-      t5 = t4.style;
-      t5.left = _s4_;
-      t5 = t4.style;
-      t5.zIndex = "1000";
       t5 = t2.createElement("button");
       t5.toString;
-      B.ButtonElement_methods.set$text(t5, "Complete");
-      t5.id = "completeButton";
+      B.ButtonElement_methods.set$text(t5, "Report");
+      t5.id = "reportButton";
       list = t5.classList;
       list.contains("custom-button").toString;
       list.add("custom-button");
-      t6 = t5.style;
-      t6.position = _s8_;
-      t6 = t5.style;
-      t6.top = _s4_;
-      t6 = t5.style;
-      t6.left = "100px";
-      t6 = t5.style;
-      t6.zIndex = "1000";
+      t6 = t2.createElement("button");
+      t6.toString;
+      B.ButtonElement_methods.set$text(t6, "Complete");
+      t6.id = "completeButton";
+      list = t6.classList;
+      list.contains("custom-button").toString;
+      list.add("custom-button");
       t1.isDrawing = false;
-      t6 = window.innerWidth;
-      t7 = window.innerHeight;
+      t7 = window.innerWidth;
+      t8 = window.innerHeight;
       t2 = t2.createElement("canvas");
       t2.toString;
-      if (t6 != null)
-        B.CanvasElement_methods.set$width(t2, t6);
       if (t7 != null)
-        B.CanvasElement_methods.set$height(t2, t7);
-      t6 = t2.style;
-      t6.position = _s8_;
-      t6 = t2.style;
-      t6.top = "0";
-      t6 = t2.style;
-      t6.left = "0";
-      t6 = t2.style;
-      t6.zIndex = "500";
-      t6 = t2.style;
-      t6.toString;
-      B.CssStyleDeclaration_methods._setPropertyHelper$3(t6, B.CssStyleDeclaration_methods._browserPropertyName$1(t6, "pointer-events"), "none", "");
-      t6 = t2.style;
-      t6.backgroundColor = "transparent";
-      t6 = t2.getContext("2d");
-      t6.toString;
+        B.CanvasElement_methods.set$width(t2, t7);
+      if (t8 != null)
+        B.CanvasElement_methods.set$height(t2, t8);
+      t2.id = "drawingCanvas";
+      t7 = t2.getContext("2d");
+      t7.toString;
       t3.appendChild(t2).toString;
       t3.appendChild(t4).toString;
+      t3.appendChild(t6).toString;
       t3.appendChild(t5).toString;
-      t7 = type$._ElementEventStreamImpl_MouseEvent;
-      t8 = t7._eval$1("~(1)?");
-      t7 = t7._precomputed1;
-      A._EventStreamSubscription$(t4, "click", t8._as(new A.main_closure(new A.main_startDrawing(t2, t3))), false, t7);
-      A._EventStreamSubscription$(t5, "click", t8._as(new A.main_closure0(new A.main_stopDrawing(t2, t3))), false, t7);
-      A._EventStreamSubscription$(t2, "mousedown", t8._as(new A.main_closure1(t1, t6)), false, t7);
-      A._EventStreamSubscription$(t2, "mousemove", t8._as(new A.main_closure2(t1, t6)), false, t7);
-      A._EventStreamSubscription$(t2, "mouseup", t8._as(new A.main_closure3(t1)), false, t7);
-      A._EventStreamSubscription$(t2, "mouseout", t8._as(new A.main_closure4(t1)), false, t7);
+      t8 = type$._ElementEventStreamImpl_MouseEvent;
+      t9 = t8._eval$1("~(1)?");
+      t8 = t8._precomputed1;
+      A._EventStreamSubscription$(t4, _s5_, t9._as(new A.main_closure(new A.main_startDrawing(t2, t3))), false, t8);
+      A._EventStreamSubscription$(t6, _s5_, t9._as(new A.main_closure0(new A.main_stopDrawing(t2, t3))), false, t8);
+      A._EventStreamSubscription$(t5, _s5_, t9._as(new A.main_closure1()), false, t8);
+      A._EventStreamSubscription$(t2, "mousedown", t9._as(new A.main_closure2(t1, t7)), false, t8);
+      A._EventStreamSubscription$(t2, "mousemove", t9._as(new A.main_closure3(t1, t7)), false, t8);
+      A._EventStreamSubscription$(t2, "mouseup", t9._as(new A.main_closure4(t1)), false, t8);
+      A._EventStreamSubscription$(t2, "mouseout", t9._as(new A.main_closure5(t1)), false, t8);
     },
     captureScreenshot() {
       var $async$goto = 0,
@@ -3546,18 +3525,20 @@
     main_closure0: function main_closure0(t0) {
       this.stopDrawing = t0;
     },
-    main_closure1: function main_closure1(t0, t1) {
-      this._box_0 = t0;
-      this.context = t1;
+    main_closure1: function main_closure1() {
     },
     main_closure2: function main_closure2(t0, t1) {
       this._box_0 = t0;
       this.context = t1;
     },
-    main_closure3: function main_closure3(t0) {
+    main_closure3: function main_closure3(t0, t1) {
       this._box_0 = t0;
+      this.context = t1;
     },
     main_closure4: function main_closure4(t0) {
+      this._box_0 = t0;
+    },
+    main_closure5: function main_closure5(t0) {
       this._box_0 = t0;
     },
     throwLateFieldADI(fieldName) {
@@ -4730,6 +4711,12 @@
   };
   A.main_closure1.prototype = {
     call$1($event) {
+      type$.MouseEvent._as($event);
+    },
+    $signature: 1
+  };
+  A.main_closure2.prototype = {
+    call$1($event) {
       var t1, t2, t3;
       type$.MouseEvent._as($event);
       this._box_0.isDrawing = true;
@@ -4743,7 +4730,7 @@
     },
     $signature: 1
   };
-  A.main_closure2.prototype = {
+  A.main_closure3.prototype = {
     call$1($event) {
       var t1, t2, t3;
       type$.MouseEvent._as($event);
@@ -4759,14 +4746,14 @@
     },
     $signature: 1
   };
-  A.main_closure3.prototype = {
+  A.main_closure4.prototype = {
     call$1($event) {
       type$.MouseEvent._as($event);
       this._box_0.isDrawing = false;
     },
     $signature: 1
   };
-  A.main_closure4.prototype = {
+  A.main_closure5.prototype = {
     call$1($event) {
       type$.MouseEvent._as($event);
       this._box_0.isDrawing = false;
@@ -4800,7 +4787,7 @@
     _inheritMany(J.JSNumber, [J.JSInt, J.JSNumNotInt]);
     _inheritMany(A.Error, [A.LateError, A.TypeError, A.JsNoSuchMethodError, A.UnknownJsTypeError, A._CyclicInitializationError, A.RuntimeError, A._Error, A.AssertionError, A.ArgumentError, A.UnsupportedError, A.UnimplementedError, A.ConcurrentModificationError]);
     _inherit(A.NullError, A.TypeError);
-    _inheritMany(A.Closure, [A.Closure0Args, A.Closure2Args, A.TearOffClosure, A.initHooks_closure, A.initHooks_closure1, A._AsyncRun__initializeScheduleImmediate_internalCallback, A._AsyncRun__initializeScheduleImmediate_closure, A._awaitOnObject_closure, A._Future__chainForeignFuture_closure, A._Future__propagateToListeners_handleWhenCompleteCallback_closure, A.Stream_length_closure, A._RootZone_bindUnaryCallbackGuarded_closure, A._EventStreamSubscription_closure, A.main_closure, A.main_closure0, A.main_closure1, A.main_closure2, A.main_closure3, A.main_closure4]);
+    _inheritMany(A.Closure, [A.Closure0Args, A.Closure2Args, A.TearOffClosure, A.initHooks_closure, A.initHooks_closure1, A._AsyncRun__initializeScheduleImmediate_internalCallback, A._AsyncRun__initializeScheduleImmediate_closure, A._awaitOnObject_closure, A._Future__chainForeignFuture_closure, A._Future__propagateToListeners_handleWhenCompleteCallback_closure, A.Stream_length_closure, A._RootZone_bindUnaryCallbackGuarded_closure, A._EventStreamSubscription_closure, A.main_closure, A.main_closure0, A.main_closure1, A.main_closure2, A.main_closure3, A.main_closure4, A.main_closure5]);
     _inheritMany(A.TearOffClosure, [A.StaticClosure, A.BoundClosure]);
     _inheritMany(A.Closure2Args, [A.initHooks_closure0, A._awaitOnObject_closure0, A._wrapJsFunctionForAsync_closure, A._Future__chainForeignFuture_closure0]);
     _inherit(A._TypeError, A._Error);
