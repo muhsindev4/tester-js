@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:html';
-
+//dart compile js -o build/main.dart.js bin/main.dart
 void main() {
   // Inject the CSS link into the head of the document
   final link = LinkElement()
