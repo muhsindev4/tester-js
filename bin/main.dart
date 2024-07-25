@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:html';
-//dart compile js -o build/main.dart.js bin/main.dart
+
 void main() {
   // Inject the CSS link into the head of the document
   final link = LinkElement()
@@ -56,7 +56,7 @@ void main() {
   });
 
   reportButton.onClick.listen((event) {
-    // show a title input box,description input add button
+    showReportInput();
   });
 
   canvas.onMouseDown.listen((event) {
@@ -95,4 +95,37 @@ Future<void> captureScreenshot() async {
 
   document.body!.append(script);
   script.remove();
+}
+
+void showReportInput() {
+  final overlay = DivElement()
+    ..id = 'reportOverlay'
+    ..classes.add('overlay');
+
+  final titleInput = InputElement()
+    ..placeholder = 'Title'
+    ..id = 'titleInput';
+
+  final descriptionInput = TextAreaElement()
+    ..placeholder = 'Description'
+    ..id = 'descriptionInput';
+
+  final submitButton = ButtonElement()
+    ..text = 'Submit'
+    ..id = 'submitButton'
+    ..classes.add('custom-button');
+
+  submitButton.onClick.listen((event) {
+    final title = (document.getElementById('titleInput') as InputElement).value ?? '';
+    final description = (document.getElementById('descriptionInput') as TextAreaElement).value ?? '';
+    print('Title: $title');
+    print('Description: $description');
+    overlay.remove();
+  });
+
+  overlay.append(titleInput);
+  overlay.append(descriptionInput);
+  overlay.append(submitButton);
+
+  document.body!.append(overlay);
 }
