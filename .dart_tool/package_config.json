@@ -62,6 +62,18 @@
       "languageVersion": "2.19"
     },
     {
+      "name": "dio",
+      "rootUri": "file:///C:/Users/Muhsin/AppData/Local/Pub/Cache/hosted/pub.dev/dio-5.5.0+1",
+      "packageUri": "lib/",
+      "languageVersion": "2.18"
+    },
+    {
+      "name": "dio_web_adapter",
+      "rootUri": "file:///C:/Users/Muhsin/AppData/Local/Pub/Cache/hosted/pub.dev/dio_web_adapter-1.0.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.18"
+    },
+    {
       "name": "file",
       "rootUri": "file:///C:/Users/Muhsin/AppData/Local/Pub/Cache/hosted/pub.dev/file-7.0.0",
       "packageUri": "lib/",
@@ -308,7 +320,7 @@
       "languageVersion": "3.4"
     }
   ],
-  "generated": "2024-07-23T04:37:36.606710Z",
+  "generated": "2024-07-25T06:50:45.334357Z",
   "generator": "pub",
   "generatorVersion": "3.4.1",
   "flutterRoot": "file:///D:/flutter/flutter",
