@@ -1,33 +1,141 @@
-body {
-  margin: 0;
-  overflow: hidden;
-}
-
-#drawButton {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 1000;
-}
-
-#completeButton {
-  position: absolute;
-  top: 10px;
-  left: 200px;
-  z-index: 1000;
-}
-
-#drawingCanvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 500;
-  pointer-events: none;
-  background-color: transparent;
-}
-
-.custom-button {
-  padding: 10px 20px;
-  font-size: 16px;
+/* Feedback button styling */
+#feedbackButton {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  padding: 10px;
+  background-color: #6200ea;
+  color: white;
+  border: none;
+  border-radius: 5px 0 0 5px;
   cursor: pointer;
+  font-size: 24px;
+  transition: background-color 0.3s;
+}
+
+#feedbackButton:hover {
+  background-color: #3700b3;
+}
+
+/* Feedback popup styling */
+#feedbackPopup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 320px;
+  padding: 20px;
+  background-color: white;
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Popup content styling */
+#popupContent {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+#popupContent button {
+  align-self: flex-end;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #6200ea;
+}
+
+#popupContent h2 {
+  margin: 0;
+  margin-bottom: 20px;
+  color: #6200ea;
+}
+
+#popupContent ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+#popupContent li {
+  margin-bottom: 15px;
+}
+
+#popupContent a {
+  text-decoration: none;
+  color: #6200ea;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  transition: color 0.3s;
+}
+
+#popupContent a i {
+  margin-right: 10px;
+  font-size: 20px;
+}
+
+#popupContent a:hover {
+  color: #3700b3;
+}
+
+/* Canvas toolbar styling */
+#canvasToolbar {
+  display: flex;
+  gap: 10px;
+  z-index: 9999; /* Ensure the toolbar is above the canvas */
+}
+
+#canvasToolbar button {
+  background-color: #6200ea;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+#canvasToolbar button:hover {
+  background-color: #3700b3;
+}
+
+/* Input container styling */
+.inputContainer textarea {
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #6200ea;
+  resize: none;
+  width: 200px;
+  height: 60px;
+}
+
+.inputContainer button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6200ea;
+}
+
+.inputContainer button:hover {
+  color: #3700b3;
+}
+
+/* Circle styling */
+canvas {
+  cursor: crosshair;
+}
+
+.circle {
+  fill: rgba(98, 0, 234, 0.7);
 }
