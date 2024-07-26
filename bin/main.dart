@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'dart:html';
 import 'dart:math';
-
 import 'modules/asana/auth_controller.dart';
+import 'views/reporter/reporter.dart';
+import 'modules/screenshot/screenshot_controller.dart';
 
 Future<void> main() async {
   AuthController authController = AuthController(
@@ -93,12 +94,13 @@ class CanvasController {
   List<Shape> shapes = [];
   List<DivElement> screenshots = [];
   int circleCount = 0;
+  List<Map<String, dynamic>> commentsList = [];
   bool isDrawing = false;
   String currentTool = '';
   Point? startPoint;
 
   void showCanvas() {
-    canvas = CanvasElement(width: window.innerWidth, height: window.innerHeight)
+    canvas = CanvasElement(width: window.innerWidth, height:10000)
       ..id = 'feedbackCanvas'
       ..style.position = 'absolute'
       ..style.top = '0'
@@ -108,6 +110,9 @@ class CanvasController {
     context = canvas!.context2D;
 
     document.body!.append(canvas!);
+
+    // Optional: Add an event listener to handle window resize
+
 
     toolbar = DivElement()
       ..id = 'canvasToolbar'
@@ -144,7 +149,7 @@ class CanvasController {
     });
 
     querySelector('#reportButton')!.onClick.listen((event) {
-      _showReportPopup();
+      Reporter().showReportPopup();
     });
 
     canvas!.onMouseDown.listen((MouseEvent event) {
@@ -265,7 +270,6 @@ class CanvasController {
 
     DivElement inputContainer = DivElement()
       ..className = 'inputContainer'
-      ..style.position = 'absolute'
       ..style.left = '${event.client.x + 15}px'
       ..style.top = '${event.client.y - 10}px'
       ..style.zIndex = '10001'
@@ -284,20 +288,33 @@ class CanvasController {
       ..style.overflow = 'hidden';
 
     ButtonElement inputRemoveButton = ButtonElement()
+      ..id = "inputRemoveButton"
       ..innerHtml = '<i class="bi bi-x-circle-fill"></i>'
       ..style.background = 'none'
       ..style.border = 'none'
       ..style.cursor = 'pointer'
       ..style.color = '#6200ea';
 
-    inputRemoveButton.onClick.listen((event) {
-      circleCount--;
-      handleDiv.remove();
-    });
+    // Create a map to store the comment and its count
+    Map<String, dynamic> commentMap = {
+      "comment": "",
+      "count": circleCount
+    };
+
+    commentsList.add(commentMap);
 
     input.onInput.listen((_) {
       input.style.height = 'auto';
       input.style.height = '${input.scrollHeight}px';
+
+      // Update the comment in the list
+      commentMap["comment"] = input.value!;
+    });
+
+    inputRemoveButton.onClick.listen((event) {
+      circleCount--;
+      handleDiv.remove();
+      commentsList.remove(commentMap);
     });
 
     circleDiv.append(countText);
@@ -309,157 +326,8 @@ class CanvasController {
     document.body!.append(handleDiv);
   }
 
-  void _showReportPopup() {
-    if (reportPopup != null) {
-      reportPopup!.remove();
-    }
 
-    reportPopup = DivElement()
-      ..id = 'reportPopup'
-      ..style.position = 'fixed'
-      ..style.top = '50%'
-      ..style.left = '50%'
-      ..style.transform = 'translate(-50%, -50%)'
-      ..style.backgroundColor = 'white'
-      ..style.padding = '20px'
-      ..style.borderRadius = '10px'
-      ..style.boxShadow = '0px 0px 15px rgba(0, 0, 0, 0.3)'
-      ..style.zIndex = '10000';
 
-    reportPopup!.innerHtml = '''
-      <h3>Report Issue</h3>
-      <div>
-        <label>Title:</label>
-        <input type="text" id="reportTitle" style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: 1px solid #ddd;">
-      </div>
-      <div>
-        <label>Description:</label>
-        <textarea id="reportDescription" style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: 1px solid #ddd;"></textarea>
-      </div>
-      <button id="addScreenshotButton" style="display: block; width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: 1px solid #6200ea; background-color: #6200ea; color: white; cursor: pointer;">Add Screenshot</button>
-      <div id="screenshotList" style="margin-bottom: 10px; display: flex; overflow-x: auto;"></div>
-      <button id="reportSubmitButton" style="display: block; width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #6200ea; background-color: #6200ea; color: white; cursor: pointer;">Submit Report</button>
-      <button id="closePopupButton" style="display: block; width: 100%; padding: 10px; margin-top: 10px; border-radius: 5px; border: 1px solid #ddd; background-color: #f5f5f5; color: #6200ea; cursor: pointer;">Close</button>
-    ''';
-
-    document.body!.append(reportPopup!);
-
-    querySelector('#addScreenshotButton')!.onClick.listen((event) {
-      _hideReportPopup();
-      _startSelection();
-    });
-
-    querySelector('#reportSubmitButton')!.onClick.listen((event) {
-      _hideReportPopup();
-      // Handle report submission
-    });
-
-    querySelector('#closePopupButton')!.onClick.listen((event) {
-      _hideReportPopup();
-    });
-  }
-
-  void _hideReportPopup() {
-    reportPopup?.remove();
-  }
-
-  void _startSelection() {
-    DivElement selectionOverlay = DivElement()
-      ..style.position = 'fixed'
-      ..style.top = '0'
-      ..style.left = '0'
-      ..style.width = '100%'
-      ..style.height = '100%'
-      ..style.backgroundColor = 'rgba(0, 0, 0, 0.5)'
-      ..style.zIndex = '10001';
-
-    document.body!.append(selectionOverlay);
-
-    selectionOverlay.onMouseDown.listen((MouseEvent event) {
-     
-    });
-
-    selectionOverlay.onMouseMove.listen((MouseEvent event) {
-      
-    });
-
-    selectionOverlay.onMouseUp.listen((MouseEvent event) {
-    _takeScreenshot(start, end)
-    });
-  }
-
-  void _drawSelectionArea(Point start, Point end) {
-    // Remove any existing overlay canvas to avoid drawing multiple canvases
-    CanvasElement? existingOverlayCanvas = document.querySelector(
-        '#selectionCanvas') as CanvasElement?;
-    existingOverlayCanvas?.remove();
-
-    CanvasElement overlayCanvas = CanvasElement(
-        width: window.innerWidth,
-        height: window.innerHeight
-    )
-      ..id = 'selectionCanvas'
-      ..style.position = 'fixed'
-      ..style.top = '0'
-      ..style.left = '0'
-      ..style.zIndex = '10002';
-
-    document.body!.append(overlayCanvas);
-
-    CanvasRenderingContext2D overlayContext = overlayCanvas.context2D;
-    overlayContext.clearRect(0, 0, overlayCanvas.width!, overlayCanvas.height!);
-
-    overlayContext.beginPath();
-    overlayContext.rect(start.x, start.y, end.x - start.x, end.y - start.y);
-    overlayContext.strokeStyle = 'rgba(0, 0, 0, 0.8)';
-    overlayContext.lineWidth = 2;
-    overlayContext.stroke();
-    overlayContext.closePath();
-  }
-
-  void _takeScreenshot(Point start, Point end) {
-    // Calculate the selection area bounds
-    int x = min(start.x, end.x).toInt();
-    int y = min(start.y, end.y).toInt();
-    int width = (end.x - start.x).abs().toInt();
-    int height = (end.y - start.y).abs().toInt();
-
-    CanvasElement screenshotCanvas = CanvasElement(
-        width: width,
-        height: height
-    );
-    CanvasRenderingContext2D screenshotContext = screenshotCanvas.context2D;
-
-    screenshotContext.drawImageScaledFromSource(
-        canvas!,
-        x,
-        y,
-        width,
-        height,
-        0,
-        0,
-        width,
-        height
-    );
-
-    String screenshotUrl = screenshotCanvas.toDataUrl();
-
-    ImageElement screenshotImage = ImageElement(src: screenshotUrl)
-      ..style.width = '150px'
-      ..style.height = 'auto'
-      ..style.marginRight = '10px';
-
-    DivElement screenshotDiv = DivElement()
-      ..className = 'screenshotDiv'
-      ..style.display = 'inline-block'
-      ..style.marginRight = '10px';
-
-    screenshotDiv.append(screenshotImage);
-    reportPopup!.querySelector('#screenshotList')!.append(screenshotDiv);
-
-    screenshots.add(screenshotDiv);
-    _showReportPopup();
-  }
 }
 
 

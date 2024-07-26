@@ -111,25 +111,41 @@
 }
 
 /* Input container styling */
+.inputContainer {
+  background-color: white; /* Card background color */
+  border-radius: 10px; /* Rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+  padding: 15px; /* Space inside the card */
+  width: fit-content; /* Adjust width to fit content */
+  max-width: 100%; /* Ensure the card doesn't overflow its container */
+  margin: 10px; /* Space around the card */
+  position:absolute
+}
+
+/* Textarea styling within the card */
 .inputContainer textarea {
   padding: 5px;
   border-radius: 5px;
   border: 1px solid #6200ea;
   resize: none;
-  width: 200px;
+  width: 100%; /* Full width within the card */
   height: 60px;
+  box-sizing: border-box; /* Include padding and border in width and height */
 }
 
+/* Button styling within the card */
 .inputContainer button {
   background: none;
   border: none;
   cursor: pointer;
   color: #6200ea;
+  font-size: 16px; /* Adjust font size if needed */
 }
 
 .inputContainer button:hover {
   color: #3700b3;
 }
+
 
 /* Circle styling */
 canvas {
@@ -156,3 +172,5 @@ canvas {
 .circleDiv button:hover {
   color: #3700b3;
 }
+
+
