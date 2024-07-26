@@ -375,26 +375,16 @@ class CanvasController {
 
     document.body!.append(selectionOverlay);
 
-    Point? startPoint;
-    Point? endPoint;
-
     selectionOverlay.onMouseDown.listen((MouseEvent event) {
-      startPoint = event.client;
-      endPoint = startPoint;
+     
     });
 
     selectionOverlay.onMouseMove.listen((MouseEvent event) {
-      if (startPoint != null) {
-        endPoint = event.client;
-        _drawSelectionArea(startPoint!, endPoint!);
-      }
+      
     });
 
     selectionOverlay.onMouseUp.listen((MouseEvent event) {
-      if (startPoint != null && endPoint != null) {
-        _takeScreenshot(startPoint!, endPoint!);
-      }
-      selectionOverlay.remove();
+    _takeScreenshot(start, end)
     });
   }
 
