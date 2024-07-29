@@ -1,11 +1,14 @@
 import 'dart:html';
 import '../../modules/screenshot/screenshot_controller.dart';
 
-
 class Reporter {
   DivElement? reportPopup;
+  List<Map<String, dynamic>> _commentsList = [];
+  List<ImageElement> _screenshots = []; // Store the screenshots here
 
-  void showReportPopup() {
+  void showReportPopup(List<Map<String, dynamic>> commentsList) {
+    _hideCommentBoxes();
+    _commentsList = commentsList;
     HttpRequest.getString('report_popup.html').then((html) {
       if (reportPopup != null) {
         reportPopup!.remove();
@@ -24,7 +27,91 @@ class Reporter {
         ..style.boxShadow = '0px 0px 15px rgba(0, 0, 0, 0.3)'
         ..style.zIndex = '10000';
 
+      // Define the styles programmatically
+      StyleElement styles = StyleElement()
+        ..innerHtml = '''
+          #reportPopup {
+              max-width: 400px;
+              width: 100%;
+          }
+          #reportPopup h3 {
+              margin-top: 0;
+          }
+          #reportPopup input, #reportPopup textarea {
+              width: 100%;
+              padding: 10px;
+              margin-bottom: 10px;
+              border-radius: 5px;
+              border: 1px solid #ddd;
+          }
+          #reportPopup button {
+              display: block;
+              width: 100%;
+              padding: 10px;
+              margin-bottom: 10px;
+              border-radius: 5px;
+              border: 1px solid #6200ea;
+              background-color: #6200ea;
+              color: white;
+              cursor: pointer;
+          }
+          #reportPopup button:last-of-type {
+              margin-top: 10px;
+              border: 1px solid #ddd;
+              background-color: #f5f5f5;
+              color: #6200ea;
+          }
+          #screenshotList {
+              margin-bottom: 10px;
+              display: flex;
+              overflow-x: auto; /* Enable horizontal scrolling */
+              gap: 10px; /* Add space between screenshots */
+          }
+          #screenshotList img {
+              max-height: 100px; /* Adjust height as needed */
+              border: 1px solid #ddd;
+              border-radius: 5px;
+          }
+          #commentSection {
+              margin-top: 20px;
+              max-height: 200px; /* Adjust height as needed */
+              overflow-y: auto; /* Enable vertical scrollbar */
+          }
+          #commentSection h4 {
+              margin-top: 0;
+          }
+          .comment {
+              display: flex;
+              align-items: center;
+              margin-bottom: 10px;
+          }
+          .comment .commentCounter {
+              width: 30px;
+              height: 30px;
+              border-radius: 50%;
+              background-color: #6200ea;
+              color: white;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              margin-right: 10px;
+          }
+          .comment .commentText {
+              flex: 1;
+          }
+        ''';
+
+      document.head!.append(styles);
       document.body!.append(reportPopup!);
+
+      // Add comments to the comment section
+      if (_commentsList.isEmpty) {
+        querySelector("#commentSection")!.style.visibility = "hidden";
+      }
+      DivElement commentSection = querySelector('#commentSection') as DivElement;
+      for (var comment in _commentsList) {
+        commentSection.append(_createCommentElement(comment['comment'], comment['count']));
+      }
 
       querySelector('#addScreenshotButton')!.onClick.listen((event) {
         _hideReportPopup();
@@ -36,11 +123,13 @@ class Reporter {
         // Create a ScreenshotController instance with a callback
         ScreenshotController screenshotController = ScreenshotController(canvas, onScreenshotTaken: (imageUrl) {
           ImageElement img = ImageElement(src: imageUrl);
-          document.body!.append(img);
+          img.style.maxHeight = '100px'; // Set image height
+          img.style.marginRight = '10px'; // Add space between images
+          DivElement screenshotList = querySelector('#screenshotList') as DivElement;
+          screenshotList.append(img); // Add the new screenshot to the list
+          _screenshots.add(img); // Store the screenshot
           print('Screenshot image data: $imageUrl');
-          _showToolBar();
-          _showCommentBoxes();
-          showReportPopup();
+          _lazyShowPopup();
         });
         screenshotController.startSelection();
       });
@@ -51,13 +140,38 @@ class Reporter {
       });
 
       querySelector('#closePopupButton')!.onClick.listen((event) {
-        _hideReportPopup();
+        _closeReporter();
+        _showToolBar();
+        _showCommentBoxes();
       });
     });
   }
 
+  DivElement _createCommentElement(String commentText, int count) {
+    DivElement commentElement = DivElement()..className = 'comment';
+    DivElement commentCounter = DivElement()
+      ..className = 'commentCounter'
+      ..text = '$count';
+    DivElement commentTextElement = DivElement()
+      ..className = 'commentText'
+      ..text = commentText;
+
+    commentElement.append(commentCounter);
+    commentElement.append(commentTextElement);
+
+    return commentElement;
+  }
+
+  void _closeReporter() {
+    reportPopup!.remove();
+  }
+
   void _hideReportPopup() {
-    reportPopup?.remove();
+    querySelector("#reportPopup")!.style.visibility = "hidden";
+  }
+
+  void _lazyShowPopup() {
+    querySelector("#reportPopup")!.style.visibility = "visible";
   }
 
   void _showToolBar() {

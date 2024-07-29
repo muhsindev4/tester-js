@@ -1,55 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Report Popup</title>
-    <style>
-        #reportPopup {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
-            z-index: 10000;
-        }
-        #reportPopup h3 {
-            margin-top: 0;
-        }
-        #reportPopup input, #reportPopup textarea {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-        }
-        #reportPopup button {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            border: 1px solid #6200ea;
-            background-color: #6200ea;
-            color: white;
-            cursor: pointer;
-        }
-        #reportPopup button:last-of-type {
-            margin-top: 10px;
-            border: 1px solid #ddd;
-            background-color: #f5f5f5;
-            color: #6200ea;
-        }
-        #screenshotList {
-            margin-bottom: 10px;
-            display: flex;
-            overflow-x: auto;
-        }
-    </style>
-</head>
 <body>
 <div id="reportPopup">
     <h3>Report Issue</h3>
@@ -62,7 +12,10 @@
         <textarea id="reportDescription"></textarea>
     </div>
     <button id="addScreenshotButton">Add Screenshot</button>
-    <div id="screenshotList"></div>
+    <div id="screenshotList"></div> <!-- Container for screenshots -->
+    <div id="commentSection">
+        <h4>Comments</h4>
+    </div>
     <button id="reportSubmitButton">Submit Report</button>
     <button id="closePopupButton">Close</button>
 </div>
