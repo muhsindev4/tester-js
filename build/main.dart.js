@@ -284,12 +284,83 @@
         throw A.wrapException(A.RangeError$range($length, 0, 4294967295, "length", null));
       return J.JSArray_JSArray$markFixed(new Array($length), $E);
     },
+    JSArray_JSArray$growable($length, $E) {
+      if ($length < 0)
+        throw A.wrapException(A.ArgumentError$("Length must be a non-negative integer: " + $length, null));
+      return A._setArrayType(new Array($length), $E._eval$1("JSArray<0>"));
+    },
     JSArray_JSArray$markFixed(allocation, $E) {
       return J.JSArray_markFixedList(A._setArrayType(allocation, $E._eval$1("JSArray<0>")), $E);
     },
     JSArray_markFixedList(list, $T) {
       list.fixed$length = Array;
       return list;
+    },
+    JSArray_markUnmodifiableList(list) {
+      list.fixed$length = Array;
+      list.immutable$list = Array;
+      return list;
+    },
+    JSString__isWhitespace(codeUnit) {
+      if (codeUnit < 256)
+        switch (codeUnit) {
+          case 9:
+          case 10:
+          case 11:
+          case 12:
+          case 13:
+          case 32:
+          case 133:
+          case 160:
+            return true;
+          default:
+            return false;
+        }
+      switch (codeUnit) {
+        case 5760:
+        case 8192:
+        case 8193:
+        case 8194:
+        case 8195:
+        case 8196:
+        case 8197:
+        case 8198:
+        case 8199:
+        case 8200:
+        case 8201:
+        case 8202:
+        case 8232:
+        case 8233:
+        case 8239:
+        case 8287:
+        case 12288:
+        case 65279:
+          return true;
+        default:
+          return false;
+      }
+    },
+    JSString__skipLeadingWhitespace(string, index) {
+      var t1, codeUnit;
+      for (t1 = string.length; index < t1;) {
+        codeUnit = string.charCodeAt(index);
+        if (codeUnit !== 32 && codeUnit !== 13 && !J.JSString__isWhitespace(codeUnit))
+          break;
+        ++index;
+      }
+      return index;
+    },
+    JSString__skipTrailingWhitespace(string, index) {
+      var t1, index0, codeUnit;
+      for (t1 = string.length; index > 0; index = index0) {
+        index0 = index - 1;
+        if (!(index0 < t1))
+          return A.ioore(string, index0);
+        codeUnit = string.charCodeAt(index0);
+        if (codeUnit !== 32 && codeUnit !== 13 && !J.JSString__isWhitespace(codeUnit))
+          break;
+      }
+      return index;
     },
     getInterceptor$(receiver) {
       if (typeof receiver == "number") {
@@ -356,6 +427,15 @@
         return receiver;
       return J.getNativeInterceptor(receiver);
     },
+    getInterceptor$n(receiver) {
+      if (typeof receiver == "number")
+        return J.JSNumber.prototype;
+      if (receiver == null)
+        return receiver;
+      if (!(receiver instanceof A.Object))
+        return J.UnknownJavaScriptObject.prototype;
+      return receiver;
+    },
     getInterceptor$s(receiver) {
       if (typeof receiver == "string")
         return J.JSString.prototype;
@@ -381,8 +461,24 @@
         return receiver;
       return J.getNativeInterceptor(receiver);
     },
+    getInterceptor$z(receiver) {
+      if (receiver == null)
+        return receiver;
+      if (!(receiver instanceof A.Object))
+        return J.UnknownJavaScriptObject.prototype;
+      return receiver;
+    },
     set$_innerHtml$x(receiver, value) {
       return J.getInterceptor$x(receiver).set$_innerHtml(receiver, value);
+    },
+    set$data$x(receiver, value) {
+      return J.getInterceptor$x(receiver).set$data(receiver, value);
+    },
+    set$headers$x(receiver, value) {
+      return J.getInterceptor$x(receiver).set$headers(receiver, value);
+    },
+    set$stream$z(receiver, value) {
+      return J.getInterceptor$z(receiver).set$stream(receiver, value);
     },
     get$attributes$x(receiver) {
       return J.getInterceptor$x(receiver).get$attributes(receiver);
@@ -390,14 +486,29 @@
     get$data$x(receiver) {
       return J.getInterceptor$x(receiver).get$data(receiver);
     },
+    get$first$ax(receiver) {
+      return J.getInterceptor$ax(receiver).get$first(receiver);
+    },
     get$hashCode$(receiver) {
       return J.getInterceptor$(receiver).get$hashCode(receiver);
+    },
+    get$isEmpty$asx(receiver) {
+      return J.getInterceptor$asx(receiver).get$isEmpty(receiver);
+    },
+    get$isNotEmpty$asx(receiver) {
+      return J.getInterceptor$asx(receiver).get$isNotEmpty(receiver);
     },
     get$iterator$ax(receiver) {
       return J.getInterceptor$ax(receiver).get$iterator(receiver);
     },
+    get$keys$x(receiver) {
+      return J.getInterceptor$x(receiver).get$keys(receiver);
+    },
     get$length$asx(receiver) {
       return J.getInterceptor$asx(receiver).get$length(receiver);
+    },
+    get$message$z(receiver) {
+      return J.getInterceptor$z(receiver).get$message(receiver);
     },
     get$offset$x(receiver) {
       return J.getInterceptor$x(receiver).get$offset(receiver);
@@ -407,6 +518,9 @@
     },
     get$runtimeType$(receiver) {
       return J.getInterceptor$(receiver).get$runtimeType(receiver);
+    },
+    get$source$z(receiver) {
+      return J.getInterceptor$z(receiver).get$source(receiver);
     },
     $eq$(receiver, a0) {
       if (receiver == null)
@@ -422,14 +536,41 @@
             return receiver[a0];
       return J.getInterceptor$asx(receiver).$index(receiver, a0);
     },
+    $indexSet$ax(receiver, a0, a1) {
+      return J.getInterceptor$ax(receiver).$indexSet(receiver, a0, a1);
+    },
     _addEventListener$3$x(receiver, a0, a1, a2) {
       return J.getInterceptor$x(receiver)._addEventListener$3(receiver, a0, a1, a2);
+    },
+    _initEvent$3$x(receiver, a0, a1, a2) {
+      return J.getInterceptor$x(receiver)._initEvent$3(receiver, a0, a1, a2);
+    },
+    _removeEventListener$3$x(receiver, a0, a1, a2) {
+      return J.getInterceptor$x(receiver)._removeEventListener$3(receiver, a0, a1, a2);
+    },
+    add$1$ax(receiver, a0) {
+      return J.getInterceptor$ax(receiver).add$1(receiver, a0);
+    },
+    allMatches$1$s(receiver, a0) {
+      return J.getInterceptor$s(receiver).allMatches$1(receiver, a0);
+    },
+    close$0$z(receiver) {
+      return J.getInterceptor$z(receiver).close$0(receiver);
     },
     elementAt$1$ax(receiver, a0) {
       return J.getInterceptor$ax(receiver).elementAt$1(receiver, a0);
     },
+    forEach$1$x(receiver, a0) {
+      return J.getInterceptor$x(receiver).forEach$1(receiver, a0);
+    },
+    join$1$ax(receiver, a0) {
+      return J.getInterceptor$ax(receiver).join$1(receiver, a0);
+    },
     map$1$1$ax(receiver, a0, $T1) {
       return J.getInterceptor$ax(receiver).map$1$1(receiver, a0, $T1);
+    },
+    matchAsPrefix$2$s(receiver, a0, a1) {
+      return J.getInterceptor$s(receiver).matchAsPrefix$2(receiver, a0, a1);
     },
     noSuchMethod$1$(receiver, a0) {
       return J.getInterceptor$(receiver).noSuchMethod$1(receiver, a0);
@@ -437,11 +578,23 @@
     remove$0$ax(receiver) {
       return J.getInterceptor$ax(receiver).remove$0(receiver);
     },
+    skip$1$ax(receiver, a0) {
+      return J.getInterceptor$ax(receiver).skip$1(receiver, a0);
+    },
+    sort$1$ax(receiver, a0) {
+      return J.getInterceptor$ax(receiver).sort$1(receiver, a0);
+    },
+    take$1$ax(receiver, a0) {
+      return J.getInterceptor$ax(receiver).take$1(receiver, a0);
+    },
     toDataUrl$1$x(receiver, a0) {
       return J.getInterceptor$x(receiver).toDataUrl$1(receiver, a0);
     },
     toLowerCase$0$s(receiver) {
       return J.getInterceptor$s(receiver).toLowerCase$0(receiver);
+    },
+    toRadixString$1$n(receiver, a0) {
+      return J.getInterceptor$n(receiver).toRadixString$1(receiver, a0);
     },
     toString$0$(receiver) {
       return J.getInterceptor$(receiver).toString$0(receiver);
@@ -491,6 +644,16 @@
   },
   A = {JS_CONST: function JS_CONST() {
     },
+    hexDigitValue(char) {
+      var letter,
+        digit = char ^ 48;
+      if (digit <= 9)
+        return digit;
+      letter = char | 32;
+      if (97 <= letter && letter <= 102)
+        return letter - 87;
+      return -1;
+    },
     SystemHash_combine(hash, value) {
       hash = hash + value & 536870911;
       hash = hash + ((hash & 524287) << 10) & 536870911;
@@ -514,10 +677,30 @@
           return true;
       return false;
     },
+    SubListIterable$(_iterable, _start, _endOrLength, $E) {
+      A.RangeError_checkNotNegative(_start, "start");
+      if (_endOrLength != null) {
+        A.RangeError_checkNotNegative(_endOrLength, "end");
+        if (_start > _endOrLength)
+          A.throwExpression(A.RangeError$range(_start, 0, _endOrLength, "start", null));
+      }
+      return new A.SubListIterable(_iterable, _start, _endOrLength, $E._eval$1("SubListIterable<0>"));
+    },
     MappedIterable_MappedIterable(iterable, $function, $S, $T) {
       if (type$.EfficientLengthIterable_dynamic._is(iterable))
         return new A.EfficientLengthMappedIterable(iterable, $function, $S._eval$1("@<0>")._bind$1($T)._eval$1("EfficientLengthMappedIterable<1,2>"));
       return new A.MappedIterable(iterable, $function, $S._eval$1("@<0>")._bind$1($T)._eval$1("MappedIterable<1,2>"));
+    },
+    SkipIterable_SkipIterable(iterable, count, $E) {
+      var _s5_ = "count";
+      if (type$.EfficientLengthIterable_dynamic._is(iterable)) {
+        A.ArgumentError_checkNotNull(count, _s5_, type$.int);
+        A.RangeError_checkNotNegative(count, _s5_);
+        return new A.EfficientLengthSkipIterable(iterable, count, $E._eval$1("EfficientLengthSkipIterable<0>"));
+      }
+      A.ArgumentError_checkNotNull(count, _s5_, type$.int);
+      A.RangeError_checkNotNegative(count, _s5_);
+      return new A.SkipIterable(iterable, count, $E._eval$1("SkipIterable<0>"));
     },
     IterableElementError_noElement() {
       return new A.StateError("No element");
@@ -525,14 +708,274 @@
     IterableElementError_tooMany() {
       return new A.StateError("Too many elements");
     },
+    IterableElementError_tooFew() {
+      return new A.StateError("Too few elements");
+    },
+    Sort__doSort(a, left, right, compare, $E) {
+      if (right - left <= 32)
+        A.Sort__insertionSort(a, left, right, compare, $E);
+      else
+        A.Sort__dualPivotQuicksort(a, left, right, compare, $E);
+    },
+    Sort__insertionSort(a, left, right, compare, $E) {
+      var i, t1, el, j, t2, j0;
+      for (i = left + 1, t1 = J.getInterceptor$asx(a); i <= right; ++i) {
+        el = t1.$index(a, i);
+        j = i;
+        while (true) {
+          if (j > left) {
+            t2 = compare.call$2(t1.$index(a, j - 1), el);
+            if (typeof t2 !== "number")
+              return t2.$gt();
+            t2 = t2 > 0;
+          } else
+            t2 = false;
+          if (!t2)
+            break;
+          j0 = j - 1;
+          t1.$indexSet(a, j, t1.$index(a, j0));
+          j = j0;
+        }
+        t1.$indexSet(a, j, el);
+      }
+    },
+    Sort__dualPivotQuicksort(a, left, right, compare, $E) {
+      var t0, less, great, pivots_are_equal, k, ak, comp, great0, less0,
+        sixth = B.JSInt_methods._tdivFast$1(right - left + 1, 6),
+        index1 = left + sixth,
+        index5 = right - sixth,
+        index3 = B.JSInt_methods._tdivFast$1(left + right, 2),
+        index2 = index3 - sixth,
+        index4 = index3 + sixth,
+        t1 = J.getInterceptor$asx(a),
+        el1 = t1.$index(a, index1),
+        el2 = t1.$index(a, index2),
+        el3 = t1.$index(a, index3),
+        el4 = t1.$index(a, index4),
+        el5 = t1.$index(a, index5),
+        t2 = compare.call$2(el1, el2);
+      if (typeof t2 !== "number")
+        return t2.$gt();
+      if (t2 > 0) {
+        t0 = el2;
+        el2 = el1;
+        el1 = t0;
+      }
+      t2 = compare.call$2(el4, el5);
+      if (typeof t2 !== "number")
+        return t2.$gt();
+      if (t2 > 0) {
+        t0 = el5;
+        el5 = el4;
+        el4 = t0;
+      }
+      t2 = compare.call$2(el1, el3);
+      if (typeof t2 !== "number")
+        return t2.$gt();
+      if (t2 > 0) {
+        t0 = el3;
+        el3 = el1;
+        el1 = t0;
+      }
+      t2 = compare.call$2(el2, el3);
+      if (typeof t2 !== "number")
+        return t2.$gt();
+      if (t2 > 0) {
+        t0 = el3;
+        el3 = el2;
+        el2 = t0;
+      }
+      t2 = compare.call$2(el1, el4);
+      if (typeof t2 !== "number")
+        return t2.$gt();
+      if (t2 > 0) {
+        t0 = el4;
+        el4 = el1;
+        el1 = t0;
+      }
+      t2 = compare.call$2(el3, el4);
+      if (typeof t2 !== "number")
+        return t2.$gt();
+      if (t2 > 0) {
+        t0 = el4;
+        el4 = el3;
+        el3 = t0;
+      }
+      t2 = compare.call$2(el2, el5);
+      if (typeof t2 !== "number")
+        return t2.$gt();
+      if (t2 > 0) {
+        t0 = el5;
+        el5 = el2;
+        el2 = t0;
+      }
+      t2 = compare.call$2(el2, el3);
+      if (typeof t2 !== "number")
+        return t2.$gt();
+      if (t2 > 0) {
+        t0 = el3;
+        el3 = el2;
+        el2 = t0;
+      }
+      t2 = compare.call$2(el4, el5);
+      if (typeof t2 !== "number")
+        return t2.$gt();
+      if (t2 > 0) {
+        t0 = el5;
+        el5 = el4;
+        el4 = t0;
+      }
+      t1.$indexSet(a, index1, el1);
+      t1.$indexSet(a, index3, el3);
+      t1.$indexSet(a, index5, el5);
+      t1.$indexSet(a, index2, t1.$index(a, left));
+      t1.$indexSet(a, index4, t1.$index(a, right));
+      less = left + 1;
+      great = right - 1;
+      pivots_are_equal = J.$eq$(compare.call$2(el2, el4), 0);
+      if (pivots_are_equal)
+        for (k = less; k <= great; ++k) {
+          ak = t1.$index(a, k);
+          comp = compare.call$2(ak, el2);
+          if (comp === 0)
+            continue;
+          if (comp < 0) {
+            if (k !== less) {
+              t1.$indexSet(a, k, t1.$index(a, less));
+              t1.$indexSet(a, less, ak);
+            }
+            ++less;
+          } else
+            for (; true;) {
+              comp = compare.call$2(t1.$index(a, great), el2);
+              if (comp > 0) {
+                --great;
+                continue;
+              } else {
+                great0 = great - 1;
+                if (comp < 0) {
+                  t1.$indexSet(a, k, t1.$index(a, less));
+                  less0 = less + 1;
+                  t1.$indexSet(a, less, t1.$index(a, great));
+                  t1.$indexSet(a, great, ak);
+                  great = great0;
+                  less = less0;
+                  break;
+                } else {
+                  t1.$indexSet(a, k, t1.$index(a, great));
+                  t1.$indexSet(a, great, ak);
+                  great = great0;
+                  break;
+                }
+              }
+            }
+        }
+      else
+        for (k = less; k <= great; ++k) {
+          ak = t1.$index(a, k);
+          if (compare.call$2(ak, el2) < 0) {
+            if (k !== less) {
+              t1.$indexSet(a, k, t1.$index(a, less));
+              t1.$indexSet(a, less, ak);
+            }
+            ++less;
+          } else if (compare.call$2(ak, el4) > 0)
+            for (; true;)
+              if (compare.call$2(t1.$index(a, great), el4) > 0) {
+                --great;
+                if (great < k)
+                  break;
+                continue;
+              } else {
+                great0 = great - 1;
+                if (compare.call$2(t1.$index(a, great), el2) < 0) {
+                  t1.$indexSet(a, k, t1.$index(a, less));
+                  less0 = less + 1;
+                  t1.$indexSet(a, less, t1.$index(a, great));
+                  t1.$indexSet(a, great, ak);
+                  less = less0;
+                } else {
+                  t1.$indexSet(a, k, t1.$index(a, great));
+                  t1.$indexSet(a, great, ak);
+                }
+                great = great0;
+                break;
+              }
+        }
+      t2 = less - 1;
+      t1.$indexSet(a, left, t1.$index(a, t2));
+      t1.$indexSet(a, t2, el2);
+      t2 = great + 1;
+      t1.$indexSet(a, right, t1.$index(a, t2));
+      t1.$indexSet(a, t2, el4);
+      A.Sort__doSort(a, left, less - 2, compare, $E);
+      A.Sort__doSort(a, great + 2, right, compare, $E);
+      if (pivots_are_equal)
+        return;
+      if (less < index1 && great > index5) {
+        for (; J.$eq$(compare.call$2(t1.$index(a, less), el2), 0);)
+          ++less;
+        for (; J.$eq$(compare.call$2(t1.$index(a, great), el4), 0);)
+          --great;
+        for (k = less; k <= great; ++k) {
+          ak = t1.$index(a, k);
+          if (compare.call$2(ak, el2) === 0) {
+            if (k !== less) {
+              t1.$indexSet(a, k, t1.$index(a, less));
+              t1.$indexSet(a, less, ak);
+            }
+            ++less;
+          } else if (compare.call$2(ak, el4) === 0)
+            for (; true;)
+              if (compare.call$2(t1.$index(a, great), el4) === 0) {
+                --great;
+                if (great < k)
+                  break;
+                continue;
+              } else {
+                great0 = great - 1;
+                if (compare.call$2(t1.$index(a, great), el2) < 0) {
+                  t1.$indexSet(a, k, t1.$index(a, less));
+                  less0 = less + 1;
+                  t1.$indexSet(a, less, t1.$index(a, great));
+                  t1.$indexSet(a, great, ak);
+                  less = less0;
+                } else {
+                  t1.$indexSet(a, k, t1.$index(a, great));
+                  t1.$indexSet(a, great, ak);
+                }
+                great = great0;
+                break;
+              }
+        }
+        A.Sort__doSort(a, less, great, compare, $E);
+      } else
+        A.Sort__doSort(a, less, great, compare, $E);
+    },
+    _BytesBuilder: function _BytesBuilder(t0) {
+      this.__internal$_length = 0;
+      this._chunks = t0;
+    },
     LateError: function LateError(t0) {
       this._message = t0;
+    },
+    CodeUnits: function CodeUnits(t0) {
+      this.__internal$_string = t0;
+    },
+    nullFuture_closure: function nullFuture_closure() {
     },
     SentinelValue: function SentinelValue() {
     },
     EfficientLengthIterable: function EfficientLengthIterable() {
     },
     ListIterable: function ListIterable() {
+    },
+    SubListIterable: function SubListIterable(t0, t1, t2, t3) {
+      var _ = this;
+      _.__internal$_iterable = t0;
+      _.__internal$_start = t1;
+      _._endOrLength = t2;
+      _.$ti = t3;
     },
     ListIterator: function ListIterator(t0, t1, t2) {
       var _ = this;
@@ -574,10 +1017,63 @@
       this._f = t1;
       this.$ti = t2;
     },
+    ExpandIterable: function ExpandIterable(t0, t1, t2) {
+      this.__internal$_iterable = t0;
+      this._f = t1;
+      this.$ti = t2;
+    },
+    ExpandIterator: function ExpandIterator(t0, t1, t2, t3) {
+      var _ = this;
+      _._iterator = t0;
+      _._f = t1;
+      _._currentExpansion = t2;
+      _.__internal$_current = null;
+      _.$ti = t3;
+    },
+    SkipIterable: function SkipIterable(t0, t1, t2) {
+      this.__internal$_iterable = t0;
+      this._skipCount = t1;
+      this.$ti = t2;
+    },
+    EfficientLengthSkipIterable: function EfficientLengthSkipIterable(t0, t1, t2) {
+      this.__internal$_iterable = t0;
+      this._skipCount = t1;
+      this.$ti = t2;
+    },
+    SkipIterator: function SkipIterator(t0, t1, t2) {
+      this._iterator = t0;
+      this._skipCount = t1;
+      this.$ti = t2;
+    },
+    EmptyIterable: function EmptyIterable(t0) {
+      this.$ti = t0;
+    },
+    EmptyIterator: function EmptyIterator(t0) {
+      this.$ti = t0;
+    },
+    WhereTypeIterable: function WhereTypeIterable(t0, t1) {
+      this._source = t0;
+      this.$ti = t1;
+    },
+    WhereTypeIterator: function WhereTypeIterator(t0, t1) {
+      this._source = t0;
+      this.$ti = t1;
+    },
     FixedLengthListMixin: function FixedLengthListMixin() {
+    },
+    UnmodifiableListMixin: function UnmodifiableListMixin() {
+    },
+    UnmodifiableListBase: function UnmodifiableListBase() {
+    },
+    ReversedListIterable: function ReversedListIterable(t0, t1) {
+      this._source = t0;
+      this.$ti = t1;
     },
     Symbol: function Symbol(t0) {
       this.__internal$_name = t0;
+    },
+    ConstantMap__throwUnmodifiable() {
+      throw A.wrapException(A.UnsupportedError$("Cannot modify unmodifiable Map"));
     },
     unminifyOrTag(rawClassName) {
       var preserved = init.mangledGlobalNames[rawClassName];
@@ -622,6 +1118,34 @@
       }
       return hash;
     },
+    Primitives_parseInt(source, radix) {
+      var decimalMatch, maxCharCode, digitsPart, t1, i, _null = null,
+        match = /^\s*[+-]?((0x[a-f0-9]+)|(\d+)|([a-z0-9]+))\s*$/i.exec(source);
+      if (match == null)
+        return _null;
+      if (3 >= match.length)
+        return A.ioore(match, 3);
+      decimalMatch = match[3];
+      if (radix == null) {
+        if (decimalMatch != null)
+          return parseInt(source, 10);
+        if (match[2] != null)
+          return parseInt(source, 16);
+        return _null;
+      }
+      if (radix < 2 || radix > 36)
+        throw A.wrapException(A.RangeError$range(radix, 2, 36, "radix", _null));
+      if (radix === 10 && decimalMatch != null)
+        return parseInt(source, 10);
+      if (radix < 10 || decimalMatch == null) {
+        maxCharCode = radix <= 10 ? 47 + radix : 86 + radix;
+        digitsPart = match[1];
+        for (t1 = digitsPart.length, i = 0; i < t1; ++i)
+          if ((digitsPart.charCodeAt(i) | 32) > maxCharCode)
+            return _null;
+      }
+      return parseInt(source, radix);
+    },
     Primitives_objectTypeName(object) {
       return A.Primitives__objectTypeNameNewRti(object);
     },
@@ -652,38 +1176,124 @@
         return object.toString$0(0);
       return "Instance of '" + A.Primitives_objectTypeName(object) + "'";
     },
+    Primitives_dateNow() {
+      return Date.now();
+    },
+    Primitives_initTicker() {
+      var $window, performance;
+      if ($.Primitives_timerFrequency !== 0)
+        return;
+      $.Primitives_timerFrequency = 1000;
+      if (typeof window == "undefined")
+        return;
+      $window = window;
+      if ($window == null)
+        return;
+      if (!!$window.dartUseDateNowForTicks)
+        return;
+      performance = $window.performance;
+      if (performance == null)
+        return;
+      if (typeof performance.now != "function")
+        return;
+      $.Primitives_timerFrequency = 1000000;
+      $.Primitives_timerTicks = new A.Primitives_initTicker_closure(performance);
+    },
+    Primitives_currentUri() {
+      if (!!self.location)
+        return self.location.href;
+      return null;
+    },
+    Primitives__fromCharCodeApply(array) {
+      var result, i, i0, chunkEnd,
+        end = array.length;
+      if (end <= 500)
+        return String.fromCharCode.apply(null, array);
+      for (result = "", i = 0; i < end; i = i0) {
+        i0 = i + 500;
+        chunkEnd = i0 < end ? i0 : end;
+        result += String.fromCharCode.apply(null, array.slice(i, chunkEnd));
+      }
+      return result;
+    },
+    Primitives_stringFromCodePoints(codePoints) {
+      var t1, _i, i,
+        a = A._setArrayType([], type$.JSArray_int);
+      for (t1 = codePoints.length, _i = 0; _i < codePoints.length; codePoints.length === t1 || (0, A.throwConcurrentModificationError)(codePoints), ++_i) {
+        i = codePoints[_i];
+        if (!A._isInt(i))
+          throw A.wrapException(A.argumentErrorValue(i));
+        if (i <= 65535)
+          B.JSArray_methods.add$1(a, i);
+        else if (i <= 1114111) {
+          B.JSArray_methods.add$1(a, 55296 + (B.JSInt_methods._shrOtherPositive$1(i - 65536, 10) & 1023));
+          B.JSArray_methods.add$1(a, 56320 + (i & 1023));
+        } else
+          throw A.wrapException(A.argumentErrorValue(i));
+      }
+      return A.Primitives__fromCharCodeApply(a);
+    },
+    Primitives_stringFromCharCodes(charCodes) {
+      var t1, _i, i;
+      for (t1 = charCodes.length, _i = 0; _i < t1; ++_i) {
+        i = charCodes[_i];
+        if (!A._isInt(i))
+          throw A.wrapException(A.argumentErrorValue(i));
+        if (i < 0)
+          throw A.wrapException(A.argumentErrorValue(i));
+        if (i > 65535)
+          return A.Primitives_stringFromCodePoints(charCodes);
+      }
+      return A.Primitives__fromCharCodeApply(charCodes);
+    },
+    Primitives_stringFromNativeUint8List(charCodes, start, end) {
+      var i, result, i0, chunkEnd;
+      if (end <= 500 && start === 0 && end === charCodes.length)
+        return String.fromCharCode.apply(null, charCodes);
+      for (i = start, result = ""; i < end; i = i0) {
+        i0 = i + 500;
+        chunkEnd = i0 < end ? i0 : end;
+        result += String.fromCharCode.apply(null, charCodes.subarray(i, chunkEnd));
+      }
+      return result;
+    },
+    Primitives_stringFromCharCode(charCode) {
+      var bits;
+      if (0 <= charCode) {
+        if (charCode <= 65535)
+          return String.fromCharCode(charCode);
+        if (charCode <= 1114111) {
+          bits = charCode - 65536;
+          return String.fromCharCode((B.JSInt_methods._shrOtherPositive$1(bits, 10) | 55296) >>> 0, bits & 1023 | 56320);
+        }
+      }
+      throw A.wrapException(A.RangeError$range(charCode, 0, 1114111, null, null));
+    },
     Primitives_lazyAsJsDate(receiver) {
       if (receiver.date === void 0)
         receiver.date = new Date(receiver._value);
       return receiver.date;
     },
     Primitives_getYear(receiver) {
-      var t1 = A.Primitives_lazyAsJsDate(receiver).getFullYear() + 0;
-      return t1;
+      return receiver.isUtc ? A.Primitives_lazyAsJsDate(receiver).getUTCFullYear() + 0 : A.Primitives_lazyAsJsDate(receiver).getFullYear() + 0;
     },
     Primitives_getMonth(receiver) {
-      var t1 = A.Primitives_lazyAsJsDate(receiver).getMonth() + 1;
-      return t1;
+      return receiver.isUtc ? A.Primitives_lazyAsJsDate(receiver).getUTCMonth() + 1 : A.Primitives_lazyAsJsDate(receiver).getMonth() + 1;
     },
     Primitives_getDay(receiver) {
-      var t1 = A.Primitives_lazyAsJsDate(receiver).getDate() + 0;
-      return t1;
+      return receiver.isUtc ? A.Primitives_lazyAsJsDate(receiver).getUTCDate() + 0 : A.Primitives_lazyAsJsDate(receiver).getDate() + 0;
     },
     Primitives_getHours(receiver) {
-      var t1 = A.Primitives_lazyAsJsDate(receiver).getHours() + 0;
-      return t1;
+      return receiver.isUtc ? A.Primitives_lazyAsJsDate(receiver).getUTCHours() + 0 : A.Primitives_lazyAsJsDate(receiver).getHours() + 0;
     },
     Primitives_getMinutes(receiver) {
-      var t1 = A.Primitives_lazyAsJsDate(receiver).getMinutes() + 0;
-      return t1;
+      return receiver.isUtc ? A.Primitives_lazyAsJsDate(receiver).getUTCMinutes() + 0 : A.Primitives_lazyAsJsDate(receiver).getMinutes() + 0;
     },
     Primitives_getSeconds(receiver) {
-      var t1 = A.Primitives_lazyAsJsDate(receiver).getSeconds() + 0;
-      return t1;
+      return receiver.isUtc ? A.Primitives_lazyAsJsDate(receiver).getUTCSeconds() + 0 : A.Primitives_lazyAsJsDate(receiver).getSeconds() + 0;
     },
     Primitives_getMilliseconds(receiver) {
-      var t1 = A.Primitives_lazyAsJsDate(receiver).getMilliseconds() + 0;
-      return t1;
+      return receiver.isUtc ? A.Primitives_lazyAsJsDate(receiver).getUTCMilliseconds() + 0 : A.Primitives_lazyAsJsDate(receiver).getMilliseconds() + 0;
     },
     Primitives_functionNoSuchMethod($function, positionalArguments, namedArguments) {
       var $arguments, namedArgumentList, t1 = {};
@@ -774,7 +1384,7 @@
         else {
           for (t1 = keys.length, used = 0, _i = 0; _i < keys.length; keys.length === t1 || (0, A.throwConcurrentModificationError)(keys), ++_i) {
             key = A._asString(keys[_i]);
-            if (namedArguments.containsKey$1(key)) {
+            if (namedArguments.containsKey$1(0, key)) {
               ++used;
               B.JSArray_methods.add$1($arguments, namedArguments.$index(0, key));
             } else {
@@ -796,6 +1406,9 @@
         return null;
       return A.getTraceFromException(jsError);
     },
+    iae(argument) {
+      throw A.wrapException(A.argumentErrorValue(argument));
+    },
     ioore(receiver, index) {
       if (receiver == null)
         J.get$length$asx(receiver);
@@ -809,6 +1422,17 @@
       if (index < 0 || index >= $length)
         return A.IndexError$withLength(index, $length, indexable, _s5_);
       return A.RangeError$value(index, _s5_);
+    },
+    diagnoseRangeError(start, end, $length) {
+      if (start < 0 || start > $length)
+        return A.RangeError$range(start, 0, $length, "start", null);
+      if (end != null)
+        if (end < start || end > $length)
+          return A.RangeError$range(end, start, $length, "end", null);
+      return new A.ArgumentError(true, end, "end", null);
+    },
+    argumentErrorValue(object) {
+      return new A.ArgumentError(true, object, null, null);
     },
     wrapException(ex) {
       return A.initializeExceptionWrapper(new Error(), ex);
@@ -1001,7 +1625,7 @@
         case 4:
           return closure.call$4(arg1, arg2, arg3, arg4);
       }
-      throw A.wrapException(new A._Exception("Unsupported number of arguments for wrapped closure"));
+      throw A.wrapException(A.Exception_Exception("Unsupported number of arguments for wrapped closure"));
     },
     convertDartClosureToJS(closure, arity) {
       var $function;
@@ -1416,14 +2040,106 @@
         return $function.apply(null, fieldRtis);
       return $function(fieldRtis);
     },
+    JSSyntaxRegExp_makeNative(source, multiLine, caseSensitive, unicode, dotAll, global) {
+      var m = multiLine ? "m" : "",
+        i = caseSensitive ? "" : "i",
+        u = unicode ? "u" : "",
+        s = dotAll ? "s" : "",
+        g = global ? "g" : "",
+        regexp = function(source, modifiers) {
+          try {
+            return new RegExp(source, modifiers);
+          } catch (e) {
+            return e;
+          }
+        }(source, m + i + u + s + g);
+      if (regexp instanceof RegExp)
+        return regexp;
+      throw A.wrapException(A.FormatException$("Illegal RegExp pattern (" + String(regexp) + ")", source, null));
+    },
     stringContainsUnchecked(receiver, other, startIndex) {
-      var t1 = receiver.indexOf(other, startIndex);
-      return t1 >= 0;
+      var t1;
+      if (typeof other == "string")
+        return receiver.indexOf(other, startIndex) >= 0;
+      else if (other instanceof A.JSSyntaxRegExp) {
+        t1 = B.JSString_methods.substring$1(receiver, startIndex);
+        return other._nativeRegExp.test(t1);
+      } else
+        return !J.allMatches$1$s(other, B.JSString_methods.substring$1(receiver, startIndex)).get$isEmpty(0);
+    },
+    escapeReplacement(replacement) {
+      if (replacement.indexOf("$", 0) >= 0)
+        return replacement.replace(/\$/g, "$$$$");
+      return replacement;
     },
     quoteStringForRegExp(string) {
       if (/[[\]{}()*+?.\\^$|]/.test(string))
         return string.replace(/[[\]{}()*+?.\\^$|]/g, "\\$&");
       return string;
+    },
+    stringReplaceAllUnchecked(receiver, pattern, replacement) {
+      var nativeRegexp;
+      if (typeof pattern == "string")
+        return A.stringReplaceAllUncheckedString(receiver, pattern, replacement);
+      if (pattern instanceof A.JSSyntaxRegExp) {
+        nativeRegexp = pattern.get$_nativeGlobalVersion();
+        nativeRegexp.lastIndex = 0;
+        return receiver.replace(nativeRegexp, A.escapeReplacement(replacement));
+      }
+      return A.stringReplaceAllGeneral(receiver, pattern, replacement);
+    },
+    stringReplaceAllGeneral(receiver, pattern, replacement) {
+      var t1, startIndex, t2, match;
+      for (t1 = J.allMatches$1$s(pattern, receiver), t1 = t1.get$iterator(t1), startIndex = 0, t2 = ""; t1.moveNext$0();) {
+        match = t1.get$current();
+        t2 = t2 + receiver.substring(startIndex, match.get$start(match)) + replacement;
+        startIndex = match.get$end();
+      }
+      t1 = t2 + receiver.substring(startIndex);
+      return t1.charCodeAt(0) == 0 ? t1 : t1;
+    },
+    stringReplaceAllUncheckedString(receiver, pattern, replacement) {
+      var $length, t1, i;
+      if (pattern === "") {
+        if (receiver === "")
+          return replacement;
+        $length = receiver.length;
+        t1 = "" + replacement;
+        for (i = 0; i < $length; ++i)
+          t1 = t1 + receiver[i] + replacement;
+        return t1.charCodeAt(0) == 0 ? t1 : t1;
+      }
+      if (receiver.indexOf(pattern, 0) < 0)
+        return receiver;
+      if (receiver.length < 500 || replacement.indexOf("$", 0) >= 0)
+        return receiver.split(pattern).join(replacement);
+      return receiver.replace(new RegExp(A.quoteStringForRegExp(pattern), "g"), A.escapeReplacement(replacement));
+    },
+    _stringIdentity(string) {
+      return string;
+    },
+    stringReplaceAllFuncUnchecked(receiver, pattern, onMatch, onNonMatch) {
+      var t1, t2, startIndex, t3, match, t4, t5;
+      for (t1 = pattern.allMatches$1(0, receiver), t1 = new A._AllMatchesIterator(t1._re, t1._string, t1._start), t2 = type$.RegExpMatch, startIndex = 0, t3 = ""; t1.moveNext$0();) {
+        match = t1.__js_helper$_current;
+        if (match == null)
+          match = t2._as(match);
+        t4 = match._match;
+        t5 = t4.index;
+        t3 = t3 + A.S(A._stringIdentity(B.JSString_methods.substring$2(receiver, startIndex, t5))) + A.S(onMatch.call$1(match));
+        startIndex = t5 + t4[0].length;
+      }
+      t1 = t3 + A.S(A._stringIdentity(B.JSString_methods.substring$1(receiver, startIndex)));
+      return t1.charCodeAt(0) == 0 ? t1 : t1;
+    },
+    stringReplaceFirstUnchecked(receiver, pattern, replacement, startIndex) {
+      var index = receiver.indexOf(pattern, startIndex);
+      if (index < 0)
+        return receiver;
+      return A.stringReplaceRangeUnchecked(receiver, index, index + pattern.length, replacement);
+    },
+    stringReplaceRangeUnchecked(receiver, start, end, replacement) {
+      return receiver.substring(0, start) + replacement + receiver.substring(end);
     },
     ConstantMapView: function ConstantMapView(t0, t1) {
       this._collection$_map = t0;
@@ -1448,6 +2164,12 @@
       _.__js_helper$_current = null;
       _.$ti = t2;
     },
+    Instantiation: function Instantiation() {
+    },
+    Instantiation1: function Instantiation1(t0, t1) {
+      this._genericClosure = t0;
+      this.$ti = t1;
+    },
     JSInvocationMirror: function JSInvocationMirror(t0, t1, t2, t3, t4) {
       var _ = this;
       _._memberName = t0;
@@ -1455,6 +2177,9 @@
       _._arguments = t2;
       _._namedArgumentNames = t3;
       _._typeArgumentCount = t4;
+    },
+    Primitives_initTicker_closure: function Primitives_initTicker_closure(t0) {
+      this.performance = t0;
     },
     Primitives_functionNoSuchMethod_closure: function Primitives_functionNoSuchMethod_closure(t0, t1, t2) {
       this._box_0 = t0;
@@ -1523,6 +2248,12 @@
       _._modifications = 0;
       _.$ti = t0;
     },
+    JsLinkedHashMap_values_closure: function JsLinkedHashMap_values_closure(t0) {
+      this.$this = t0;
+    },
+    JsLinkedHashMap_addAll_closure: function JsLinkedHashMap_addAll_closure(t0) {
+      this.$this = t0;
+    },
     LinkedHashMapCell: function LinkedHashMapCell(t0, t1) {
       var _ = this;
       _.hashMapCellKey = t0;
@@ -1556,9 +2287,97 @@
     initHooks_closure1: function initHooks_closure1(t0) {
       this.prototypeForTag = t0;
     },
+    JSSyntaxRegExp: function JSSyntaxRegExp(t0, t1) {
+      var _ = this;
+      _.pattern = t0;
+      _._nativeRegExp = t1;
+      _._nativeAnchoredRegExp = _._nativeGlobalRegExp = null;
+    },
+    _MatchImplementation: function _MatchImplementation(t0) {
+      this._match = t0;
+    },
+    _AllMatchesIterable: function _AllMatchesIterable(t0, t1, t2) {
+      this._re = t0;
+      this._string = t1;
+      this._start = t2;
+    },
+    _AllMatchesIterator: function _AllMatchesIterator(t0, t1, t2) {
+      var _ = this;
+      _._regExp = t0;
+      _._string = t1;
+      _._nextIndex = t2;
+      _.__js_helper$_current = null;
+    },
+    StringMatch: function StringMatch(t0, t1) {
+      this.start = t0;
+      this.pattern = t1;
+    },
+    _StringAllMatchesIterable: function _StringAllMatchesIterable(t0, t1, t2) {
+      this._input = t0;
+      this._pattern = t1;
+      this.__js_helper$_index = t2;
+    },
+    _StringAllMatchesIterator: function _StringAllMatchesIterator(t0, t1, t2) {
+      var _ = this;
+      _._input = t0;
+      _._pattern = t1;
+      _.__js_helper$_index = t2;
+      _.__js_helper$_current = null;
+    },
+    throwLateFieldNI(fieldName) {
+      A.throwExpressionWithWrapper(new A.LateError("Field '" + fieldName + "' has not been initialized."), new Error());
+    },
+    throwLateFieldAI(fieldName) {
+      A.throwExpressionWithWrapper(new A.LateError("Field '" + fieldName + "' has already been initialized."), new Error());
+    },
+    throwLateFieldADI(fieldName) {
+      A.throwExpressionWithWrapper(new A.LateError("Field '" + fieldName + "' has been assigned during initialization."), new Error());
+    },
+    _Cell$named(_name) {
+      var t1 = new A._Cell(_name);
+      return t1.__late_helper$_value = t1;
+    },
+    _Cell: function _Cell(t0) {
+      this.__late_helper$_name = t0;
+      this.__late_helper$_value = null;
+    },
+    _ensureNativeList(list) {
+      var t1, result, i;
+      if (type$.JSIndexable_dynamic._is(list))
+        return list;
+      t1 = J.getInterceptor$asx(list);
+      result = A.List_List$filled(t1.get$length(list), null, false, type$.dynamic);
+      for (i = 0; i < t1.get$length(list); ++i)
+        B.JSArray_methods.$indexSet(result, i, t1.$index(list, i));
+      return result;
+    },
+    NativeInt8List__create1(arg) {
+      return new Int8Array(arg);
+    },
+    NativeUint8List_NativeUint8List($length) {
+      return new Uint8Array($length);
+    },
+    NativeUint8List_NativeUint8List$fromList(elements) {
+      return new Uint8Array(A._ensureNativeList(elements));
+    },
+    NativeUint8List_NativeUint8List$view(buffer, offsetInBytes, $length) {
+      return $length == null ? new Uint8Array(buffer, offsetInBytes) : new Uint8Array(buffer, offsetInBytes, $length);
+    },
     _checkValidIndex(index, list, $length) {
       if (index >>> 0 !== index || index >= $length)
         throw A.wrapException(A.diagnoseIndexError(list, index));
+    },
+    _checkValidRange(start, end, $length) {
+      var t1;
+      if (!(start >>> 0 !== start))
+        t1 = end >>> 0 !== end || start > end || end > $length;
+      else
+        t1 = true;
+      if (t1)
+        throw A.wrapException(A.diagnoseRangeError(start, end, $length));
+      return end;
+    },
+    NativeByteBuffer: function NativeByteBuffer() {
     },
     NativeTypedData: function NativeTypedData() {
     },
@@ -1615,6 +2434,22 @@
     },
     findType(recipe) {
       return A._Universe_eval(init.typeUniverse, recipe, false);
+    },
+    instantiatedGenericFunctionType(genericFunctionRti, instantiationRti) {
+      var t1, cache, key, probe, rti;
+      if (genericFunctionRti == null)
+        return null;
+      t1 = instantiationRti._rest;
+      cache = genericFunctionRti._bindCache;
+      if (cache == null)
+        cache = genericFunctionRti._bindCache = new Map();
+      key = instantiationRti._canonicalRecipe;
+      probe = cache.get(key);
+      if (probe != null)
+        return probe;
+      rti = A._substitute(init.typeUniverse, genericFunctionRti._primary, t1, 0);
+      cache.set(key, rti);
+      return rti;
     },
     _substitute(universe, rti, typeArguments, depth) {
       var baseType, substitutedBaseType, interfaceTypeArguments, substitutedInterfaceTypeArguments, base, substitutedBase, $arguments, substitutedArguments, t1, fields, substitutedFields, returnType, substitutedReturnType, functionParameters, substitutedFunctionParameters, bounds, substitutedBounds, index, argument,
@@ -1807,6 +2642,10 @@
     },
     getRuntimeTypeOfDartObject(object) {
       return A.createRuntimeType(A._instanceType(object));
+    },
+    getRuntimeTypeOfClosure(closure) {
+      var rti = A.closureFunctionType(closure);
+      return A.createRuntimeType(rti == null ? A.instanceType(closure) : rti);
     },
     _structuralTypeOf(object) {
       var functionRti = object instanceof A.Closure ? A.closureFunctionType(object) : null;
@@ -3193,8 +4032,11 @@
       self.setImmediate(A.convertDartClosureToJS(new A._AsyncRun__scheduleImmediateWithSetImmediate_internalCallback(type$.void_Function._as(callback)), 0));
     },
     _AsyncRun__scheduleImmediateWithTimer(callback) {
-      type$.void_Function._as(callback);
-      A._TimerImpl$(0, callback);
+      A.Timer__createTimer(B.Duration_0, type$.void_Function._as(callback));
+    },
+    Timer__createTimer(duration, callback) {
+      var milliseconds = B.JSInt_methods._tdivFast$1(duration._duration, 1000);
+      return A._TimerImpl$(milliseconds < 0 ? 0 : milliseconds, callback);
     },
     _TimerImpl$(milliseconds, callback) {
       var t1 = new A._TimerImpl();
@@ -3264,6 +4106,39 @@
           return stackTrace;
       }
       return B.C__StringStackTrace;
+    },
+    Future_Future(computation, $T) {
+      var result = new A._Future($.Zone__current, $T._eval$1("_Future<0>"));
+      A.Timer_Timer(B.Duration_0, new A.Future_Future_closure(result, computation));
+      return result;
+    },
+    Future_Future$value(value, $T) {
+      var t1;
+      $T._as(value);
+      t1 = new A._Future($.Zone__current, $T._eval$1("_Future<0>"));
+      t1._asyncComplete$1(value);
+      return t1;
+    },
+    FutureExtensions__ignore(_, __) {
+    },
+    _completeWithErrorCallback(result, error, stackTrace) {
+      if (stackTrace == null)
+        stackTrace = A.AsyncError_defaultStackTrace(error);
+      result._completeError$2(error, stackTrace);
+    },
+    _Future$zoneValue(value, _zone, $T) {
+      var t1 = new A._Future(_zone, $T._eval$1("_Future<0>"));
+      $T._as(value);
+      t1._state = 8;
+      t1._resultOrListeners = value;
+      return t1;
+    },
+    _Future$value(value, $T) {
+      var t1 = new A._Future($.Zone__current, $T._eval$1("_Future<0>"));
+      $T._as(value);
+      t1._state = 8;
+      t1._resultOrListeners = value;
+      return t1;
     },
     _Future__chainCoreFutureSync(source, target) {
       var t1, t2, listeners;
@@ -3473,8 +4348,58 @@
       A._rootScheduleMicrotask(_null, _null, currentZone, type$.void_Function._as(currentZone.bindCallbackGuarded$1(callback)));
     },
     StreamIterator_StreamIterator(stream, $T) {
-      A.checkNotNullable(stream, "stream", type$.Object);
-      return new A._StreamIterator($T._eval$1("_StreamIterator<0>"));
+      return new A._StreamIterator(A.checkNotNullable(stream, "stream", type$.Object), $T._eval$1("_StreamIterator<0>"));
+    },
+    StreamController_StreamController(sync, $T) {
+      var _null = null;
+      return new A._AsyncStreamController(_null, _null, _null, _null, $T._eval$1("_AsyncStreamController<0>"));
+    },
+    _runGuarded(notificationHandler) {
+      var e, s, exception;
+      if (notificationHandler == null)
+        return;
+      try {
+        notificationHandler.call$0();
+      } catch (exception) {
+        e = A.unwrapException(exception);
+        s = A.getTraceFromException(exception);
+        A._rootHandleError(type$.Object._as(e), type$.StackTrace._as(s));
+      }
+    },
+    _BufferingStreamSubscription__registerDataHandler(zone, handleData, $T) {
+      var t1 = handleData == null ? A.async___nullDataHandler$closure() : handleData;
+      return type$.$env_1_1_void._bind$1($T)._eval$1("1(2)")._as(t1);
+    },
+    _BufferingStreamSubscription__registerErrorHandler(zone, handleError) {
+      if (handleError == null)
+        handleError = A.async___nullErrorHandler$closure();
+      if (type$.void_Function_Object_StackTrace._is(handleError))
+        return zone.registerBinaryCallback$3$1(handleError, type$.dynamic, type$.Object, type$.StackTrace);
+      if (type$.void_Function_Object._is(handleError))
+        return type$.dynamic_Function_Object._as(handleError);
+      throw A.wrapException(A.ArgumentError$("handleError callback must take either an Object (the error), or both an Object (the error) and a StackTrace.", null));
+    },
+    _nullDataHandler(value) {
+    },
+    _nullErrorHandler(error, stackTrace) {
+      A._rootHandleError(type$.Object._as(error), type$.StackTrace._as(stackTrace));
+    },
+    _cancelAndValue(subscription, future, value) {
+      var cancelFuture = subscription.cancel$0(),
+        t1 = $.$get$Future__nullFuture();
+      if (cancelFuture !== t1)
+        cancelFuture.whenComplete$1(new A._cancelAndValue_closure(future, value));
+      else
+        future._complete$1(value);
+    },
+    _StreamHandlerTransformer$(handleData, $S, $T) {
+      return new A._StreamHandlerTransformer(new A._StreamHandlerTransformer_closure(handleData, null, null, $T, $S), $S._eval$1("@<0>")._bind$1($T)._eval$1("_StreamHandlerTransformer<1,2>"));
+    },
+    Timer_Timer(duration, callback) {
+      var t1 = $.Zone__current;
+      if (t1 === B.C__RootZone)
+        return A.Timer__createTimer(duration, type$.void_Function._as(callback));
+      return A.Timer__createTimer(duration, type$.void_Function._as(t1.bindCallbackGuarded$1(callback)));
     },
     _rootHandleError(error, stackTrace) {
       A._schedulePriorityAsyncCallback(new A._rootHandleError_closure(error, stackTrace));
@@ -3542,6 +4467,7 @@
       this.callback = t0;
     },
     _TimerImpl: function _TimerImpl() {
+      this._handle = null;
     },
     _TimerImpl_internalCallback: function _TimerImpl_internalCallback(t0, t1) {
       this.$this = t0;
@@ -3564,6 +4490,10 @@
     AsyncError: function AsyncError(t0, t1) {
       this.error = t0;
       this.stackTrace = t1;
+    },
+    Future_Future_closure: function Future_Future_closure(t0, t1) {
+      this.result = t0;
+      this.computation = t1;
     },
     _Completer: function _Completer() {
     },
@@ -3649,8 +4579,149 @@
       this._box_0 = t0;
       this.future = t1;
     },
-    _StreamIterator: function _StreamIterator(t0) {
-      this.$ti = t0;
+    Stream_toList_closure: function Stream_toList_closure(t0, t1) {
+      this.$this = t0;
+      this.result = t1;
+    },
+    Stream_toList_closure0: function Stream_toList_closure0(t0, t1) {
+      this.future = t0;
+      this.result = t1;
+    },
+    Stream_first_closure: function Stream_first_closure(t0) {
+      this.future = t0;
+    },
+    Stream_first_closure0: function Stream_first_closure0(t0, t1, t2) {
+      this.$this = t0;
+      this.subscription = t1;
+      this.future = t2;
+    },
+    StreamTransformerBase: function StreamTransformerBase() {
+    },
+    _StreamController: function _StreamController() {
+    },
+    _StreamController__subscribe_closure: function _StreamController__subscribe_closure(t0) {
+      this.$this = t0;
+    },
+    _StreamController__recordCancel_complete: function _StreamController__recordCancel_complete(t0) {
+      this.$this = t0;
+    },
+    _AsyncStreamControllerDispatch: function _AsyncStreamControllerDispatch() {
+    },
+    _AsyncStreamController: function _AsyncStreamController(t0, t1, t2, t3, t4) {
+      var _ = this;
+      _._varData = null;
+      _._state = 0;
+      _._doneFuture = null;
+      _.onListen = t0;
+      _.onPause = t1;
+      _.onResume = t2;
+      _.onCancel = t3;
+      _.$ti = t4;
+    },
+    _ControllerStream: function _ControllerStream(t0, t1) {
+      this._controller = t0;
+      this.$ti = t1;
+    },
+    _ControllerSubscription: function _ControllerSubscription(t0, t1, t2, t3, t4, t5, t6) {
+      var _ = this;
+      _._controller = t0;
+      _._async$_onData = t1;
+      _._onError = t2;
+      _._onDone = t3;
+      _._zone = t4;
+      _._state = t5;
+      _._pending = _._cancelFuture = null;
+      _.$ti = t6;
+    },
+    _BufferingStreamSubscription: function _BufferingStreamSubscription() {
+    },
+    _BufferingStreamSubscription__sendError_sendError: function _BufferingStreamSubscription__sendError_sendError(t0, t1, t2) {
+      this.$this = t0;
+      this.error = t1;
+      this.stackTrace = t2;
+    },
+    _BufferingStreamSubscription__sendDone_sendDone: function _BufferingStreamSubscription__sendDone_sendDone(t0) {
+      this.$this = t0;
+    },
+    _StreamImpl: function _StreamImpl() {
+    },
+    _DelayedEvent: function _DelayedEvent() {
+    },
+    _DelayedData: function _DelayedData(t0, t1) {
+      this.value = t0;
+      this.next = null;
+      this.$ti = t1;
+    },
+    _DelayedError: function _DelayedError(t0, t1) {
+      this.error = t0;
+      this.stackTrace = t1;
+      this.next = null;
+    },
+    _DelayedDone: function _DelayedDone() {
+    },
+    _PendingEvents: function _PendingEvents(t0) {
+      var _ = this;
+      _._state = 0;
+      _.lastPendingEvent = _.firstPendingEvent = null;
+      _.$ti = t0;
+    },
+    _PendingEvents_schedule_closure: function _PendingEvents_schedule_closure(t0, t1) {
+      this.$this = t0;
+      this.dispatch = t1;
+    },
+    _StreamIterator: function _StreamIterator(t0, t1) {
+      var _ = this;
+      _._subscription = null;
+      _._stateData = t0;
+      _._async$_hasValue = false;
+      _.$ti = t1;
+    },
+    _cancelAndValue_closure: function _cancelAndValue_closure(t0, t1) {
+      this.future = t0;
+      this.value = t1;
+    },
+    _EventSinkWrapper: function _EventSinkWrapper(t0, t1) {
+      this._async$_sink = t0;
+      this.$ti = t1;
+    },
+    _SinkTransformerStreamSubscription: function _SinkTransformerStreamSubscription(t0, t1, t2, t3, t4, t5) {
+      var _ = this;
+      _.___SinkTransformerStreamSubscription__transformerSink_A = $;
+      _._subscription = null;
+      _._async$_onData = t0;
+      _._onError = t1;
+      _._onDone = t2;
+      _._zone = t3;
+      _._state = t4;
+      _._pending = _._cancelFuture = null;
+      _.$ti = t5;
+    },
+    _StreamSinkTransformer: function _StreamSinkTransformer() {
+    },
+    _BoundSinkStream: function _BoundSinkStream(t0, t1, t2) {
+      this._sinkMapper = t0;
+      this._stream = t1;
+      this.$ti = t2;
+    },
+    _HandlerEventSink: function _HandlerEventSink(t0, t1, t2, t3, t4) {
+      var _ = this;
+      _._handleData = t0;
+      _._handleError = t1;
+      _._handleDone = t2;
+      _._async$_sink = t3;
+      _.$ti = t4;
+    },
+    _StreamHandlerTransformer: function _StreamHandlerTransformer(t0, t1) {
+      this._sinkMapper = t0;
+      this.$ti = t1;
+    },
+    _StreamHandlerTransformer_closure: function _StreamHandlerTransformer_closure(t0, t1, t2, t3, t4) {
+      var _ = this;
+      _.handleData = t0;
+      _.handleError = t1;
+      _.handleDone = t2;
+      _.T = t3;
+      _.S = t4;
     },
     _Zone: function _Zone() {
     },
@@ -3686,8 +4757,16 @@
       return table;
     },
     LinkedHashMap_LinkedHashMap(equals, hashCode, $K, $V) {
-      if (A.core__identityHashCode$closure() === hashCode && A.core__identical$closure() === equals)
-        return new A.JsIdentityLinkedHashMap($K._eval$1("@<0>")._bind$1($V)._eval$1("JsIdentityLinkedHashMap<1,2>"));
+      if (hashCode == null) {
+        if (equals == null)
+          return new A.JsLinkedHashMap($K._eval$1("@<0>")._bind$1($V)._eval$1("JsLinkedHashMap<1,2>"));
+        hashCode = A.collection___defaultHashCode$closure();
+      } else {
+        if (A.core__identityHashCode$closure() === hashCode && A.core__identical$closure() === equals)
+          return new A.JsIdentityLinkedHashMap($K._eval$1("@<0>")._bind$1($V)._eval$1("JsIdentityLinkedHashMap<1,2>"));
+        if (equals == null)
+          equals = A.collection___defaultEquals$closure();
+      }
       return A._LinkedCustomHashMap$(equals, hashCode, null, $K, $V);
     },
     LinkedHashMap_LinkedHashMap$_literal(keyValuePairs, $K, $V) {
@@ -3702,11 +4781,30 @@
     LinkedHashSet_LinkedHashSet($E) {
       return new A._LinkedHashSet($E._eval$1("_LinkedHashSet<0>"));
     },
+    LinkedHashSet_LinkedHashSet$_empty($E) {
+      return new A._LinkedHashSet($E._eval$1("_LinkedHashSet<0>"));
+    },
     _LinkedHashSet__newHashTable() {
       var table = Object.create(null);
       table["<non-identifier-key>"] = table;
       delete table["<non-identifier-key>"];
       return table;
+    },
+    _LinkedHashSetIterator$(_set, _modifications, $E) {
+      var t1 = new A._LinkedHashSetIterator(_set, _modifications, $E._eval$1("_LinkedHashSetIterator<0>"));
+      t1._collection$_cell = _set._collection$_first;
+      return t1;
+    },
+    _defaultEquals(a, b) {
+      return J.$eq$(a, b);
+    },
+    _defaultHashCode(a) {
+      return J.get$hashCode$(a);
+    },
+    LinkedHashMap_LinkedHashMap$from(other, $K, $V) {
+      var result = A.LinkedHashMap_LinkedHashMap(null, null, $K, $V);
+      other.forEach$1(0, new A.LinkedHashMap_LinkedHashMap$from_closure(result, $K, $V));
+      return result;
     },
     LinkedHashSet_LinkedHashSet$from(elements, $E) {
       var t1, _i,
@@ -3724,7 +4822,7 @@
         B.JSArray_methods.add$1($.toStringVisiting, m);
         result._contents += "{";
         t1.first = true;
-        m.forEach$1(0, new A.MapBase_mapToString_closure(t1, result));
+        J.forEach$1$x(m, new A.MapBase_mapToString_closure(t1, result));
         result._contents += "}";
       } finally {
         if (0 >= $.toStringVisiting.length)
@@ -3776,7 +4874,7 @@
     },
     _LinkedHashSetCell: function _LinkedHashSetCell(t0) {
       this._element = t0;
-      this._collection$_next = null;
+      this._collection$_previous = this._collection$_next = null;
     },
     _LinkedHashSetIterator: function _LinkedHashSetIterator(t0, t1, t2) {
       var _ = this;
@@ -3785,9 +4883,17 @@
       _._collection$_current = _._collection$_cell = null;
       _.$ti = t2;
     },
+    LinkedHashMap_LinkedHashMap$from_closure: function LinkedHashMap_LinkedHashMap$from_closure(t0, t1, t2) {
+      this.result = t0;
+      this.K = t1;
+      this.V = t2;
+    },
     ListBase: function ListBase() {
     },
     MapBase: function MapBase() {
+    },
+    MapBase_entries_closure: function MapBase_entries_closure(t0) {
+      this.$this = t0;
     },
     MapBase_mapToString_closure: function MapBase_mapToString_closure(t0, t1) {
       this._box_0 = t0;
@@ -3797,7 +4903,9 @@
     },
     MapView: function MapView() {
     },
-    UnmodifiableMapView: function UnmodifiableMapView() {
+    UnmodifiableMapView: function UnmodifiableMapView(t0, t1) {
+      this._collection$_map = t0;
+      this.$ti = t1;
     },
     SetBase: function SetBase() {
     },
@@ -3805,8 +4913,387 @@
     },
     _UnmodifiableMapView_MapView__UnmodifiableMapMixin: function _UnmodifiableMapView_MapView__UnmodifiableMapMixin() {
     },
+    _parseJson(source, reviver) {
+      var e, exception, t1, parsed = null;
+      try {
+        parsed = JSON.parse(source);
+      } catch (exception) {
+        e = A.unwrapException(exception);
+        t1 = A.FormatException$(String(e), null, null);
+        throw A.wrapException(t1);
+      }
+      t1 = A._convertJsonToDartLazy(parsed);
+      return t1;
+    },
+    _convertJsonToDartLazy(object) {
+      var i;
+      if (object == null)
+        return null;
+      if (typeof object != "object")
+        return object;
+      if (!Array.isArray(object))
+        return new A._JsonMap(object, Object.create(null));
+      for (i = 0; i < object.length; ++i)
+        object[i] = A._convertJsonToDartLazy(object[i]);
+      return object;
+    },
+    _Utf8Decoder__makeNativeUint8List(codeUnits, start, end) {
+      var bytes, t1, i, b,
+        $length = end - start;
+      if ($length <= 4096)
+        bytes = $.$get$_Utf8Decoder__reusableBuffer();
+      else
+        bytes = new Uint8Array($length);
+      for (t1 = J.getInterceptor$asx(codeUnits), i = 0; i < $length; ++i) {
+        b = t1.$index(codeUnits, start + i);
+        if ((b & 255) !== b)
+          b = 255;
+        bytes[i] = b;
+      }
+      return bytes;
+    },
+    _Utf8Decoder__convertInterceptedUint8List(allowMalformed, codeUnits, start, end) {
+      var decoder = allowMalformed ? $.$get$_Utf8Decoder__decoderNonfatal() : $.$get$_Utf8Decoder__decoder();
+      if (decoder == null)
+        return null;
+      if (0 === start && end === codeUnits.length)
+        return A._Utf8Decoder__useTextDecoder(decoder, codeUnits);
+      return A._Utf8Decoder__useTextDecoder(decoder, codeUnits.subarray(start, end));
+    },
+    _Utf8Decoder__useTextDecoder(decoder, codeUnits) {
+      var t1, exception;
+      try {
+        t1 = decoder.decode(codeUnits);
+        return t1;
+      } catch (exception) {
+      }
+      return null;
+    },
+    Base64Codec__checkPadding(source, sourceIndex, sourceEnd, firstPadding, paddingCount, $length) {
+      if (B.JSInt_methods.$mod($length, 4) !== 0)
+        throw A.wrapException(A.FormatException$("Invalid base64 padding, padded length must be multiple of four, is " + $length, source, sourceEnd));
+      if (firstPadding + paddingCount !== $length)
+        throw A.wrapException(A.FormatException$("Invalid base64 padding, '=' not at the end", source, sourceIndex));
+      if (paddingCount > 2)
+        throw A.wrapException(A.FormatException$("Invalid base64 padding, more than two '=' characters", source, sourceIndex));
+    },
+    _Base64Encoder_encodeChunk(alphabet, bytes, start, end, isLast, output, outputIndex, state) {
+      var t1, t2, t3, i, byteOr, byte, outputIndex0, t4, outputIndex1,
+        bits = state >>> 2,
+        expectedChars = 3 - (state & 3);
+      for (t1 = J.getInterceptor$asx(bytes), t2 = alphabet.length, t3 = output.length, i = start, byteOr = 0; i < end; ++i) {
+        byte = t1.$index(bytes, i);
+        byteOr = (byteOr | byte) >>> 0;
+        bits = (bits << 8 | byte) & 16777215;
+        --expectedChars;
+        if (expectedChars === 0) {
+          outputIndex0 = outputIndex + 1;
+          t4 = bits >>> 18 & 63;
+          if (!(t4 < t2))
+            return A.ioore(alphabet, t4);
+          if (!(outputIndex < t3))
+            return A.ioore(output, outputIndex);
+          output[outputIndex] = alphabet.charCodeAt(t4);
+          outputIndex = outputIndex0 + 1;
+          t4 = bits >>> 12 & 63;
+          if (!(t4 < t2))
+            return A.ioore(alphabet, t4);
+          if (!(outputIndex0 < t3))
+            return A.ioore(output, outputIndex0);
+          output[outputIndex0] = alphabet.charCodeAt(t4);
+          outputIndex0 = outputIndex + 1;
+          t4 = bits >>> 6 & 63;
+          if (!(t4 < t2))
+            return A.ioore(alphabet, t4);
+          if (!(outputIndex < t3))
+            return A.ioore(output, outputIndex);
+          output[outputIndex] = alphabet.charCodeAt(t4);
+          outputIndex = outputIndex0 + 1;
+          t4 = bits & 63;
+          if (!(t4 < t2))
+            return A.ioore(alphabet, t4);
+          if (!(outputIndex0 < t3))
+            return A.ioore(output, outputIndex0);
+          output[outputIndex0] = alphabet.charCodeAt(t4);
+          bits = 0;
+          expectedChars = 3;
+        }
+      }
+      if (byteOr >= 0 && byteOr <= 255) {
+        if (isLast && expectedChars < 3) {
+          outputIndex0 = outputIndex + 1;
+          outputIndex1 = outputIndex0 + 1;
+          if (3 - expectedChars === 1) {
+            t1 = bits >>> 2 & 63;
+            if (!(t1 < t2))
+              return A.ioore(alphabet, t1);
+            if (!(outputIndex < t3))
+              return A.ioore(output, outputIndex);
+            output[outputIndex] = alphabet.charCodeAt(t1);
+            t1 = bits << 4 & 63;
+            if (!(t1 < t2))
+              return A.ioore(alphabet, t1);
+            if (!(outputIndex0 < t3))
+              return A.ioore(output, outputIndex0);
+            output[outputIndex0] = alphabet.charCodeAt(t1);
+            outputIndex = outputIndex1 + 1;
+            if (!(outputIndex1 < t3))
+              return A.ioore(output, outputIndex1);
+            output[outputIndex1] = 61;
+            if (!(outputIndex < t3))
+              return A.ioore(output, outputIndex);
+            output[outputIndex] = 61;
+          } else {
+            t1 = bits >>> 10 & 63;
+            if (!(t1 < t2))
+              return A.ioore(alphabet, t1);
+            if (!(outputIndex < t3))
+              return A.ioore(output, outputIndex);
+            output[outputIndex] = alphabet.charCodeAt(t1);
+            t1 = bits >>> 4 & 63;
+            if (!(t1 < t2))
+              return A.ioore(alphabet, t1);
+            if (!(outputIndex0 < t3))
+              return A.ioore(output, outputIndex0);
+            output[outputIndex0] = alphabet.charCodeAt(t1);
+            outputIndex = outputIndex1 + 1;
+            t1 = bits << 2 & 63;
+            if (!(t1 < t2))
+              return A.ioore(alphabet, t1);
+            if (!(outputIndex1 < t3))
+              return A.ioore(output, outputIndex1);
+            output[outputIndex1] = alphabet.charCodeAt(t1);
+            if (!(outputIndex < t3))
+              return A.ioore(output, outputIndex);
+            output[outputIndex] = 61;
+          }
+          return 0;
+        }
+        return (bits << 2 | 3 - expectedChars) >>> 0;
+      }
+      for (i = start; i < end;) {
+        byte = t1.$index(bytes, i);
+        if (byte < 0 || byte > 255)
+          break;
+        ++i;
+      }
+      throw A.wrapException(A.ArgumentError$value(bytes, "Not a byte value at index " + i + ": 0x" + J.toRadixString$1$n(t1.$index(bytes, i), 16), null));
+    },
+    JsonUnsupportedObjectError$(unsupportedObject, cause, partialResult) {
+      return new A.JsonUnsupportedObjectError(unsupportedObject, cause);
+    },
+    _defaultToEncodable(object) {
+      return object.toJson$0();
+    },
+    _JsonStringStringifier$(_sink, _toEncodable) {
+      return new A._JsonStringStringifier(_sink, [], A.convert___defaultToEncodable$closure());
+    },
+    _JsonStringStringifier_stringify(object, toEncodable, indent) {
+      var t1,
+        output = new A.StringBuffer("");
+      A._JsonStringStringifier_printOn(object, output, toEncodable, indent);
+      t1 = output._contents;
+      return t1.charCodeAt(0) == 0 ? t1 : t1;
+    },
+    _JsonStringStringifier_printOn(object, output, toEncodable, indent) {
+      var stringifier = A._JsonStringStringifier$(output, toEncodable);
+      stringifier.writeObject$1(object);
+    },
+    _Utf8Decoder_errorDescription(state) {
+      switch (state) {
+        case 65:
+          return "Missing extension byte";
+        case 67:
+          return "Unexpected extension byte";
+        case 69:
+          return "Invalid UTF-8 byte";
+        case 71:
+          return "Overlong encoding";
+        case 73:
+          return "Out of unicode range";
+        case 75:
+          return "Encoded surrogate";
+        case 77:
+          return "Unfinished UTF-8 octet sequence";
+        default:
+          return "";
+      }
+    },
+    _JsonMap: function _JsonMap(t0, t1) {
+      this._original = t0;
+      this._processed = t1;
+      this._data = null;
+    },
+    _JsonMapKeyIterable: function _JsonMapKeyIterable(t0) {
+      this._parent = t0;
+    },
+    _JsonDecoderSink: function _JsonDecoderSink(t0, t1, t2) {
+      this._reviver = t0;
+      this._sink = t1;
+      this._stringSink = t2;
+    },
+    _Utf8Decoder__decoder_closure: function _Utf8Decoder__decoder_closure() {
+    },
+    _Utf8Decoder__decoderNonfatal_closure: function _Utf8Decoder__decoderNonfatal_closure() {
+    },
+    Base64Codec: function Base64Codec() {
+    },
+    Base64Encoder: function Base64Encoder() {
+    },
+    _Base64Encoder: function _Base64Encoder(t0) {
+      this._convert$_state = 0;
+      this._alphabet = t0;
+    },
+    _BufferCachingBase64Encoder: function _BufferCachingBase64Encoder(t0) {
+      this.bufferCache = null;
+      this._convert$_state = 0;
+      this._alphabet = t0;
+    },
+    _Base64EncoderSink: function _Base64EncoderSink() {
+    },
+    _AsciiBase64EncoderSink: function _AsciiBase64EncoderSink(t0, t1) {
+      this._sink = t0;
+      this._encoder = t1;
+    },
+    _Utf8Base64EncoderSink: function _Utf8Base64EncoderSink(t0, t1) {
+      this._sink = t0;
+      this._encoder = t1;
+    },
+    ByteConversionSink: function ByteConversionSink() {
+    },
+    _ByteAdapterSink: function _ByteAdapterSink(t0) {
+      this._sink = t0;
+    },
+    _ByteCallbackSink: function _ByteCallbackSink(t0, t1) {
+      this._callback = t0;
+      this._buffer = t1;
+      this._bufferIndex = 0;
+    },
+    ChunkedConversionSink: function ChunkedConversionSink() {
+    },
+    _ConverterStreamEventSink: function _ConverterStreamEventSink(t0, t1, t2) {
+      this._eventSink = t0;
+      this._chunkedSink = t1;
+      this.$ti = t2;
+    },
+    Codec: function Codec() {
+    },
+    Converter: function Converter() {
+    },
+    Converter_bind_closure: function Converter_bind_closure(t0) {
+      this.$this = t0;
+    },
+    _FusedConverter: function _FusedConverter(t0, t1, t2) {
+      this._convert$_first = t0;
+      this._second = t1;
+      this.$ti = t2;
+    },
+    Encoding: function Encoding() {
+    },
+    JsonUnsupportedObjectError: function JsonUnsupportedObjectError(t0, t1) {
+      this.unsupportedObject = t0;
+      this.cause = t1;
+    },
+    JsonCyclicError: function JsonCyclicError(t0, t1) {
+      this.unsupportedObject = t0;
+      this.cause = t1;
+    },
+    JsonCodec: function JsonCodec() {
+    },
+    JsonEncoder: function JsonEncoder(t0) {
+      this._toEncodable = t0;
+    },
+    _JsonEncoderSink: function _JsonEncoderSink(t0, t1, t2) {
+      var _ = this;
+      _._indent = t0;
+      _._toEncodable = t1;
+      _._sink = t2;
+      _._isDone = false;
+    },
+    JsonDecoder: function JsonDecoder(t0) {
+      this._reviver = t0;
+    },
+    _JsonStringifier: function _JsonStringifier() {
+    },
+    _JsonStringifier_writeMap_closure: function _JsonStringifier_writeMap_closure(t0, t1) {
+      this._box_0 = t0;
+      this.keyValueList = t1;
+    },
+    _JsonStringStringifier: function _JsonStringStringifier(t0, t1, t2) {
+      this._sink = t0;
+      this._seen = t1;
+      this._toEncodable = t2;
+    },
+    StringConversionSink: function StringConversionSink() {
+    },
+    _ClosableStringSink: function _ClosableStringSink(t0, t1) {
+      this._callback = t0;
+      this._sink = t1;
+    },
+    _StringConversionSinkAsStringSinkAdapter: function _StringConversionSinkAsStringSinkAdapter(t0, t1) {
+      this._buffer = t0;
+      this._chunkedSink = t1;
+    },
+    _StringSinkConversionSink: function _StringSinkConversionSink() {
+    },
+    _StringAdapterSink: function _StringAdapterSink(t0) {
+      this._sink = t0;
+    },
+    _Utf8StringSinkAdapter: function _Utf8StringSinkAdapter(t0, t1, t2) {
+      this._decoder = t0;
+      this._sink = t1;
+      this._stringSink = t2;
+    },
+    _Utf8ConversionSink: function _Utf8ConversionSink(t0, t1, t2) {
+      this._decoder = t0;
+      this._chunkedSink = t1;
+      this._buffer = t2;
+    },
+    Utf8Codec: function Utf8Codec() {
+    },
+    Utf8Encoder: function Utf8Encoder() {
+    },
+    _Utf8Encoder: function _Utf8Encoder(t0) {
+      this._bufferIndex = this._carry = 0;
+      this._buffer = t0;
+    },
+    _Utf8EncoderSink: function _Utf8EncoderSink(t0, t1) {
+      var _ = this;
+      _._sink = t0;
+      _._bufferIndex = _._carry = 0;
+      _._buffer = t1;
+    },
+    Utf8Decoder: function Utf8Decoder(t0) {
+      this._allowMalformed = t0;
+    },
+    _Utf8Decoder: function _Utf8Decoder(t0) {
+      this.allowMalformed = t0;
+      this._convert$_state = 16;
+      this._charOrIndex = 0;
+    },
+    __Utf8EncoderSink__Utf8Encoder_StringConversionSink: function __Utf8EncoderSink__Utf8Encoder_StringConversionSink() {
+    },
     identityHashCode(object) {
       return A.objectHashCode(object);
+    },
+    _WeakReferenceWrapper__findWeakRefConstructor() {
+      if (typeof WeakRef == "function")
+        return WeakRef;
+      var $constructor = function LeakRef(o) {
+        this._ = o;
+      };
+      $constructor.prototype = {
+        deref() {
+          return this._;
+        }
+      };
+      return $constructor;
+    },
+    int_parse(source, radix) {
+      var value = A.Primitives_parseInt(source, radix);
+      if (value != null)
+        return value;
+      throw A.wrapException(A.FormatException$(source, null, null));
     },
     Error__throw(error, stackTrace) {
       error = A.wrapException(error);
@@ -3816,25 +5303,34 @@
       throw error;
       throw A.wrapException("unreachable");
     },
+    DateTime$fromMillisecondsSinceEpoch(millisecondsSinceEpoch, isUtc) {
+      if (Math.abs(millisecondsSinceEpoch) > 864e13)
+        A.throwExpression(A.ArgumentError$("DateTime is outside valid range: " + millisecondsSinceEpoch, null));
+      A.checkNotNullable(isUtc, "isUtc", type$.bool);
+      return new A.DateTime(millisecondsSinceEpoch, isUtc);
+    },
     List_List$filled($length, fill, growable, $E) {
       var i,
-        result = J.JSArray_JSArray$fixed($length, $E);
+        result = growable ? J.JSArray_JSArray$growable($length, $E) : J.JSArray_JSArray$fixed($length, $E);
       if ($length !== 0 && fill != null)
-        for (i = 0; i < $length; ++i)
+        for (i = 0; i < result.length; ++i)
           result[i] = fill;
       return result;
     },
-    List_List$from(elements, $E) {
-      var t1, t2, t3,
+    List_List$from(elements, growable, $E) {
+      var t1,
         list = A._setArrayType([], $E._eval$1("JSArray<0>"));
-      for (t1 = A._instanceType(elements), t2 = new A.ListIterator(elements, elements.get$length(elements), t1._eval$1("ListIterator<ListIterable.E>")), t1 = t1._eval$1("ListIterable.E"); t2.moveNext$0();) {
-        t3 = t2.__internal$_current;
-        B.JSArray_methods.add$1(list, $E._as(t3 == null ? t1._as(t3) : t3));
-      }
-      return list;
+      for (t1 = J.get$iterator$ax(elements); t1.moveNext$0();)
+        B.JSArray_methods.add$1(list, $E._as(t1.get$current()));
+      if (growable)
+        return list;
+      return J.JSArray_markFixedList(list, $E);
     },
     List_List$of(elements, growable, $E) {
-      var t1 = A.List_List$_of(elements, $E);
+      var t1;
+      if (growable)
+        return A.List_List$_of(elements, $E);
+      t1 = J.JSArray_markFixedList(A.List_List$_of(elements, $E), $E);
       return t1;
     },
     List_List$_of(elements, $E) {
@@ -3846,8 +5342,50 @@
         B.JSArray_methods.add$1(list, t1.get$current());
       return list;
     },
+    List_List$unmodifiable(elements, $E) {
+      return J.JSArray_markUnmodifiableList(A.List_List$from(elements, false, $E));
+    },
+    String_String$fromCharCodes(charCodes, start, end) {
+      var t1, t2, maxLength, array, len;
+      A.RangeError_checkNotNegative(start, "start");
+      t1 = end == null;
+      t2 = !t1;
+      if (t2) {
+        maxLength = end - start;
+        if (maxLength < 0)
+          throw A.wrapException(A.RangeError$range(end, start, null, "end", null));
+        if (maxLength === 0)
+          return "";
+      }
+      if (Array.isArray(charCodes)) {
+        array = charCodes;
+        len = array.length;
+        if (t1)
+          end = len;
+        return A.Primitives_stringFromCharCodes(start > 0 || end < len ? array.slice(start, end) : array);
+      }
+      if (type$.NativeUint8List._is(charCodes))
+        return A.String__stringFromUint8List(charCodes, start, end);
+      if (t2)
+        charCodes = J.take$1$ax(charCodes, end);
+      if (start > 0)
+        charCodes = J.skip$1$ax(charCodes, start);
+      return A.Primitives_stringFromCharCodes(A.List_List$of(charCodes, true, type$.int));
+    },
+    String__stringFromUint8List(charCodes, start, endOrNull) {
+      var len = charCodes.length;
+      if (start >= len)
+        return "";
+      return A.Primitives_stringFromNativeUint8List(charCodes, start, endOrNull == null || endOrNull > len ? len : endOrNull);
+    },
+    RegExp_RegExp(source) {
+      return new A.JSSyntaxRegExp(source, A.JSSyntaxRegExp_makeNative(source, false, true, false, false, false));
+    },
     identical(a, b) {
       return a == null ? b == null : a === b;
+    },
+    StringBuffer$($content) {
+      return new A.StringBuffer($content);
     },
     StringBuffer__writeAll(string, objects, separator) {
       var iterator = J.get$iterator$ax(objects);
@@ -3866,6 +5404,49 @@
     },
     NoSuchMethodError_NoSuchMethodError$withInvocation(receiver, invocation) {
       return new A.NoSuchMethodError(receiver, invocation.get$memberName(), invocation.get$positionalArguments(), invocation.get$namedArguments());
+    },
+    Uri_base() {
+      var cachedUri, uri,
+        current = A.Primitives_currentUri();
+      if (current == null)
+        throw A.wrapException(A.UnsupportedError$("'Uri.base' is not supported"));
+      cachedUri = $.Uri__cachedBaseUri;
+      if (cachedUri != null && current === $.Uri__cachedBaseString)
+        return cachedUri;
+      uri = A.Uri_parse(current);
+      $.Uri__cachedBaseUri = uri;
+      $.Uri__cachedBaseString = current;
+      return uri;
+    },
+    _Uri__uriEncode(canonicalTable, text, encoding, spaceToPlus) {
+      var t1, bytes, i, t2, byte, t3,
+        _s16_ = "0123456789ABCDEF";
+      if (encoding === B.C_Utf8Codec) {
+        t1 = $.$get$_Uri__needsNoEncoding();
+        t1 = t1._nativeRegExp.test(text);
+      } else
+        t1 = false;
+      if (t1)
+        return text;
+      bytes = B.C_Utf8Encoder.convert$1(text);
+      for (t1 = bytes.length, i = 0, t2 = ""; i < t1; ++i) {
+        byte = bytes[i];
+        if (byte < 128) {
+          t3 = byte >>> 4;
+          if (!(t3 < 8))
+            return A.ioore(canonicalTable, t3);
+          t3 = (canonicalTable[t3] & 1 << (byte & 15)) !== 0;
+        } else
+          t3 = false;
+        if (t3)
+          t2 += A.Primitives_stringFromCharCode(byte);
+        else
+          t2 = spaceToPlus && byte === 32 ? t2 + "+" : t2 + "%" + _s16_[byte >>> 4 & 15] + _s16_[byte & 15];
+      }
+      return t2.charCodeAt(0) == 0 ? t2 : t2;
+    },
+    StackTrace_current() {
+      return A.getTraceFromException(new Error());
     },
     DateTime__fourDigits(n) {
       var absN = Math.abs(n),
@@ -3890,6 +5471,9 @@
         return "" + n;
       return "0" + n;
     },
+    Duration$(microseconds, milliseconds) {
+      return new A.Duration(microseconds + 1000 * milliseconds);
+    },
     Error_safeToString(object) {
       if (typeof object == "number" || A._isBool(object) || object == null)
         return J.toString$0$(object);
@@ -3911,11 +5495,33 @@
     ArgumentError$value(value, $name, message) {
       return new A.ArgumentError(true, value, $name, message);
     },
+    ArgumentError_checkNotNull(argument, $name, $T) {
+      return argument;
+    },
+    RangeError$(message) {
+      var _null = null;
+      return new A.RangeError(_null, _null, false, _null, _null, message);
+    },
     RangeError$value(value, $name) {
       return new A.RangeError(null, null, true, value, $name, "Value not in range");
     },
     RangeError$range(invalidValue, minValue, maxValue, $name, message) {
       return new A.RangeError(minValue, maxValue, true, invalidValue, $name, "Invalid value");
+    },
+    RangeError_checkValueInInterval(value, minValue, maxValue, $name) {
+      if (value < minValue || value > maxValue)
+        throw A.wrapException(A.RangeError$range(value, minValue, maxValue, $name, null));
+      return value;
+    },
+    RangeError_checkValidRange(start, end, $length) {
+      if (0 > start || start > $length)
+        throw A.wrapException(A.RangeError$range(start, 0, $length, "start", null));
+      if (end != null) {
+        if (start > end || end > $length)
+          throw A.wrapException(A.RangeError$range(end, start, $length, "end", null));
+        return end;
+      }
+      return $length;
     },
     RangeError_checkNotNegative(value, $name) {
       if (value < 0)
@@ -3936,6 +5542,12 @@
     },
     ConcurrentModificationError$(modifiedObject) {
       return new A.ConcurrentModificationError(modifiedObject);
+    },
+    Exception_Exception(message) {
+      return new A._Exception(message);
+    },
+    FormatException$(message, source, offset) {
+      return new A.FormatException(message, source, offset);
     },
     Iterable_iterableToShortString(iterable, leftDelimiter, rightDelimiter) {
       var parts, t1;
@@ -4056,15 +5668,1245 @@
       B.JSArray_methods.add$1(parts, ultimateString);
     },
     Object_hash(object1, object2, object3, object4) {
-      var t1 = B.JSNumber_methods.get$hashCode(object1);
-      object2 = B.JSNumber_methods.get$hashCode(object2);
-      object3 = B.JSNumber_methods.get$hashCode(object3);
-      object4 = B.JSNumber_methods.get$hashCode(object4);
+      var t1;
+      if (B.C_SentinelValue === object3)
+        return A.SystemHash_hash2(J.get$hashCode$(object1), J.get$hashCode$(object2), $.$get$_hashSeed());
+      if (B.C_SentinelValue === object4) {
+        t1 = J.get$hashCode$(object1);
+        object2 = J.get$hashCode$(object2);
+        object3 = J.get$hashCode$(object3);
+        return A.SystemHash_finish(A.SystemHash_combine(A.SystemHash_combine(A.SystemHash_combine($.$get$_hashSeed(), t1), object2), object3));
+      }
+      t1 = J.get$hashCode$(object1);
+      object2 = J.get$hashCode$(object2);
+      object3 = J.get$hashCode$(object3);
+      object4 = J.get$hashCode$(object4);
       object4 = A.SystemHash_finish(A.SystemHash_combine(A.SystemHash_combine(A.SystemHash_combine(A.SystemHash_combine($.$get$_hashSeed(), t1), object2), object3), object4));
       return object4;
     },
     print(object) {
       A.printString(object);
+    },
+    Uri_parse(uri) {
+      var delta, indices, schemeEnd, hostStart, portStart, pathStart, queryStart, fragmentStart, isSimple, scheme, t1, t2, schemeAuth, queryStart0, pathStart0, userInfoStart, userInfo, host, portNumber, port, path, query, _null = null,
+        end = uri.length;
+      if (end >= 5) {
+        if (4 >= end)
+          return A.ioore(uri, 4);
+        delta = ((uri.charCodeAt(4) ^ 58) * 3 | uri.charCodeAt(0) ^ 100 | uri.charCodeAt(1) ^ 97 | uri.charCodeAt(2) ^ 116 | uri.charCodeAt(3) ^ 97) >>> 0;
+        if (delta === 0)
+          return A.UriData__parse(end < end ? B.JSString_methods.substring$2(uri, 0, end) : uri, 5, _null).get$uri();
+        else if (delta === 32)
+          return A.UriData__parse(B.JSString_methods.substring$2(uri, 5, end), 0, _null).get$uri();
+      }
+      indices = A.List_List$filled(8, 0, false, type$.int);
+      B.JSArray_methods.$indexSet(indices, 0, 0);
+      B.JSArray_methods.$indexSet(indices, 1, -1);
+      B.JSArray_methods.$indexSet(indices, 2, -1);
+      B.JSArray_methods.$indexSet(indices, 7, -1);
+      B.JSArray_methods.$indexSet(indices, 3, 0);
+      B.JSArray_methods.$indexSet(indices, 4, 0);
+      B.JSArray_methods.$indexSet(indices, 5, end);
+      B.JSArray_methods.$indexSet(indices, 6, end);
+      if (A._scan(uri, 0, end, 0, indices) >= 14)
+        B.JSArray_methods.$indexSet(indices, 7, end);
+      schemeEnd = indices[1];
+      if (schemeEnd >= 0)
+        if (A._scan(uri, 0, schemeEnd, 20, indices) === 20)
+          indices[7] = schemeEnd;
+      hostStart = indices[2] + 1;
+      portStart = indices[3];
+      pathStart = indices[4];
+      queryStart = indices[5];
+      fragmentStart = indices[6];
+      if (fragmentStart < queryStart)
+        queryStart = fragmentStart;
+      if (pathStart < hostStart)
+        pathStart = queryStart;
+      else if (pathStart <= schemeEnd)
+        pathStart = schemeEnd + 1;
+      if (portStart < hostStart)
+        portStart = pathStart;
+      isSimple = indices[7] < 0;
+      if (isSimple)
+        if (hostStart > schemeEnd + 3) {
+          scheme = _null;
+          isSimple = false;
+        } else {
+          t1 = portStart > 0;
+          if (t1 && portStart + 1 === pathStart) {
+            scheme = _null;
+            isSimple = false;
+          } else {
+            if (!B.JSString_methods.startsWith$2(uri, "\\", pathStart))
+              if (hostStart > 0)
+                t2 = B.JSString_methods.startsWith$2(uri, "\\", hostStart - 1) || B.JSString_methods.startsWith$2(uri, "\\", hostStart - 2);
+              else
+                t2 = false;
+            else
+              t2 = true;
+            if (t2) {
+              scheme = _null;
+              isSimple = false;
+            } else {
+              if (!(queryStart < end && queryStart === pathStart + 2 && B.JSString_methods.startsWith$2(uri, "..", pathStart)))
+                t2 = queryStart > pathStart + 2 && B.JSString_methods.startsWith$2(uri, "/..", queryStart - 3);
+              else
+                t2 = true;
+              if (t2)
+                scheme = _null;
+              else if (schemeEnd === 4)
+                if (B.JSString_methods.startsWith$2(uri, "file", 0)) {
+                  if (hostStart <= 0) {
+                    if (!B.JSString_methods.startsWith$2(uri, "/", pathStart)) {
+                      schemeAuth = "file:///";
+                      delta = 3;
+                    } else {
+                      schemeAuth = "file://";
+                      delta = 2;
+                    }
+                    uri = schemeAuth + B.JSString_methods.substring$2(uri, pathStart, end);
+                    schemeEnd -= 0;
+                    t1 = delta - 0;
+                    queryStart += t1;
+                    fragmentStart += t1;
+                    end = uri.length;
+                    hostStart = 7;
+                    portStart = 7;
+                    pathStart = 7;
+                  } else if (pathStart === queryStart) {
+                    ++fragmentStart;
+                    queryStart0 = queryStart + 1;
+                    uri = B.JSString_methods.replaceRange$3(uri, pathStart, queryStart, "/");
+                    ++end;
+                    queryStart = queryStart0;
+                  }
+                  scheme = "file";
+                } else if (B.JSString_methods.startsWith$2(uri, "http", 0)) {
+                  if (t1 && portStart + 3 === pathStart && B.JSString_methods.startsWith$2(uri, "80", portStart + 1)) {
+                    fragmentStart -= 3;
+                    pathStart0 = pathStart - 3;
+                    queryStart -= 3;
+                    uri = B.JSString_methods.replaceRange$3(uri, portStart, pathStart, "");
+                    end -= 3;
+                    pathStart = pathStart0;
+                  }
+                  scheme = "http";
+                } else
+                  scheme = _null;
+              else if (schemeEnd === 5 && B.JSString_methods.startsWith$2(uri, "https", 0)) {
+                if (t1 && portStart + 4 === pathStart && B.JSString_methods.startsWith$2(uri, "443", portStart + 1)) {
+                  fragmentStart -= 4;
+                  pathStart0 = pathStart - 4;
+                  queryStart -= 4;
+                  uri = B.JSString_methods.replaceRange$3(uri, portStart, pathStart, "");
+                  end -= 3;
+                  pathStart = pathStart0;
+                }
+                scheme = "https";
+              } else
+                scheme = _null;
+              isSimple = !t2;
+            }
+          }
+        }
+      else
+        scheme = _null;
+      if (isSimple) {
+        if (end < uri.length) {
+          uri = B.JSString_methods.substring$2(uri, 0, end);
+          schemeEnd -= 0;
+          hostStart -= 0;
+          portStart -= 0;
+          pathStart -= 0;
+          queryStart -= 0;
+          fragmentStart -= 0;
+        }
+        return new A._SimpleUri(uri, schemeEnd, hostStart, portStart, pathStart, queryStart, fragmentStart, scheme);
+      }
+      if (scheme == null)
+        if (schemeEnd > 0)
+          scheme = A._Uri__makeScheme(uri, 0, schemeEnd);
+        else {
+          if (schemeEnd === 0)
+            A._Uri__fail(uri, 0, "Invalid empty scheme");
+          scheme = "";
+        }
+      if (hostStart > 0) {
+        userInfoStart = schemeEnd + 3;
+        userInfo = userInfoStart < hostStart ? A._Uri__makeUserInfo(uri, userInfoStart, hostStart - 1) : "";
+        host = A._Uri__makeHost(uri, hostStart, portStart, false);
+        t1 = portStart + 1;
+        if (t1 < pathStart) {
+          portNumber = A.Primitives_parseInt(B.JSString_methods.substring$2(uri, t1, pathStart), _null);
+          port = A._Uri__makePort(portNumber == null ? A.throwExpression(A.FormatException$("Invalid port", uri, t1)) : portNumber, scheme);
+        } else
+          port = _null;
+      } else {
+        port = _null;
+        host = port;
+        userInfo = "";
+      }
+      path = A._Uri__makePath(uri, pathStart, queryStart, _null, scheme, host != null);
+      query = queryStart < fragmentStart ? A._Uri__makeQuery(uri, queryStart + 1, fragmentStart, _null) : _null;
+      return A._Uri$_internal(scheme, userInfo, host, port, path, query, fragmentStart < end ? A._Uri__makeFragment(uri, fragmentStart + 1, end) : _null);
+    },
+    Uri_encodeQueryComponent(component, encoding) {
+      return A._Uri__uriEncode(B.List_piR, component, encoding, true);
+    },
+    Uri_decodeComponent(encodedComponent) {
+      A._asString(encodedComponent);
+      return A._Uri__uriDecode(encodedComponent, 0, encodedComponent.length, B.C_Utf8Codec, false);
+    },
+    Uri_splitQueryString(query) {
+      var t1 = type$.String;
+      return B.JSArray_methods.fold$1$2(A._setArrayType(query.split("&"), type$.JSArray_String), A.LinkedHashMap_LinkedHashMap$_empty(t1, t1), new A.Uri_splitQueryString_closure(B.C_Utf8Codec), type$.Map_String_String);
+    },
+    Uri__parseIPv4Address(host, start, end) {
+      var t1, i, partStart, partIndex, char, part, partIndex0,
+        _s43_ = "IPv4 address should contain exactly 4 parts",
+        _s37_ = "each part must be in the range 0..255",
+        error = new A.Uri__parseIPv4Address_error(host),
+        result = new Uint8Array(4);
+      for (t1 = host.length, i = start, partStart = i, partIndex = 0; i < end; ++i) {
+        if (!(i >= 0 && i < t1))
+          return A.ioore(host, i);
+        char = host.charCodeAt(i);
+        if (char !== 46) {
+          if ((char ^ 48) > 9)
+            error.call$2("invalid character", i);
+        } else {
+          if (partIndex === 3)
+            error.call$2(_s43_, i);
+          part = A.int_parse(B.JSString_methods.substring$2(host, partStart, i), null);
+          if (part > 255)
+            error.call$2(_s37_, partStart);
+          partIndex0 = partIndex + 1;
+          if (!(partIndex < 4))
+            return A.ioore(result, partIndex);
+          result[partIndex] = part;
+          partStart = i + 1;
+          partIndex = partIndex0;
+        }
+      }
+      if (partIndex !== 3)
+        error.call$2(_s43_, end);
+      part = A.int_parse(B.JSString_methods.substring$2(host, partStart, end), null);
+      if (part > 255)
+        error.call$2(_s37_, partStart);
+      if (!(partIndex < 4))
+        return A.ioore(result, partIndex);
+      result[partIndex] = part;
+      return result;
+    },
+    Uri_parseIPv6Address(host, start, end) {
+      var parts, i, partStart, wildcardSeen, seenDot, char, atEnd, last, bytes, wildCardLength, index, value, j, t2, _null = null,
+        error = new A.Uri_parseIPv6Address_error(host),
+        parseHex = new A.Uri_parseIPv6Address_parseHex(error, host),
+        t1 = host.length;
+      if (t1 < 2)
+        error.call$2("address is too short", _null);
+      parts = A._setArrayType([], type$.JSArray_int);
+      for (i = start, partStart = i, wildcardSeen = false, seenDot = false; i < end; ++i) {
+        if (!(i >= 0 && i < t1))
+          return A.ioore(host, i);
+        char = host.charCodeAt(i);
+        if (char === 58) {
+          if (i === start) {
+            ++i;
+            if (!(i < t1))
+              return A.ioore(host, i);
+            if (host.charCodeAt(i) !== 58)
+              error.call$2("invalid start colon.", i);
+            partStart = i;
+          }
+          if (i === partStart) {
+            if (wildcardSeen)
+              error.call$2("only one wildcard `::` is allowed", i);
+            B.JSArray_methods.add$1(parts, -1);
+            wildcardSeen = true;
+          } else
+            B.JSArray_methods.add$1(parts, parseHex.call$2(partStart, i));
+          partStart = i + 1;
+        } else if (char === 46)
+          seenDot = true;
+      }
+      if (parts.length === 0)
+        error.call$2("too few parts", _null);
+      atEnd = partStart === end;
+      t1 = B.JSArray_methods.get$last(parts);
+      if (atEnd && t1 !== -1)
+        error.call$2("expected a part after last `:`", end);
+      if (!atEnd)
+        if (!seenDot)
+          B.JSArray_methods.add$1(parts, parseHex.call$2(partStart, end));
+        else {
+          last = A.Uri__parseIPv4Address(host, partStart, end);
+          B.JSArray_methods.add$1(parts, (last[0] << 8 | last[1]) >>> 0);
+          B.JSArray_methods.add$1(parts, (last[2] << 8 | last[3]) >>> 0);
+        }
+      if (wildcardSeen) {
+        if (parts.length > 7)
+          error.call$2("an address with a wildcard must have less than 7 parts", _null);
+      } else if (parts.length !== 8)
+        error.call$2("an address without a wildcard must contain exactly 8 parts", _null);
+      bytes = new Uint8Array(16);
+      for (t1 = parts.length, wildCardLength = 9 - t1, i = 0, index = 0; i < t1; ++i) {
+        value = parts[i];
+        if (value === -1)
+          for (j = 0; j < wildCardLength; ++j) {
+            if (!(index >= 0 && index < 16))
+              return A.ioore(bytes, index);
+            bytes[index] = 0;
+            t2 = index + 1;
+            if (!(t2 < 16))
+              return A.ioore(bytes, t2);
+            bytes[t2] = 0;
+            index += 2;
+          }
+        else {
+          t2 = B.JSInt_methods._shrOtherPositive$1(value, 8);
+          if (!(index >= 0 && index < 16))
+            return A.ioore(bytes, index);
+          bytes[index] = t2;
+          t2 = index + 1;
+          if (!(t2 < 16))
+            return A.ioore(bytes, t2);
+          bytes[t2] = value & 255;
+          index += 2;
+        }
+      }
+      return bytes;
+    },
+    _Uri$_internal(scheme, _userInfo, _host, _port, path, _query, _fragment) {
+      return new A._Uri(scheme, _userInfo, _host, _port, path, _query, _fragment);
+    },
+    _Uri__defaultPort(scheme) {
+      if (scheme === "http")
+        return 80;
+      if (scheme === "https")
+        return 443;
+      return 0;
+    },
+    _Uri__fail(uri, index, message) {
+      throw A.wrapException(A.FormatException$(message, uri, index));
+    },
+    _Uri__checkNonWindowsPathReservedCharacters(segments, argumentError) {
+      var t1, _i, segment, t2, t3;
+      for (t1 = segments.length, _i = 0; _i < t1; ++_i) {
+        segment = segments[_i];
+        t2 = J.getInterceptor$asx(segment);
+        t3 = t2.get$length(segment);
+        if (0 > t3)
+          A.throwExpression(A.RangeError$range(0, 0, t2.get$length(segment), null, null));
+        if (A.stringContainsUnchecked(segment, "/", 0)) {
+          t1 = A.UnsupportedError$("Illegal path character " + A.S(segment));
+          throw A.wrapException(t1);
+        }
+      }
+    },
+    _Uri__makePort(port, scheme) {
+      if (port != null && port === A._Uri__defaultPort(scheme))
+        return null;
+      return port;
+    },
+    _Uri__makeHost(host, start, end, strictIPv6) {
+      var t1, t2, index, zoneIDstart, zoneID, i;
+      if (host == null)
+        return null;
+      if (start === end)
+        return "";
+      t1 = host.length;
+      if (!(start >= 0 && start < t1))
+        return A.ioore(host, start);
+      if (host.charCodeAt(start) === 91) {
+        t2 = end - 1;
+        if (!(t2 >= 0 && t2 < t1))
+          return A.ioore(host, t2);
+        if (host.charCodeAt(t2) !== 93)
+          A._Uri__fail(host, start, "Missing end `]` to match `[` in host");
+        t1 = start + 1;
+        index = A._Uri__checkZoneID(host, t1, t2);
+        if (index < t2) {
+          zoneIDstart = index + 1;
+          zoneID = A._Uri__normalizeZoneID(host, B.JSString_methods.startsWith$2(host, "25", zoneIDstart) ? index + 3 : zoneIDstart, t2, "%25");
+        } else
+          zoneID = "";
+        A.Uri_parseIPv6Address(host, t1, index);
+        return B.JSString_methods.substring$2(host, start, index).toLowerCase() + zoneID + "]";
+      }
+      for (i = start; i < end; ++i) {
+        if (!(i < t1))
+          return A.ioore(host, i);
+        if (host.charCodeAt(i) === 58) {
+          index = B.JSString_methods.indexOf$2(host, "%", start);
+          index = index >= start && index < end ? index : end;
+          if (index < end) {
+            zoneIDstart = index + 1;
+            zoneID = A._Uri__normalizeZoneID(host, B.JSString_methods.startsWith$2(host, "25", zoneIDstart) ? index + 3 : zoneIDstart, end, "%25");
+          } else
+            zoneID = "";
+          A.Uri_parseIPv6Address(host, start, index);
+          return "[" + B.JSString_methods.substring$2(host, start, index) + zoneID + "]";
+        }
+      }
+      return A._Uri__normalizeRegName(host, start, end);
+    },
+    _Uri__checkZoneID(host, start, end) {
+      var index = B.JSString_methods.indexOf$2(host, "%", start);
+      return index >= start && index < end ? index : end;
+    },
+    _Uri__normalizeZoneID(host, start, end, prefix) {
+      var t1, index, sectionStart, isNormalized, char, replacement, t2, t3, tail, sourceLength, slice,
+        buffer = prefix !== "" ? new A.StringBuffer(prefix) : null;
+      for (t1 = host.length, index = start, sectionStart = index, isNormalized = true; index < end;) {
+        if (!(index >= 0 && index < t1))
+          return A.ioore(host, index);
+        char = host.charCodeAt(index);
+        if (char === 37) {
+          replacement = A._Uri__normalizeEscape(host, index, true);
+          t2 = replacement == null;
+          if (t2 && isNormalized) {
+            index += 3;
+            continue;
+          }
+          if (buffer == null)
+            buffer = new A.StringBuffer("");
+          t3 = buffer._contents += B.JSString_methods.substring$2(host, sectionStart, index);
+          if (t2)
+            replacement = B.JSString_methods.substring$2(host, index, index + 3);
+          else if (replacement === "%")
+            A._Uri__fail(host, index, "ZoneID should not contain % anymore");
+          buffer._contents = t3 + replacement;
+          index += 3;
+          sectionStart = index;
+          isNormalized = true;
+        } else {
+          if (char < 127) {
+            t2 = char >>> 4;
+            if (!(t2 < 8))
+              return A.ioore(B.List_piR, t2);
+            t2 = (B.List_piR[t2] & 1 << (char & 15)) !== 0;
+          } else
+            t2 = false;
+          if (t2) {
+            if (isNormalized && 65 <= char && 90 >= char) {
+              if (buffer == null)
+                buffer = new A.StringBuffer("");
+              if (sectionStart < index) {
+                buffer._contents += B.JSString_methods.substring$2(host, sectionStart, index);
+                sectionStart = index;
+              }
+              isNormalized = false;
+            }
+            ++index;
+          } else {
+            if ((char & 64512) === 55296 && index + 1 < end) {
+              t2 = index + 1;
+              if (!(t2 < t1))
+                return A.ioore(host, t2);
+              tail = host.charCodeAt(t2);
+              if ((tail & 64512) === 56320) {
+                char = (char & 1023) << 10 | tail & 1023 | 65536;
+                sourceLength = 2;
+              } else
+                sourceLength = 1;
+            } else
+              sourceLength = 1;
+            slice = B.JSString_methods.substring$2(host, sectionStart, index);
+            if (buffer == null) {
+              buffer = new A.StringBuffer("");
+              t2 = buffer;
+            } else
+              t2 = buffer;
+            t2._contents += slice;
+            t3 = A._Uri__escapeChar(char);
+            t2._contents += t3;
+            index += sourceLength;
+            sectionStart = index;
+          }
+        }
+      }
+      if (buffer == null)
+        return B.JSString_methods.substring$2(host, start, end);
+      if (sectionStart < end) {
+        slice = B.JSString_methods.substring$2(host, sectionStart, end);
+        buffer._contents += slice;
+      }
+      t1 = buffer._contents;
+      return t1.charCodeAt(0) == 0 ? t1 : t1;
+    },
+    _Uri__normalizeRegName(host, start, end) {
+      var t1, index, sectionStart, buffer, isNormalized, char, replacement, t2, slice, t3, sourceLength, tail;
+      for (t1 = host.length, index = start, sectionStart = index, buffer = null, isNormalized = true; index < end;) {
+        if (!(index >= 0 && index < t1))
+          return A.ioore(host, index);
+        char = host.charCodeAt(index);
+        if (char === 37) {
+          replacement = A._Uri__normalizeEscape(host, index, true);
+          t2 = replacement == null;
+          if (t2 && isNormalized) {
+            index += 3;
+            continue;
+          }
+          if (buffer == null)
+            buffer = new A.StringBuffer("");
+          slice = B.JSString_methods.substring$2(host, sectionStart, index);
+          if (!isNormalized)
+            slice = slice.toLowerCase();
+          t3 = buffer._contents += slice;
+          if (t2) {
+            replacement = B.JSString_methods.substring$2(host, index, index + 3);
+            sourceLength = 3;
+          } else if (replacement === "%") {
+            replacement = "%25";
+            sourceLength = 1;
+          } else
+            sourceLength = 3;
+          buffer._contents = t3 + replacement;
+          index += sourceLength;
+          sectionStart = index;
+          isNormalized = true;
+        } else {
+          if (char < 127) {
+            t2 = char >>> 4;
+            if (!(t2 < 8))
+              return A.ioore(B.List_4AN, t2);
+            t2 = (B.List_4AN[t2] & 1 << (char & 15)) !== 0;
+          } else
+            t2 = false;
+          if (t2) {
+            if (isNormalized && 65 <= char && 90 >= char) {
+              if (buffer == null)
+                buffer = new A.StringBuffer("");
+              if (sectionStart < index) {
+                buffer._contents += B.JSString_methods.substring$2(host, sectionStart, index);
+                sectionStart = index;
+              }
+              isNormalized = false;
+            }
+            ++index;
+          } else {
+            if (char <= 93) {
+              t2 = char >>> 4;
+              if (!(t2 < 8))
+                return A.ioore(B.List_VOY, t2);
+              t2 = (B.List_VOY[t2] & 1 << (char & 15)) !== 0;
+            } else
+              t2 = false;
+            if (t2)
+              A._Uri__fail(host, index, "Invalid character");
+            else {
+              if ((char & 64512) === 55296 && index + 1 < end) {
+                t2 = index + 1;
+                if (!(t2 < t1))
+                  return A.ioore(host, t2);
+                tail = host.charCodeAt(t2);
+                if ((tail & 64512) === 56320) {
+                  char = (char & 1023) << 10 | tail & 1023 | 65536;
+                  sourceLength = 2;
+                } else
+                  sourceLength = 1;
+              } else
+                sourceLength = 1;
+              slice = B.JSString_methods.substring$2(host, sectionStart, index);
+              if (!isNormalized)
+                slice = slice.toLowerCase();
+              if (buffer == null) {
+                buffer = new A.StringBuffer("");
+                t2 = buffer;
+              } else
+                t2 = buffer;
+              t2._contents += slice;
+              t3 = A._Uri__escapeChar(char);
+              t2._contents += t3;
+              index += sourceLength;
+              sectionStart = index;
+            }
+          }
+        }
+      }
+      if (buffer == null)
+        return B.JSString_methods.substring$2(host, start, end);
+      if (sectionStart < end) {
+        slice = B.JSString_methods.substring$2(host, sectionStart, end);
+        if (!isNormalized)
+          slice = slice.toLowerCase();
+        buffer._contents += slice;
+      }
+      t1 = buffer._contents;
+      return t1.charCodeAt(0) == 0 ? t1 : t1;
+    },
+    _Uri__makeScheme(scheme, start, end) {
+      var t1, i, containsUpperCase, codeUnit, t2;
+      if (start === end)
+        return "";
+      t1 = scheme.length;
+      if (!(start < t1))
+        return A.ioore(scheme, start);
+      if (!A._Uri__isAlphabeticCharacter(scheme.charCodeAt(start)))
+        A._Uri__fail(scheme, start, "Scheme not starting with alphabetic character");
+      for (i = start, containsUpperCase = false; i < end; ++i) {
+        if (!(i < t1))
+          return A.ioore(scheme, i);
+        codeUnit = scheme.charCodeAt(i);
+        if (codeUnit < 128) {
+          t2 = codeUnit >>> 4;
+          if (!(t2 < 8))
+            return A.ioore(B.List_GVy, t2);
+          t2 = (B.List_GVy[t2] & 1 << (codeUnit & 15)) !== 0;
+        } else
+          t2 = false;
+        if (!t2)
+          A._Uri__fail(scheme, i, "Illegal scheme character");
+        if (65 <= codeUnit && codeUnit <= 90)
+          containsUpperCase = true;
+      }
+      scheme = B.JSString_methods.substring$2(scheme, start, end);
+      return A._Uri__canonicalizeScheme(containsUpperCase ? scheme.toLowerCase() : scheme);
+    },
+    _Uri__canonicalizeScheme(scheme) {
+      if (scheme === "http")
+        return "http";
+      if (scheme === "file")
+        return "file";
+      if (scheme === "https")
+        return "https";
+      if (scheme === "package")
+        return "package";
+      return scheme;
+    },
+    _Uri__makeUserInfo(userInfo, start, end) {
+      if (userInfo == null)
+        return "";
+      return A._Uri__normalizeOrSubstring(userInfo, start, end, B.List_2jN, false, false);
+    },
+    _Uri__makePath(path, start, end, pathSegments, scheme, hasAuthority) {
+      var result,
+        isFile = scheme === "file",
+        ensureLeadingSlash = isFile || hasAuthority;
+      if (path == null)
+        return isFile ? "/" : "";
+      else
+        result = A._Uri__normalizeOrSubstring(path, start, end, B.List_M2I, true, true);
+      if (result.length === 0) {
+        if (isFile)
+          return "/";
+      } else if (ensureLeadingSlash && !B.JSString_methods.startsWith$1(result, "/"))
+        result = "/" + result;
+      return A._Uri__normalizePath(result, scheme, hasAuthority);
+    },
+    _Uri__normalizePath(path, scheme, hasAuthority) {
+      var t1 = scheme.length === 0;
+      if (t1 && !hasAuthority && !B.JSString_methods.startsWith$1(path, "/") && !B.JSString_methods.startsWith$1(path, "\\"))
+        return A._Uri__normalizeRelativePath(path, !t1 || hasAuthority);
+      return A._Uri__removeDotSegments(path);
+    },
+    _Uri__makeQuery(query, start, end, queryParameters) {
+      if (query != null)
+        return A._Uri__normalizeOrSubstring(query, start, end, B.List_42A, true, false);
+      return null;
+    },
+    _Uri__makeFragment(fragment, start, end) {
+      if (fragment == null)
+        return null;
+      return A._Uri__normalizeOrSubstring(fragment, start, end, B.List_42A, true, false);
+    },
+    _Uri__normalizeEscape(source, index, lowerCase) {
+      var t3, firstDigit, secondDigit, firstDigitValue, secondDigitValue, value,
+        t1 = index + 2,
+        t2 = source.length;
+      if (t1 >= t2)
+        return "%";
+      t3 = index + 1;
+      if (!(t3 >= 0 && t3 < t2))
+        return A.ioore(source, t3);
+      firstDigit = source.charCodeAt(t3);
+      if (!(t1 >= 0))
+        return A.ioore(source, t1);
+      secondDigit = source.charCodeAt(t1);
+      firstDigitValue = A.hexDigitValue(firstDigit);
+      secondDigitValue = A.hexDigitValue(secondDigit);
+      if (firstDigitValue < 0 || secondDigitValue < 0)
+        return "%";
+      value = firstDigitValue * 16 + secondDigitValue;
+      if (value < 127) {
+        t1 = B.JSInt_methods._shrOtherPositive$1(value, 4);
+        if (!(t1 < 8))
+          return A.ioore(B.List_piR, t1);
+        t1 = (B.List_piR[t1] & 1 << (value & 15)) !== 0;
+      } else
+        t1 = false;
+      if (t1)
+        return A.Primitives_stringFromCharCode(lowerCase && 65 <= value && 90 >= value ? (value | 32) >>> 0 : value);
+      if (firstDigit >= 97 || secondDigit >= 97)
+        return B.JSString_methods.substring$2(source, index, index + 3).toUpperCase();
+      return null;
+    },
+    _Uri__escapeChar(char) {
+      var codeUnits, t1, flag, encodedBytes, index, byte, t2, t3,
+        _s16_ = "0123456789ABCDEF";
+      if (char < 128) {
+        codeUnits = new Uint8Array(3);
+        codeUnits[0] = 37;
+        t1 = char >>> 4;
+        if (!(t1 < 16))
+          return A.ioore(_s16_, t1);
+        codeUnits[1] = _s16_.charCodeAt(t1);
+        codeUnits[2] = _s16_.charCodeAt(char & 15);
+      } else {
+        if (char > 2047)
+          if (char > 65535) {
+            flag = 240;
+            encodedBytes = 4;
+          } else {
+            flag = 224;
+            encodedBytes = 3;
+          }
+        else {
+          flag = 192;
+          encodedBytes = 2;
+        }
+        t1 = 3 * encodedBytes;
+        codeUnits = new Uint8Array(t1);
+        for (index = 0; --encodedBytes, encodedBytes >= 0; flag = 128) {
+          byte = B.JSInt_methods._shrReceiverPositive$1(char, 6 * encodedBytes) & 63 | flag;
+          if (!(index < t1))
+            return A.ioore(codeUnits, index);
+          codeUnits[index] = 37;
+          t2 = index + 1;
+          t3 = byte >>> 4;
+          if (!(t3 < 16))
+            return A.ioore(_s16_, t3);
+          if (!(t2 < t1))
+            return A.ioore(codeUnits, t2);
+          codeUnits[t2] = _s16_.charCodeAt(t3);
+          t3 = index + 2;
+          if (!(t3 < t1))
+            return A.ioore(codeUnits, t3);
+          codeUnits[t3] = _s16_.charCodeAt(byte & 15);
+          index += 3;
+        }
+      }
+      return A.String_String$fromCharCodes(codeUnits, 0, null);
+    },
+    _Uri__normalizeOrSubstring(component, start, end, charTable, escapeDelimiters, replaceBackslash) {
+      var t1 = A._Uri__normalize(component, start, end, charTable, escapeDelimiters, replaceBackslash);
+      return t1 == null ? B.JSString_methods.substring$2(component, start, end) : t1;
+    },
+    _Uri__normalize(component, start, end, charTable, escapeDelimiters, replaceBackslash) {
+      var t1, t2, index, sectionStart, buffer, char, t3, replacement, sourceLength, tail, t4, _null = null;
+      for (t1 = !escapeDelimiters, t2 = component.length, index = start, sectionStart = index, buffer = _null; index < end;) {
+        if (!(index >= 0 && index < t2))
+          return A.ioore(component, index);
+        char = component.charCodeAt(index);
+        if (char < 127) {
+          t3 = char >>> 4;
+          if (!(t3 < 8))
+            return A.ioore(charTable, t3);
+          t3 = (charTable[t3] & 1 << (char & 15)) !== 0;
+        } else
+          t3 = false;
+        if (t3)
+          ++index;
+        else {
+          if (char === 37) {
+            replacement = A._Uri__normalizeEscape(component, index, false);
+            if (replacement == null) {
+              index += 3;
+              continue;
+            }
+            if ("%" === replacement) {
+              replacement = "%25";
+              sourceLength = 1;
+            } else
+              sourceLength = 3;
+          } else if (char === 92 && replaceBackslash) {
+            replacement = "/";
+            sourceLength = 1;
+          } else {
+            if (t1)
+              if (char <= 93) {
+                t3 = char >>> 4;
+                if (!(t3 < 8))
+                  return A.ioore(B.List_VOY, t3);
+                t3 = (B.List_VOY[t3] & 1 << (char & 15)) !== 0;
+              } else
+                t3 = false;
+            else
+              t3 = false;
+            if (t3) {
+              A._Uri__fail(component, index, "Invalid character");
+              sourceLength = _null;
+              replacement = sourceLength;
+            } else {
+              if ((char & 64512) === 55296) {
+                t3 = index + 1;
+                if (t3 < end) {
+                  if (!(t3 < t2))
+                    return A.ioore(component, t3);
+                  tail = component.charCodeAt(t3);
+                  if ((tail & 64512) === 56320) {
+                    char = (char & 1023) << 10 | tail & 1023 | 65536;
+                    sourceLength = 2;
+                  } else
+                    sourceLength = 1;
+                } else
+                  sourceLength = 1;
+              } else
+                sourceLength = 1;
+              replacement = A._Uri__escapeChar(char);
+            }
+          }
+          if (buffer == null) {
+            buffer = new A.StringBuffer("");
+            t3 = buffer;
+          } else
+            t3 = buffer;
+          t4 = t3._contents += B.JSString_methods.substring$2(component, sectionStart, index);
+          t3._contents = t4 + A.S(replacement);
+          if (typeof sourceLength !== "number")
+            return A.iae(sourceLength);
+          index += sourceLength;
+          sectionStart = index;
+        }
+      }
+      if (buffer == null)
+        return _null;
+      if (sectionStart < end) {
+        t1 = B.JSString_methods.substring$2(component, sectionStart, end);
+        buffer._contents += t1;
+      }
+      t1 = buffer._contents;
+      return t1.charCodeAt(0) == 0 ? t1 : t1;
+    },
+    _Uri__mayContainDotSegments(path) {
+      if (B.JSString_methods.startsWith$1(path, "."))
+        return true;
+      return B.JSString_methods.indexOf$1(path, "/.") !== -1;
+    },
+    _Uri__removeDotSegments(path) {
+      var output, t1, t2, appendSlash, _i, segment, t3;
+      if (!A._Uri__mayContainDotSegments(path))
+        return path;
+      output = A._setArrayType([], type$.JSArray_String);
+      for (t1 = path.split("/"), t2 = t1.length, appendSlash = false, _i = 0; _i < t2; ++_i) {
+        segment = t1[_i];
+        if (J.$eq$(segment, "..")) {
+          t3 = output.length;
+          if (t3 !== 0) {
+            if (0 >= t3)
+              return A.ioore(output, -1);
+            output.pop();
+            if (output.length === 0)
+              B.JSArray_methods.add$1(output, "");
+          }
+          appendSlash = true;
+        } else {
+          appendSlash = "." === segment;
+          if (!appendSlash)
+            B.JSArray_methods.add$1(output, segment);
+        }
+      }
+      if (appendSlash)
+        B.JSArray_methods.add$1(output, "");
+      return B.JSArray_methods.join$1(output, "/");
+    },
+    _Uri__normalizeRelativePath(path, allowScheme) {
+      var output, t1, t2, appendSlash, _i, segment;
+      if (!A._Uri__mayContainDotSegments(path))
+        return !allowScheme ? A._Uri__escapeScheme(path) : path;
+      output = A._setArrayType([], type$.JSArray_String);
+      for (t1 = path.split("/"), t2 = t1.length, appendSlash = false, _i = 0; _i < t2; ++_i) {
+        segment = t1[_i];
+        if (".." === segment) {
+          appendSlash = output.length !== 0 && B.JSArray_methods.get$last(output) !== "..";
+          if (appendSlash) {
+            if (0 >= output.length)
+              return A.ioore(output, -1);
+            output.pop();
+          } else
+            B.JSArray_methods.add$1(output, "..");
+        } else {
+          appendSlash = "." === segment;
+          if (!appendSlash)
+            B.JSArray_methods.add$1(output, segment);
+        }
+      }
+      t1 = output.length;
+      if (t1 !== 0)
+        if (t1 === 1) {
+          if (0 >= t1)
+            return A.ioore(output, 0);
+          t1 = output[0].length === 0;
+        } else
+          t1 = false;
+      else
+        t1 = true;
+      if (t1)
+        return "./";
+      if (appendSlash || B.JSArray_methods.get$last(output) === "..")
+        B.JSArray_methods.add$1(output, "");
+      if (!allowScheme) {
+        if (0 >= output.length)
+          return A.ioore(output, 0);
+        B.JSArray_methods.$indexSet(output, 0, A._Uri__escapeScheme(output[0]));
+      }
+      return B.JSArray_methods.join$1(output, "/");
+    },
+    _Uri__escapeScheme(path) {
+      var i, char, t2,
+        t1 = path.length;
+      if (t1 >= 2 && A._Uri__isAlphabeticCharacter(path.charCodeAt(0)))
+        for (i = 1; i < t1; ++i) {
+          char = path.charCodeAt(i);
+          if (char === 58)
+            return B.JSString_methods.substring$2(path, 0, i) + "%3A" + B.JSString_methods.substring$1(path, i + 1);
+          if (char <= 127) {
+            t2 = char >>> 4;
+            if (!(t2 < 8))
+              return A.ioore(B.List_GVy, t2);
+            t2 = (B.List_GVy[t2] & 1 << (char & 15)) === 0;
+          } else
+            t2 = true;
+          if (t2)
+            break;
+        }
+      return path;
+    },
+    _Uri__packageNameEnd(uri, path) {
+      if (uri.isScheme$1("package") && uri._host == null)
+        return A._skipPackageNameChars(path, 0, path.length);
+      return -1;
+    },
+    _Uri__hexCharPairToByte(s, pos) {
+      var t1, byte, i, t2, charCode;
+      for (t1 = s.length, byte = 0, i = 0; i < 2; ++i) {
+        t2 = pos + i;
+        if (!(t2 < t1))
+          return A.ioore(s, t2);
+        charCode = s.charCodeAt(t2);
+        if (48 <= charCode && charCode <= 57)
+          byte = byte * 16 + charCode - 48;
+        else {
+          charCode |= 32;
+          if (97 <= charCode && charCode <= 102)
+            byte = byte * 16 + charCode - 87;
+          else
+            throw A.wrapException(A.ArgumentError$("Invalid URL encoding", null));
+        }
+      }
+      return byte;
+    },
+    _Uri__uriDecode(text, start, end, encoding, plusToSpace) {
+      var simple, codeUnit, t2, bytes,
+        t1 = text.length,
+        i = start;
+      while (true) {
+        if (!(i < end)) {
+          simple = true;
+          break;
+        }
+        if (!(i < t1))
+          return A.ioore(text, i);
+        codeUnit = text.charCodeAt(i);
+        if (codeUnit <= 127)
+          if (codeUnit !== 37)
+            t2 = plusToSpace && codeUnit === 43;
+          else
+            t2 = true;
+        else
+          t2 = true;
+        if (t2) {
+          simple = false;
+          break;
+        }
+        ++i;
+      }
+      if (simple)
+        if (B.C_Utf8Codec === encoding)
+          return B.JSString_methods.substring$2(text, start, end);
+        else
+          bytes = new A.CodeUnits(B.JSString_methods.substring$2(text, start, end));
+      else {
+        bytes = A._setArrayType([], type$.JSArray_int);
+        for (i = start; i < end; ++i) {
+          if (!(i < t1))
+            return A.ioore(text, i);
+          codeUnit = text.charCodeAt(i);
+          if (codeUnit > 127)
+            throw A.wrapException(A.ArgumentError$("Illegal percent encoding in URI", null));
+          if (codeUnit === 37) {
+            if (i + 3 > t1)
+              throw A.wrapException(A.ArgumentError$("Truncated URI", null));
+            B.JSArray_methods.add$1(bytes, A._Uri__hexCharPairToByte(text, i + 1));
+            i += 2;
+          } else if (plusToSpace && codeUnit === 43)
+            B.JSArray_methods.add$1(bytes, 32);
+          else
+            B.JSArray_methods.add$1(bytes, codeUnit);
+        }
+      }
+      return encoding.decode$1(0, bytes);
+    },
+    _Uri__isAlphabeticCharacter(codeUnit) {
+      var lowerCase = codeUnit | 32;
+      return 97 <= lowerCase && lowerCase <= 122;
+    },
+    UriData__parse(text, start, sourceUri) {
+      var t1, i, slashIndex, char, equalsIndex, lastSeparator, t2, data,
+        _s17_ = "Invalid MIME type",
+        indices = A._setArrayType([start - 1], type$.JSArray_int);
+      for (t1 = text.length, i = start, slashIndex = -1, char = null; i < t1; ++i) {
+        char = text.charCodeAt(i);
+        if (char === 44 || char === 59)
+          break;
+        if (char === 47) {
+          if (slashIndex < 0) {
+            slashIndex = i;
+            continue;
+          }
+          throw A.wrapException(A.FormatException$(_s17_, text, i));
+        }
+      }
+      if (slashIndex < 0 && i > start)
+        throw A.wrapException(A.FormatException$(_s17_, text, i));
+      for (; char !== 44;) {
+        B.JSArray_methods.add$1(indices, i);
+        ++i;
+        for (equalsIndex = -1; i < t1; ++i) {
+          if (!(i >= 0))
+            return A.ioore(text, i);
+          char = text.charCodeAt(i);
+          if (char === 61) {
+            if (equalsIndex < 0)
+              equalsIndex = i;
+          } else if (char === 59 || char === 44)
+            break;
+        }
+        if (equalsIndex >= 0)
+          B.JSArray_methods.add$1(indices, equalsIndex);
+        else {
+          lastSeparator = B.JSArray_methods.get$last(indices);
+          if (char !== 44 || i !== lastSeparator + 7 || !B.JSString_methods.startsWith$2(text, "base64", lastSeparator + 1))
+            throw A.wrapException(A.FormatException$("Expecting '='", text, i));
+          break;
+        }
+      }
+      B.JSArray_methods.add$1(indices, i);
+      t2 = i + 1;
+      if ((indices.length & 1) === 1)
+        text = B.C_Base64Codec.normalize$3(text, t2, t1);
+      else {
+        data = A._Uri__normalize(text, t2, t1, B.List_42A, true, false);
+        if (data != null)
+          text = B.JSString_methods.replaceRange$3(text, t2, t1, data);
+      }
+      return new A.UriData(text, indices, sourceUri);
+    },
+    _createTables() {
+      var _i, t1, t2, t3, b,
+        _s77_ = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-._~!$&'()*+,;=",
+        _s1_ = ".", _s1_0 = ":", _s1_1 = "/", _s1_2 = "\\", _s1_3 = "?", _s1_4 = "#", _s2_ = "/\\",
+        tables = A._setArrayType(new Array(22), type$.JSArray_Uint8List);
+      for (_i = 0; _i < 22; ++_i)
+        tables[_i] = new Uint8Array(96);
+      t1 = new A._createTables_build(tables);
+      t2 = new A._createTables_setChars();
+      t3 = new A._createTables_setRange();
+      b = t1.call$2(0, 225);
+      t2.call$3(b, _s77_, 1);
+      t2.call$3(b, _s1_, 14);
+      t2.call$3(b, _s1_0, 34);
+      t2.call$3(b, _s1_1, 3);
+      t2.call$3(b, _s1_2, 227);
+      t2.call$3(b, _s1_3, 172);
+      t2.call$3(b, _s1_4, 205);
+      b = t1.call$2(14, 225);
+      t2.call$3(b, _s77_, 1);
+      t2.call$3(b, _s1_, 15);
+      t2.call$3(b, _s1_0, 34);
+      t2.call$3(b, _s2_, 234);
+      t2.call$3(b, _s1_3, 172);
+      t2.call$3(b, _s1_4, 205);
+      b = t1.call$2(15, 225);
+      t2.call$3(b, _s77_, 1);
+      t2.call$3(b, "%", 225);
+      t2.call$3(b, _s1_0, 34);
+      t2.call$3(b, _s1_1, 9);
+      t2.call$3(b, _s1_2, 233);
+      t2.call$3(b, _s1_3, 172);
+      t2.call$3(b, _s1_4, 205);
+      b = t1.call$2(1, 225);
+      t2.call$3(b, _s77_, 1);
+      t2.call$3(b, _s1_0, 34);
+      t2.call$3(b, _s1_1, 10);
+      t2.call$3(b, _s1_2, 234);
+      t2.call$3(b, _s1_3, 172);
+      t2.call$3(b, _s1_4, 205);
+      b = t1.call$2(2, 235);
+      t2.call$3(b, _s77_, 139);
+      t2.call$3(b, _s1_1, 131);
+      t2.call$3(b, _s1_2, 131);
+      t2.call$3(b, _s1_, 146);
+      t2.call$3(b, _s1_3, 172);
+      t2.call$3(b, _s1_4, 205);
+      b = t1.call$2(3, 235);
+      t2.call$3(b, _s77_, 11);
+      t2.call$3(b, _s1_1, 68);
+      t2.call$3(b, _s1_2, 68);
+      t2.call$3(b, _s1_, 18);
+      t2.call$3(b, _s1_3, 172);
+      t2.call$3(b, _s1_4, 205);
+      b = t1.call$2(4, 229);
+      t2.call$3(b, _s77_, 5);
+      t3.call$3(b, "AZ", 229);
+      t2.call$3(b, _s1_0, 102);
+      t2.call$3(b, "@", 68);
+      t2.call$3(b, "[", 232);
+      t2.call$3(b, _s1_1, 138);
+      t2.call$3(b, _s1_2, 138);
+      t2.call$3(b, _s1_3, 172);
+      t2.call$3(b, _s1_4, 205);
+      b = t1.call$2(5, 229);
+      t2.call$3(b, _s77_, 5);
+      t3.call$3(b, "AZ", 229);
+      t2.call$3(b, _s1_0, 102);
+      t2.call$3(b, "@", 68);
+      t2.call$3(b, _s1_1, 138);
+      t2.call$3(b, _s1_2, 138);
+      t2.call$3(b, _s1_3, 172);
+      t2.call$3(b, _s1_4, 205);
+      b = t1.call$2(6, 231);
+      t3.call$3(b, "19", 7);
+      t2.call$3(b, "@", 68);
+      t2.call$3(b, _s1_1, 138);
+      t2.call$3(b, _s1_2, 138);
+      t2.call$3(b, _s1_3, 172);
+      t2.call$3(b, _s1_4, 205);
+      b = t1.call$2(7, 231);
+      t3.call$3(b, "09", 7);
+      t2.call$3(b, "@", 68);
+      t2.call$3(b, _s1_1, 138);
+      t2.call$3(b, _s1_2, 138);
+      t2.call$3(b, _s1_3, 172);
+      t2.call$3(b, _s1_4, 205);
+      t2.call$3(t1.call$2(8, 8), "]", 5);
+      b = t1.call$2(9, 235);
+      t2.call$3(b, _s77_, 11);
+      t2.call$3(b, _s1_, 16);
+      t2.call$3(b, _s2_, 234);
+      t2.call$3(b, _s1_3, 172);
+      t2.call$3(b, _s1_4, 205);
+      b = t1.call$2(16, 235);
+      t2.call$3(b, _s77_, 11);
+      t2.call$3(b, _s1_, 17);
+      t2.call$3(b, _s2_, 234);
+      t2.call$3(b, _s1_3, 172);
+      t2.call$3(b, _s1_4, 205);
+      b = t1.call$2(17, 235);
+      t2.call$3(b, _s77_, 11);
+      t2.call$3(b, _s1_1, 9);
+      t2.call$3(b, _s1_2, 233);
+      t2.call$3(b, _s1_3, 172);
+      t2.call$3(b, _s1_4, 205);
+      b = t1.call$2(10, 235);
+      t2.call$3(b, _s77_, 11);
+      t2.call$3(b, _s1_, 18);
+      t2.call$3(b, _s1_1, 10);
+      t2.call$3(b, _s1_2, 234);
+      t2.call$3(b, _s1_3, 172);
+      t2.call$3(b, _s1_4, 205);
+      b = t1.call$2(18, 235);
+      t2.call$3(b, _s77_, 11);
+      t2.call$3(b, _s1_, 19);
+      t2.call$3(b, _s2_, 234);
+      t2.call$3(b, _s1_3, 172);
+      t2.call$3(b, _s1_4, 205);
+      b = t1.call$2(19, 235);
+      t2.call$3(b, _s77_, 11);
+      t2.call$3(b, _s2_, 234);
+      t2.call$3(b, _s1_3, 172);
+      t2.call$3(b, _s1_4, 205);
+      b = t1.call$2(11, 235);
+      t2.call$3(b, _s77_, 11);
+      t2.call$3(b, _s1_1, 10);
+      t2.call$3(b, _s1_2, 234);
+      t2.call$3(b, _s1_3, 172);
+      t2.call$3(b, _s1_4, 205);
+      b = t1.call$2(12, 236);
+      t2.call$3(b, _s77_, 12);
+      t2.call$3(b, _s1_3, 12);
+      t2.call$3(b, _s1_4, 205);
+      b = t1.call$2(13, 237);
+      t2.call$3(b, _s77_, 13);
+      t2.call$3(b, _s1_3, 13);
+      t3.call$3(t1.call$2(20, 245), "az", 21);
+      b = t1.call$2(21, 245);
+      t3.call$3(b, "az", 21);
+      t3.call$3(b, "09", 21);
+      t2.call$3(b, "+-.", 21);
+      return tables;
+    },
+    _scan(uri, start, end, state, indices) {
+      var t1, i, table, char, transition,
+        tables = $.$get$_scannerTables();
+      for (t1 = uri.length, i = start; i < end; ++i) {
+        if (!(state >= 0 && state < tables.length))
+          return A.ioore(tables, state);
+        table = tables[state];
+        if (!(i < t1))
+          return A.ioore(uri, i);
+        char = uri.charCodeAt(i) ^ 96;
+        transition = table[char > 95 ? 31 : char];
+        state = transition & 31;
+        B.JSArray_methods.$indexSet(indices, transition >>> 5, i);
+      }
+      return state;
+    },
+    _SimpleUri__packageNameEnd(uri) {
+      if (uri._schemeEnd === 7 && B.JSString_methods.startsWith$1(uri._uri, "package") && uri._hostStart <= 0)
+        return A._skipPackageNameChars(uri._uri, uri._pathStart, uri._queryStart);
+      return -1;
+    },
+    _skipPackageNameChars(source, start, end) {
+      var t1, i, dots, char;
+      for (t1 = source.length, i = start, dots = 0; i < end; ++i) {
+        if (!(i >= 0 && i < t1))
+          return A.ioore(source, i);
+        char = source.charCodeAt(i);
+        if (char === 47)
+          return dots !== 0 ? i : -1;
+        if (char === 37 || char === 58)
+          return -1;
+        dots |= char ^ 46;
+      }
+      return -1;
+    },
+    _caseInsensitiveCompareStart(prefix, string, start) {
+      var t1, t2, result, i, t3, stringChar, delta, lowerChar;
+      for (t1 = prefix.length, t2 = string.length, result = 0, i = 0; i < t1; ++i) {
+        t3 = start + i;
+        if (!(t3 < t2))
+          return A.ioore(string, t3);
+        stringChar = string.charCodeAt(t3);
+        delta = prefix.charCodeAt(i) ^ stringChar;
+        if (delta !== 0) {
+          if (delta === 32) {
+            lowerChar = stringChar | delta;
+            if (97 <= lowerChar && lowerChar <= 122) {
+              result = 32;
+              continue;
+            }
+          }
+          return -1;
+        }
+      }
+      return result;
+    },
+    _WeakReferenceWrapper: function _WeakReferenceWrapper(t0, t1) {
+      this._weakRef = t0;
+      this.$ti = t1;
     },
     NoSuchMethodError_toString_closure: function NoSuchMethodError_toString_closure(t0, t1) {
       this._box_0 = t0;
@@ -4073,6 +6915,9 @@
     DateTime: function DateTime(t0, t1) {
       this._value = t0;
       this.isUtc = t1;
+    },
+    Duration: function Duration(t0) {
+      this._duration = t0;
     },
     _Enum: function _Enum() {
     },
@@ -4126,12 +6971,24 @@
     ConcurrentModificationError: function ConcurrentModificationError(t0) {
       this.modifiedObject = t0;
     },
+    OutOfMemoryError: function OutOfMemoryError() {
+    },
     StackOverflowError: function StackOverflowError() {
     },
     _Exception: function _Exception(t0) {
       this.message = t0;
     },
+    FormatException: function FormatException(t0, t1, t2) {
+      this.message = t0;
+      this.source = t1;
+      this.offset = t2;
+    },
     Iterable: function Iterable() {
+    },
+    MapEntry: function MapEntry(t0, t1, t2) {
+      this.key = t0;
+      this.value = t1;
+      this.$ti = t2;
     },
     Null: function Null() {
     },
@@ -4139,8 +6996,86 @@
     },
     _StringStackTrace: function _StringStackTrace() {
     },
+    Stopwatch: function Stopwatch() {
+      this._stop = this._core$_start = 0;
+    },
     StringBuffer: function StringBuffer(t0) {
       this._contents = t0;
+    },
+    Uri_splitQueryString_closure: function Uri_splitQueryString_closure(t0) {
+      this.encoding = t0;
+    },
+    Uri__parseIPv4Address_error: function Uri__parseIPv4Address_error(t0) {
+      this.host = t0;
+    },
+    Uri_parseIPv6Address_error: function Uri_parseIPv6Address_error(t0) {
+      this.host = t0;
+    },
+    Uri_parseIPv6Address_parseHex: function Uri_parseIPv6Address_parseHex(t0, t1) {
+      this.error = t0;
+      this.host = t1;
+    },
+    _Uri: function _Uri(t0, t1, t2, t3, t4, t5, t6) {
+      var _ = this;
+      _.scheme = t0;
+      _._userInfo = t1;
+      _._host = t2;
+      _._port = t3;
+      _.path = t4;
+      _._query = t5;
+      _._fragment = t6;
+      _.___Uri_queryParameters_FI = _.___Uri_hashCode_FI = _.___Uri_pathSegments_FI = _.___Uri__text_FI = $;
+    },
+    UriData: function UriData(t0, t1, t2) {
+      this._text = t0;
+      this._separatorIndices = t1;
+      this._uriCache = t2;
+    },
+    _createTables_build: function _createTables_build(t0) {
+      this.tables = t0;
+    },
+    _createTables_setChars: function _createTables_setChars() {
+    },
+    _createTables_setRange: function _createTables_setRange() {
+    },
+    _SimpleUri: function _SimpleUri(t0, t1, t2, t3, t4, t5, t6, t7) {
+      var _ = this;
+      _._uri = t0;
+      _._schemeEnd = t1;
+      _._hostStart = t2;
+      _._portStart = t3;
+      _._pathStart = t4;
+      _._queryStart = t5;
+      _._fragmentStart = t6;
+      _._schemeCache = t7;
+      _._hashCodeCache = null;
+    },
+    _DataUri: function _DataUri(t0, t1, t2, t3, t4, t5, t6) {
+      var _ = this;
+      _.scheme = t0;
+      _._userInfo = t1;
+      _._host = t2;
+      _._port = t3;
+      _.path = t4;
+      _._query = t5;
+      _._fragment = t6;
+      _.___Uri_queryParameters_FI = _.___Uri_hashCode_FI = _.___Uri_pathSegments_FI = _.___Uri__text_FI = $;
+    },
+    AnchorElement_AnchorElement(href) {
+      var t1 = document.createElement("a");
+      t1.toString;
+      if (href != null)
+        B.AnchorElement_methods.set$href(t1, href);
+      return t1;
+    },
+    CanvasElement_CanvasElement(height, width) {
+      var t1 = document.createElement("canvas");
+      t1.toString;
+      if (width != null)
+        B.CanvasElement_methods.set$width(t1, width);
+      if (height != null)
+        B.CanvasElement_methods.set$height(t1, height);
+      return t1;
     },
     Element_Element$html(html, treeSanitizer, validator) {
       var t2,
@@ -4177,17 +7112,22 @@
       t2.send();
       return t1;
     },
+    ImageElement_ImageElement(src) {
+      var t1 = document.createElement("img");
+      t1.toString;
+      B.ImageElement_methods.set$src(t1, src);
+      return t1;
+    },
     _EventStreamSubscription$(_target, _eventType, onData, _useCapture, $T) {
-      var t1 = A._wrapZone(new A._EventStreamSubscription_closure(onData), type$.Event);
-      if (t1 != null)
-        J._addEventListener$3$x(_target, _eventType, type$.nullable_dynamic_Function_Event._as(t1), false);
-      return new A._EventStreamSubscription(_target, _eventType, t1, false, $T._eval$1("_EventStreamSubscription<0>"));
+      var t1 = onData == null ? null : A._wrapZone(new A._EventStreamSubscription_closure(onData), type$.Event);
+      t1 = new A._EventStreamSubscription(_target, _eventType, t1, false, $T._eval$1("_EventStreamSubscription<0>"));
+      t1._tryResume$0();
+      return t1;
     },
     _Html5NodeValidator$(uriPolicy) {
-      var t1 = document.createElement("a");
-      t1.toString;
-      t1 = new A._SameOriginUriPolicy(t1, type$.Location._as(window.location));
-      t1 = new A._Html5NodeValidator(t1);
+      var t1 = A.AnchorElement_AnchorElement(null),
+        t2 = type$.Location._as(window.location);
+      t1 = new A._Html5NodeValidator(new A._SameOriginUriPolicy(t1, t2));
       t1._Html5NodeValidator$1$uriPolicy(uriPolicy);
       return t1;
     },
@@ -4252,6 +7192,14 @@
         return $window;
       } else
         return type$.nullable_EventTarget._as(e);
+    },
+    _convertNativeToDart_XHR_Response(o) {
+      var t1;
+      if (type$.Document._is(o))
+        return o;
+      t1 = new A._AcceptStructuredCloneDart2Js([], []);
+      t1.mustCopy = true;
+      return t1.walk$1(o);
     },
     _DOMWindowCrossFrame__createSafe(w) {
       var t1 = window;
@@ -4348,6 +7296,11 @@
     },
     SpanElement: function SpanElement() {
     },
+    Storage: function Storage() {
+    },
+    Storage_keys_closure: function Storage_keys_closure(t0) {
+      this.keys = t0;
+    },
     StyleElement: function StyleElement() {
     },
     TableElement: function TableElement() {
@@ -4395,6 +7348,7 @@
     },
     _EventStreamSubscription: function _EventStreamSubscription(t0, t1, t2, t3, t4) {
       var _ = this;
+      _._pauseCount = 0;
       _._target = t0;
       _._eventType = t1;
       _._onData = t2;
@@ -4403,6 +7357,9 @@
     },
     _EventStreamSubscription_closure: function _EventStreamSubscription_closure(t0) {
       this.onData = t0;
+    },
+    _EventStreamSubscription_onData_closure: function _EventStreamSubscription_onData_closure(t0) {
+      this.handleData = t0;
     },
     _Html5NodeValidator: function _Html5NodeValidator(t0) {
       this.uriPolicy = t0;
@@ -4465,12 +7422,14 @@
     },
     _NodeList_JavaScriptObject_ListMixin_ImmutableListMixin: function _NodeList_JavaScriptObject_ListMixin_ImmutableListMixin() {
     },
+    _Storage_JavaScriptObject_MapMixin: function _Storage_JavaScriptObject_MapMixin() {
+    },
     __NamedNodeMap_JavaScriptObject_ListMixin: function __NamedNodeMap_JavaScriptObject_ListMixin() {
     },
     __NamedNodeMap_JavaScriptObject_ListMixin_ImmutableListMixin: function __NamedNodeMap_JavaScriptObject_ListMixin_ImmutableListMixin() {
     },
     convertNativeToDart_ImageData(nativeImageData) {
-      var data, t1, t2, t3;
+      var data, t1;
       if (type$.ImageData._is(nativeImageData)) {
         data = J.get$data$x(nativeImageData);
         t1 = data.constructor === Array;
@@ -4487,26 +7446,28 @@
       }
       t1 = nativeImageData.data;
       t1.toString;
-      t2 = nativeImageData.height;
-      t2.toString;
-      t3 = nativeImageData.width;
-      t3.toString;
-      return new A._TypedImageData(t1, t2, t3);
-    },
-    convertDartToNative_ImageData(imageData) {
-      if (imageData instanceof A._TypedImageData)
-        return {data: imageData.data, height: imageData.height, width: imageData.width};
-      return imageData;
+      nativeImageData.height.toString;
+      nativeImageData.width.toString;
+      return new A._TypedImageData(t1);
     },
     Device_userAgent() {
       var t1 = window.navigator.userAgent;
       t1.toString;
       return t1;
     },
-    _TypedImageData: function _TypedImageData(t0, t1, t2) {
+    _AcceptStructuredClone: function _AcceptStructuredClone() {
+    },
+    _AcceptStructuredClone_walk_closure: function _AcceptStructuredClone_walk_closure(t0, t1) {
+      this.$this = t0;
+      this.map = t1;
+    },
+    _TypedImageData: function _TypedImageData(t0) {
       this.data = t0;
-      this.height = t1;
-      this.width = t2;
+    },
+    _AcceptStructuredCloneDart2Js: function _AcceptStructuredCloneDart2Js(t0, t1) {
+      this.values = t0;
+      this.copies = t1;
+      this.mustCopy = false;
     },
     KeyRange: function KeyRange() {
     },
@@ -4520,7 +7481,7 @@
         $arguments = arguments0;
       }
       t1 = type$.dynamic;
-      dartArgs = A.List_List$from(J.map$1$1$ax($arguments, A.js___convertToDart$closure(), t1), t1);
+      dartArgs = A.List_List$from(J.map$1$1$ax($arguments, A.js___convertToDart$closure(), t1), true, t1);
       type$.Function._as(callback);
       return A._convertToJS(A.Primitives_applyFunction(callback, dartArgs, null));
     },
@@ -4570,20 +7531,15 @@
       return jsProxy;
     },
     _convertToDart(o) {
-      var t1;
       if (o == null || typeof o == "string" || typeof o == "number" || typeof o == "boolean")
         return o;
       else if (o instanceof Object && A.isBrowserObject(o))
         return o;
       else if (o instanceof Object && type$.TypedData._is(o))
         return o;
-      else if (o instanceof Date) {
-        t1 = A._asInt(o.getTime());
-        if (Math.abs(t1) > 864e13)
-          A.throwExpression(A.ArgumentError$("DateTime is outside valid range: " + t1, null));
-        A.checkNotNullable(false, "isUtc", type$.bool);
-        return new A.DateTime(t1, false);
-      } else if (o.constructor === $.$get$_dartProxyCtor())
+      else if (o instanceof Date)
+        return A.DateTime$fromMillisecondsSinceEpoch(A._asInt(o.getTime()), false);
+      else if (o.constructor === $.$get$_dartProxyCtor())
         return o.o;
       else
         return A._wrapToDart(o);
@@ -4629,6 +7585,28 @@
     },
     _JsArray_JsObject_ListMixin: function _JsArray_JsObject_ListMixin() {
     },
+    promiseToFuture(jsPromise, $T) {
+      var t1 = new A._Future($.Zone__current, $T._eval$1("_Future<0>")),
+        completer = new A._AsyncCompleter(t1, $T._eval$1("_AsyncCompleter<0>"));
+      jsPromise.then(A.convertDartClosureToJS(new A.promiseToFuture_closure(completer, $T), 1), A.convertDartClosureToJS(new A.promiseToFuture_closure0(completer), 1));
+      return t1;
+    },
+    promiseToFuture_closure: function promiseToFuture_closure(t0, t1) {
+      this.completer = t0;
+      this.T = t1;
+    },
+    promiseToFuture_closure0: function promiseToFuture_closure0(t0) {
+      this.completer = t0;
+    },
+    NullRejectionException: function NullRejectionException(t0) {
+      this.isUndefined = t0;
+    },
+    max(a, b, $T) {
+      A.checkTypeBound($T, type$.num, "T", "max");
+      return Math.max($T._as(a), $T._as(b));
+    },
+    _JSRandom: function _JSRandom() {
+    },
     Point: function Point(t0, t1, t2) {
       this.x = t0;
       this.y = t1;
@@ -4638,32 +7616,589 @@
     },
     SvgElement: function SvgElement() {
     },
+    CancelableOperation: function CancelableOperation(t0, t1) {
+      this._cancelable_operation$_completer = t0;
+      this.$ti = t1;
+    },
+    CancelableCompleter: function CancelableCompleter(t0, t1, t2, t3) {
+      var _ = this;
+      _._inner = t0;
+      _._cancelCompleter = t1;
+      _._onCancel = t2;
+      _._mayComplete = true;
+      _.__CancelableCompleter_operation_FI = $;
+      _.$ti = t3;
+    },
+    CancelableCompleter_complete_closure: function CancelableCompleter_complete_closure(t0) {
+      this.$this = t0;
+    },
+    CancelableCompleter_complete_closure0: function CancelableCompleter_complete_closure0(t0) {
+      this.$this = t0;
+    },
+    CanonicalizedMap: function CanonicalizedMap() {
+    },
+    CanonicalizedMap_addAll_closure: function CanonicalizedMap_addAll_closure(t0) {
+      this.$this = t0;
+    },
+    CanonicalizedMap_forEach_closure: function CanonicalizedMap_forEach_closure(t0, t1) {
+      this.$this = t0;
+      this.f = t1;
+    },
+    CanonicalizedMap_keys_closure: function CanonicalizedMap_keys_closure(t0) {
+      this.$this = t0;
+    },
+    ResponseBody: function ResponseBody(t0, t1, t2, t3, t4, t5) {
+      var _ = this;
+      _.isRedirect = t0;
+      _.stream = t1;
+      _.statusCode = t2;
+      _.statusMessage = t3;
+      _.headers = t4;
+      _.extra = t5;
+    },
+    _DioExceptionTypeExtension_toPrettyDescription(_this) {
+      switch (_this) {
+        case B.DioExceptionType_0:
+          return "connection timeout";
+        case B.DioExceptionType_1:
+          return "send timeout";
+        case B.DioExceptionType_2:
+          return "receive timeout";
+        case B.DioExceptionType_3:
+          return "bad certificate";
+        case B.DioExceptionType_4:
+          return "bad response";
+        case B.DioExceptionType_5:
+          return "request cancelled";
+        case B.DioExceptionType_6:
+          return "connection error";
+        case B.DioExceptionType_7:
+          return "unknown";
+      }
+    },
+    DioException$(error, message, requestOptions, response, stackTrace, type) {
+      var t1 = requestOptions.sourceStackTrace;
+      if (t1 == null)
+        t1 = A.StackTrace_current();
+      return new A.DioException(type, error, t1, message);
+    },
+    DioException_DioException$connectionTimeout(requestOptions, timeout) {
+      return A.DioException$(null, "The request connection took longer than " + timeout.toString$0(0) + " and it was aborted. To get rid of this exception, try raising the RequestOptions.connectTimeout above the duration of " + timeout.toString$0(0) + string$._or_im, requestOptions, null, null, B.DioExceptionType_0);
+    },
+    DioException_DioException$receiveTimeout(requestOptions, timeout) {
+      return A.DioException$(null, "The request took longer than " + timeout.toString$0(0) + " to receive data. It was aborted. To get rid of this exception, try raising the RequestOptions.receiveTimeout above the duration of " + timeout.toString$0(0) + string$._or_im, requestOptions, null, null, B.DioExceptionType_2);
+    },
+    DioException_DioException$connectionError(reason, requestOptions) {
+      return A.DioException$(null, "The connection errored: " + reason + " This indicates an error which most likely cannot be solved by the library.", requestOptions, null, null, B.DioExceptionType_6);
+    },
+    DioExceptionType: function DioExceptionType(t0) {
+      this._name = t0;
+    },
+    DioException: function DioException(t0, t1, t2, t3) {
+      var _ = this;
+      _.type = t0;
+      _.error = t1;
+      _.stackTrace = t2;
+      _.message = t3;
+    },
+    DioMixin_listenCancelForAsyncTask(cancelToken, future, $T) {
+      return future;
+    },
+    DioMixin_assureDioException(error, requestOptions) {
+      if (error instanceof A.DioException)
+        return error;
+      return A.DioException$(error, null, requestOptions, null, null, B.DioExceptionType_7);
+    },
+    DioMixin_assureResponse(response, requestOptions, $T) {
+      var data, t1, t2, headers, _null = null;
+      if (!(response instanceof A.Response))
+        return A.Response$($T._as(response), _null, _null, false, B.List_empty1, requestOptions, _null, _null, $T);
+      else if (!$T._eval$1("Response<0>")._is(response)) {
+        data = $T._eval$1("0?")._as(response.data);
+        if (data instanceof A.ResponseBody) {
+          t1 = data.headers;
+          t2 = requestOptions.___RequestConfig_preserveHeaderCase_A;
+          t2 === $ && A.throwLateFieldNI("preserveHeaderCase");
+          headers = A.Headers$fromMap(t1, t2);
+        } else
+          headers = response.headers;
+        return A.Response$(data, response.extra, headers, response.isRedirect, response.redirects, response.requestOptions, response.statusCode, response.statusMessage, $T);
+      }
+      return response;
+    },
     DioMixin: function DioMixin() {
+    },
+    DioMixin_fetch_requestInterceptorWrapper: function DioMixin_fetch_requestInterceptorWrapper(t0) {
+      this._box_0 = t0;
+    },
+    DioMixin_fetch_requestInterceptorWrapper_closure: function DioMixin_fetch_requestInterceptorWrapper_closure(t0, t1) {
+      this._box_0 = t0;
+      this.cb = t1;
+    },
+    DioMixin_fetch_requestInterceptorWrapper__closure: function DioMixin_fetch_requestInterceptorWrapper__closure(t0, t1) {
+      this.cb = t0;
+      this.state = t1;
+    },
+    DioMixin_fetch_responseInterceptorWrapper: function DioMixin_fetch_responseInterceptorWrapper(t0) {
+      this._box_0 = t0;
+    },
+    DioMixin_fetch_responseInterceptorWrapper_closure: function DioMixin_fetch_responseInterceptorWrapper_closure(t0, t1) {
+      this._box_0 = t0;
+      this.cb = t1;
+    },
+    DioMixin_fetch_responseInterceptorWrapper__closure: function DioMixin_fetch_responseInterceptorWrapper__closure(t0, t1) {
+      this.cb = t0;
+      this.state = t1;
+    },
+    DioMixin_fetch_errorInterceptorWrapper: function DioMixin_fetch_errorInterceptorWrapper(t0) {
+      this._box_0 = t0;
+    },
+    DioMixin_fetch_errorInterceptorWrapper_closure: function DioMixin_fetch_errorInterceptorWrapper_closure(t0, t1) {
+      this._box_0 = t0;
+      this.cb = t1;
+    },
+    DioMixin_fetch_errorInterceptorWrapper_closure_handleError: function DioMixin_fetch_errorInterceptorWrapper_closure_handleError(t0, t1) {
+      this.cb = t0;
+      this.state = t1;
+    },
+    DioMixin_fetch_closure: function DioMixin_fetch_closure(t0) {
+      this._box_0 = t0;
+    },
+    DioMixin_fetch_closure0: function DioMixin_fetch_closure0(t0, t1, t2) {
+      this._box_0 = t0;
+      this.$this = t1;
+      this.T = t2;
+    },
+    DioMixin__dispatchRequest_closure: function DioMixin__dispatchRequest_closure(t0) {
+      this.operationWeakReference = t0;
+    },
+    InterceptorResultType: function InterceptorResultType(t0) {
+      this._name = t0;
+    },
+    InterceptorState: function InterceptorState(t0, t1, t2) {
+      this.data = t0;
+      this.type = t1;
+      this.$ti = t2;
+    },
+    _BaseHandler: function _BaseHandler() {
+    },
+    RequestInterceptorHandler: function RequestInterceptorHandler(t0) {
+      this._completer = t0;
+    },
+    ResponseInterceptorHandler: function ResponseInterceptorHandler(t0) {
+      this._completer = t0;
+    },
+    ErrorInterceptorHandler: function ErrorInterceptorHandler(t0) {
+      this._completer = t0;
+    },
+    Interceptor0: function Interceptor0() {
+    },
+    Interceptors: function Interceptors(t0) {
+      this._list = t0;
+    },
+    FormData: function FormData(t0, t1) {
+      var _ = this;
+      _.__FormData__boundary_F = $;
+      _.fields = t0;
+      _.files = t1;
+      _._isFinalized = false;
+    },
+    FormData__init_closure: function FormData__init_closure(t0) {
+      this.$this = t0;
+    },
+    FormData__headerForFile_closure: function FormData__headerForFile_closure(t0) {
+      this._box_0 = t0;
+    },
+    FormData_finalize_writeLine: function FormData_finalize_writeLine(t0) {
+      this.controller = t0;
+    },
+    FormData_finalize_writeUtf8: function FormData_finalize_writeUtf8(t0) {
+      this.controller = t0;
+    },
+    FormData_finalize_closure: function FormData_finalize_closure(t0, t1, t2, t3) {
+      var _ = this;
+      _.$this = t0;
+      _.writeUtf8 = t1;
+      _.controller = t2;
+      _.writeLine = t3;
+    },
+    FormData_finalize_closure0: function FormData_finalize_closure0(t0, t1) {
+      this.$this = t0;
+      this.writeUtf8 = t1;
+    },
+    FormData_finalize_closure1: function FormData_finalize_closure1(t0) {
+      this.controller = t0;
+    },
+    Headers$fromMap(map, preserveHeaderCase) {
+      var t1 = type$.List_String;
+      return new A.Headers(A.caseInsensitiveKeyMap(map.map$2$1(map, new A.Headers$fromMap_closure(), type$.String, t1), t1));
+    },
+    Headers: function Headers(t0) {
+      this._headers$_map = t0;
+    },
+    Headers$fromMap_closure: function Headers$fromMap_closure() {
+    },
+    Headers_toString_closure: function Headers_toString_closure(t0) {
+      this.stringBuffer = t0;
+    },
+    ImplyContentTypeInterceptor: function ImplyContentTypeInterceptor() {
+    },
+    Options$(contentType) {
+      return new A.Options(contentType);
+    },
+    _defaultValidateStatus($status) {
+      return $status >= 200 && $status < 300;
     },
     ResponseType: function ResponseType(t0) {
       this._name = t0;
     },
+    ListFormat: function ListFormat(t0) {
+      this._name = t0;
+    },
     OptionsMixin: function OptionsMixin() {
     },
-    BaseOptions: function BaseOptions(t0, t1, t2) {
+    BaseOptions: function BaseOptions(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16) {
       var _ = this;
       _.OptionsMixin___OptionsMixin__baseUrl_A = t0;
       _.OptionsMixin___OptionsMixin_queryParameters_A = t1;
       _.OptionsMixin__connectTimeout = t2;
+      _.___RequestConfig_method_A = t3;
       _.___RequestConfig__headers_A = $;
+      _.___RequestConfig_preserveHeaderCase_A = t4;
+      _._sendTimeout = t5;
+      _._receiveTimeout = t6;
       _._defaultContentType = null;
+      _.___RequestConfig_responseType_A = t7;
+      _.___RequestConfig_validateStatus_A = t8;
+      _.___RequestConfig_receiveDataWhenStatusError_A = t9;
+      _.___RequestConfig_extra_A = t10;
+      _.___RequestConfig_followRedirects_A = t11;
+      _.___RequestConfig_maxRedirects_A = t12;
+      _.___RequestConfig_persistentConnection_A = t13;
+      _.requestEncoder = t14;
+      _.responseDecoder = t15;
+      _.___RequestConfig_listFormat_A = t16;
+    },
+    Options: function Options(t0) {
+      this.method = null;
+      this.contentType = t0;
+    },
+    RequestOptions: function RequestOptions(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21) {
+      var _ = this;
+      _.sourceStackTrace = null;
+      _.data = t0;
+      _.path = t1;
+      _.cancelToken = t2;
+      _.onReceiveProgress = t3;
+      _.onSendProgress = t4;
+      _.OptionsMixin___OptionsMixin__baseUrl_A = t5;
+      _.OptionsMixin___OptionsMixin_queryParameters_A = t6;
+      _.OptionsMixin__connectTimeout = t7;
+      _.___RequestConfig_method_A = t8;
+      _.___RequestConfig__headers_A = $;
+      _.___RequestConfig_preserveHeaderCase_A = t9;
+      _._sendTimeout = t10;
+      _._receiveTimeout = t11;
+      _._defaultContentType = null;
+      _.___RequestConfig_responseType_A = t12;
+      _.___RequestConfig_validateStatus_A = t13;
+      _.___RequestConfig_receiveDataWhenStatusError_A = t14;
+      _.___RequestConfig_extra_A = t15;
+      _.___RequestConfig_followRedirects_A = t16;
+      _.___RequestConfig_maxRedirects_A = t17;
+      _.___RequestConfig_persistentConnection_A = t18;
+      _.requestEncoder = t19;
+      _.responseDecoder = t20;
+      _.___RequestConfig_listFormat_A = t21;
     },
     _RequestConfig: function _RequestConfig() {
     },
     _BaseOptions__RequestConfig_OptionsMixin: function _BaseOptions__RequestConfig_OptionsMixin() {
     },
+    _RequestOptions__RequestConfig_OptionsMixin: function _RequestOptions__RequestConfig_OptionsMixin() {
+    },
+    Response$(data, extra, headers, isRedirect, redirects, requestOptions, statusCode, statusMessage, $T) {
+      var t1, t2;
+      if (headers == null) {
+        requestOptions.___RequestConfig_preserveHeaderCase_A === $ && A.throwLateFieldNI("preserveHeaderCase");
+        t1 = new A.Headers(A.caseInsensitiveKeyMap(null, type$.List_String));
+      } else
+        t1 = headers;
+      t2 = extra == null ? A.LinkedHashMap_LinkedHashMap$_empty(type$.String, type$.dynamic) : extra;
+      return new A.Response(data, requestOptions, statusCode, statusMessage, t1, isRedirect, redirects, t2, $T._eval$1("Response<0>"));
+    },
+    Response: function Response(t0, t1, t2, t3, t4, t5, t6, t7, t8) {
+      var _ = this;
+      _.data = t0;
+      _.requestOptions = t1;
+      _.statusCode = t2;
+      _.statusMessage = t3;
+      _.headers = t4;
+      _.isRedirect = t5;
+      _.redirects = t6;
+      _.extra = t7;
+      _.$ti = t8;
+    },
+    handleResponseStream(options, response) {
+      var receiveStopwatch, t2, t1 = {},
+        source = response.stream,
+        responseSink = A.StreamController_StreamController(false, type$.Uint8List),
+        responseSubscription = A._Cell$named("responseSubscription"),
+        totalLength = A._Cell$named("totalLength");
+      t1.receivedLength = 0;
+      receiveStopwatch = new A.Stopwatch();
+      $.$get$Stopwatch__frequency();
+      t1.receiveTimer = null;
+      t2 = new A.handleResponseStream_stopWatchReceiveTimeout(t1, null, receiveStopwatch);
+      responseSubscription.__late_helper$_value = source.listen$4$cancelOnError$onDone$onError(new A.handleResponseStream_closure(t1, new A.handleResponseStream_watchReceiveTimeout(t1, B.Duration_0, receiveStopwatch, t2, response, responseSubscription, responseSink, options), receiveStopwatch, B.Duration_0, responseSink, options, totalLength), true, new A.handleResponseStream_closure0(t2, responseSubscription, responseSink), new A.handleResponseStream_closure1(t2, responseSink));
+      return new A._ControllerStream(responseSink, A._instanceType(responseSink)._eval$1("_ControllerStream<1>"));
+    },
+    _extension_0_addErrorAndClose(_this, error, stackTrace) {
+      if ((_this._state & 4) === 0) {
+        _this.addError$2(error, stackTrace);
+        _this.close$0(0);
+      }
+    },
+    handleResponseStream_stopWatchReceiveTimeout: function handleResponseStream_stopWatchReceiveTimeout(t0, t1, t2) {
+      this._box_0 = t0;
+      this.onReceiveTimeoutWatchCancelled = t1;
+      this.receiveStopwatch = t2;
+    },
+    handleResponseStream_watchReceiveTimeout: function handleResponseStream_watchReceiveTimeout(t0, t1, t2, t3, t4, t5, t6, t7) {
+      var _ = this;
+      _._box_0 = t0;
+      _.receiveTimeout = t1;
+      _.receiveStopwatch = t2;
+      _.stopWatchReceiveTimeout = t3;
+      _.response = t4;
+      _.responseSubscription = t5;
+      _.responseSink = t6;
+      _.options = t7;
+    },
+    handleResponseStream_watchReceiveTimeout_closure: function handleResponseStream_watchReceiveTimeout_closure(t0, t1, t2, t3, t4, t5) {
+      var _ = this;
+      _.stopWatchReceiveTimeout = t0;
+      _.response = t1;
+      _.responseSubscription = t2;
+      _.responseSink = t3;
+      _.receiveTimeout = t4;
+      _.options = t5;
+    },
+    handleResponseStream_closure: function handleResponseStream_closure(t0, t1, t2, t3, t4, t5, t6) {
+      var _ = this;
+      _._box_0 = t0;
+      _.watchReceiveTimeout = t1;
+      _.receiveStopwatch = t2;
+      _.receiveTimeout = t3;
+      _.responseSink = t4;
+      _.options = t5;
+      _.totalLength = t6;
+    },
+    handleResponseStream_closure1: function handleResponseStream_closure1(t0, t1) {
+      this.stopWatchReceiveTimeout = t0;
+      this.responseSink = t1;
+    },
+    handleResponseStream_closure0: function handleResponseStream_closure0(t0, t1, t2) {
+      this.stopWatchReceiveTimeout = t0;
+      this.responseSubscription = t1;
+      this.responseSink = t2;
+    },
+    Transformer_urlEncodeQueryMap(map, listFormat) {
+      return A.encodeMap(map, new A.Transformer_urlEncodeQueryMap_closure(), true, true, listFormat);
+    },
+    Transformer_isJsonMimeType(contentType) {
+      var mediaType, s, t1, exception;
+      if (contentType == null)
+        return false;
+      try {
+        mediaType = A.MediaType_MediaType$parse(contentType);
+        t1 = mediaType;
+        if (t1.type + "/" + t1.subtype !== "application/json") {
+          t1 = mediaType;
+          t1 = t1.type + "/" + t1.subtype === "text/json" || B.JSString_methods.endsWith$1(mediaType.subtype, "+json");
+        } else
+          t1 = true;
+        return t1;
+      } catch (exception) {
+        s = A.getTraceFromException(exception);
+        return false;
+      }
+    },
+    Transformer: function Transformer() {
+    },
+    Transformer_urlEncodeQueryMap_closure: function Transformer_urlEncodeQueryMap_closure() {
+    },
+    FusedTransformer__decodeUtf8ToJson(data) {
+      return A.FusedTransformer__decodeUtf8ToJson$body(type$.Uint8List._as(data));
+    },
+    FusedTransformer__decodeUtf8ToJson$body(data) {
+      var $async$goto = 0,
+        $async$completer = A._makeAsyncAwaitCompleter(type$.nullable_Object),
+        $async$returnValue, t1;
+      var $async$FusedTransformer__decodeUtf8ToJson = A._wrapJsFunctionForAsync(function($async$errorCode, $async$result) {
+        if ($async$errorCode === 1)
+          return A._asyncRethrow($async$result, $async$completer);
+        while (true)
+          switch ($async$goto) {
+            case 0:
+              // Function start
+              if (data.length === 0) {
+                $async$returnValue = null;
+                // goto return
+                $async$goto = 1;
+                break;
+              }
+              t1 = $.$get$FusedTransformer__utf8JsonDecoder();
+              $async$returnValue = A._parseJson(A._asString(t1._convert$_first.convert$1(t1.$ti._precomputed1._as(data))), t1._second._reviver);
+              // goto return
+              $async$goto = 1;
+              break;
+            case 1:
+              // return
+              return A._asyncReturn($async$returnValue, $async$completer);
+          }
+      });
+      return A._asyncStartSync($async$FusedTransformer__decodeUtf8ToJson, $async$completer);
+    },
+    FusedTransformer: function FusedTransformer(t0) {
+      this.contentLengthIsolateThreshold = t0;
+    },
+    writeStreamToSink(stream, sink, $T) {
+      var t1 = new A._Future($.Zone__current, type$._Future_void);
+      stream.listen$3$onDone$onError($T._eval$1("~(0)")._as(sink.get$add(sink)), new A.writeStreamToSink_closure(new A._AsyncCompleter(t1, type$._AsyncCompleter_void)), sink.get$addError());
+      return t1;
+    },
+    encodeMap(data, handler, encode, isQuery, listFormat) {
+      var t2, leftBracket, rightBracket, encodeComponent, t1 = {},
+        urlData = new A.StringBuffer("");
+      t1.first = true;
+      t2 = !isQuery;
+      leftBracket = !t2 || !encode ? "[" : "%5B";
+      rightBracket = !t2 || !encode ? "]" : "%5D";
+      encodeComponent = encode ? A.core_Uri_encodeQueryComponent$closure() : new A.encodeMap_closure();
+      new A.encodeMap_urlEncode(t1, listFormat, isQuery, new A.encodeMap_maybeEncode(isQuery, encodeComponent), leftBracket, rightBracket, encodeComponent, handler, urlData).call$2(data, "");
+      t1 = urlData._contents;
+      return t1.charCodeAt(0) == 0 ? t1 : t1;
+    },
+    _getSeparatorChar(collectionFormat, isQuery) {
+      switch (collectionFormat) {
+        case B.ListFormat_0:
+          return ",";
+        case B.ListFormat_1:
+          return isQuery ? "%20" : " ";
+        case B.ListFormat_2:
+          return "\\t";
+        case B.ListFormat_3:
+          return "|";
+        default:
+          return "";
+      }
+    },
     caseInsensitiveKeyMap(value, $V) {
       var map = A.LinkedHashMap_LinkedHashMap(new A.caseInsensitiveKeyMap_closure(), new A.caseInsensitiveKeyMap_closure0(), type$.String, $V);
+      if (value != null && value.__js_helper$_length !== 0)
+        map.addAll$1(0, value);
       return map;
+    },
+    writeStreamToSink_closure: function writeStreamToSink_closure(t0) {
+      this.completer = t0;
+    },
+    encodeMap_closure: function encodeMap_closure() {
+    },
+    encodeMap_maybeEncode: function encodeMap_maybeEncode(t0, t1) {
+      this.isQuery = t0;
+      this.encodeComponent = t1;
+    },
+    encodeMap_urlEncode: function encodeMap_urlEncode(t0, t1, t2, t3, t4, t5, t6, t7, t8) {
+      var _ = this;
+      _._box_0 = t0;
+      _.listFormat = t1;
+      _.isQuery = t2;
+      _.maybeEncode = t3;
+      _.leftBracket = t4;
+      _.rightBracket = t5;
+      _.encodeComponent = t6;
+      _.handler = t7;
+      _.urlData = t8;
+    },
+    encodeMap_urlEncode_closure: function encodeMap_urlEncode_closure(t0, t1, t2, t3, t4, t5) {
+      var _ = this;
+      _.path = t0;
+      _.urlEncode = t1;
+      _.maybeEncode = t2;
+      _.encodeComponent = t3;
+      _.leftBracket = t4;
+      _.rightBracket = t5;
     },
     caseInsensitiveKeyMap_closure: function caseInsensitiveKeyMap_closure() {
     },
     caseInsensitiveKeyMap_closure0: function caseInsensitiveKeyMap_closure0() {
+    },
+    BrowserHttpClientAdapter: function BrowserHttpClientAdapter(t0) {
+      this.xhrs = t0;
+    },
+    BrowserHttpClientAdapter_fetch_closure: function BrowserHttpClientAdapter_fetch_closure(t0) {
+      this.xhr = t0;
+    },
+    BrowserHttpClientAdapter_fetch_closure0: function BrowserHttpClientAdapter_fetch_closure0(t0, t1, t2) {
+      this.xhr = t0;
+      this.completer = t1;
+      this.options = t2;
+    },
+    BrowserHttpClientAdapter_fetch__closure: function BrowserHttpClientAdapter_fetch__closure() {
+    },
+    BrowserHttpClientAdapter_fetch_stopWatchReceiveTimeout: function BrowserHttpClientAdapter_fetch_stopWatchReceiveTimeout(t0, t1) {
+      this._box_0 = t0;
+      this.receiveStopwatch = t1;
+    },
+    BrowserHttpClientAdapter_fetch_watchReceiveTimeout: function BrowserHttpClientAdapter_fetch_watchReceiveTimeout(t0, t1, t2, t3, t4, t5, t6) {
+      var _ = this;
+      _._box_0 = t0;
+      _.receiveTimeout = t1;
+      _.receiveStopwatch = t2;
+      _.completer = t3;
+      _.xhr = t4;
+      _.options = t5;
+      _.stopWatchReceiveTimeout = t6;
+    },
+    BrowserHttpClientAdapter_fetch_watchReceiveTimeout_closure: function BrowserHttpClientAdapter_fetch_watchReceiveTimeout_closure(t0, t1, t2, t3, t4) {
+      var _ = this;
+      _.completer = t0;
+      _.xhr = t1;
+      _.receiveTimeout = t2;
+      _.options = t3;
+      _.stopWatchReceiveTimeout = t4;
+    },
+    BrowserHttpClientAdapter_fetch_closure1: function BrowserHttpClientAdapter_fetch_closure1(t0, t1, t2) {
+      this._box_0 = t0;
+      this.watchReceiveTimeout = t1;
+      this.options = t2;
+    },
+    BrowserHttpClientAdapter_fetch_closure2: function BrowserHttpClientAdapter_fetch_closure2(t0) {
+      this.stopWatchReceiveTimeout = t0;
+    },
+    BrowserHttpClientAdapter_fetch_closure3: function BrowserHttpClientAdapter_fetch_closure3(t0, t1, t2) {
+      this._box_0 = t0;
+      this.completer = t1;
+      this.options = t2;
+    },
+    BrowserHttpClientAdapter_fetch_closure4: function BrowserHttpClientAdapter_fetch_closure4(t0, t1, t2, t3, t4) {
+      var _ = this;
+      _._box_0 = t0;
+      _.completer = t1;
+      _.connectTimeout = t2;
+      _.options = t3;
+      _.xhrTimeout = t4;
+    },
+    BrowserHttpClientAdapter_fetch_closure5: function BrowserHttpClientAdapter_fetch_closure5(t0) {
+      this.completer = t0;
+    },
+    BrowserHttpClientAdapter_fetch_closure6: function BrowserHttpClientAdapter_fetch_closure6(t0) {
+      this.completer = t0;
+    },
+    BrowserHttpClientAdapter_fetch_closure7: function BrowserHttpClientAdapter_fetch_closure7(t0, t1) {
+      this.$this = t0;
+      this.xhr = t1;
     },
     DioForBrowser: function DioForBrowser(t0, t1, t2, t3, t4) {
       var _ = this;
@@ -4675,13 +8210,545 @@
     },
     _DioForBrowser_Object_DioMixin: function _DioForBrowser_Object_DioMixin() {
     },
-    AuthController: function AuthController(t0) {
-      this._dio = t0;
+    addProgress(stream, $length, options) {
+      var t1;
+      if (type$.Stream_Uint8List._is(stream))
+        return stream;
+      t1 = A._instanceType(stream)._eval$1("StreamTransformer<Stream.T,Uint8List>")._as(A._transform(stream, $length, options, type$.List_int));
+      return t1.super$_StreamSinkTransformer$bind(t1.$ti._eval$1("Stream<1>")._as(stream));
+    },
+    _transform(stream, $length, options, $S) {
+      return A._StreamHandlerTransformer$(new A._transform_closure(options, $S), $S, type$.Uint8List);
+    },
+    _transform_closure: function _transform_closure(t0, t1) {
+      this.options = t0;
+      this.S = t1;
+    },
+    CaseInsensitiveMap__canonicalizer(key) {
+      return A._asString(key).toLowerCase();
+    },
+    CaseInsensitiveMap: function CaseInsensitiveMap(t0, t1, t2) {
+      this._canonicalize = t0;
+      this._base = t1;
+      this.$ti = t2;
+    },
+    MediaType_MediaType$parse(mediaType) {
+      return A.wrapFormatException("media type", mediaType, new A.MediaType_MediaType$parse_closure(mediaType), type$.MediaType);
+    },
+    MediaType: function MediaType(t0, t1, t2) {
+      this.type = t0;
+      this.subtype = t1;
+      this.parameters = t2;
+    },
+    MediaType_MediaType$parse_closure: function MediaType_MediaType$parse_closure(t0) {
+      this.mediaType = t0;
+    },
+    MediaType_toString_closure: function MediaType_toString_closure(t0) {
+      this.buffer = t0;
+    },
+    MediaType_toString__closure: function MediaType_toString__closure() {
+    },
+    expectQuotedString(scanner) {
+      var string;
+      scanner.expect$2$name($.$get$_quotedString(), "quoted string");
+      string = scanner.get$lastMatch().$index(0, 0);
+      return A.stringReplaceAllFuncUnchecked(B.JSString_methods.substring$2(string, 1, string.length - 1), $.$get$_quotedPair(), type$.nullable_String_Function_Match._as(type$.String_Function_Match._as(new A.expectQuotedString_closure())), null);
+    },
+    expectQuotedString_closure: function expectQuotedString_closure() {
+    },
+    _parseUri(uri) {
+      return uri;
+    },
+    _validateArgList(method, args) {
+      var numArgs, i, numArgs0, message, t1, t2, t3, t4;
+      for (numArgs = args.length, i = 1; i < numArgs; ++i) {
+        if (args[i] == null || args[i - 1] != null)
+          continue;
+        for (; numArgs >= 1; numArgs = numArgs0) {
+          numArgs0 = numArgs - 1;
+          if (args[numArgs0] != null)
+            break;
+        }
+        message = new A.StringBuffer("");
+        t1 = "" + (method + "(");
+        message._contents = t1;
+        t2 = A._arrayInstanceType(args);
+        t3 = t2._eval$1("SubListIterable<1>");
+        t4 = new A.SubListIterable(args, 0, numArgs, t3);
+        t4.SubListIterable$3(args, 0, numArgs, t2._precomputed1);
+        t3 = t1 + new A.MappedListIterable(t4, t3._eval$1("String(ListIterable.E)")._as(new A._validateArgList_closure()), t3._eval$1("MappedListIterable<ListIterable.E,String>")).join$1(0, ", ");
+        message._contents = t3;
+        message._contents = t3 + ("): part " + (i - 1) + " was null, but part " + i + " was not.");
+        throw A.wrapException(A.ArgumentError$(message.toString$0(0), null));
+      }
+    },
+    Context: function Context(t0) {
+      this.style = t0;
+    },
+    Context_joinAll_closure: function Context_joinAll_closure() {
+    },
+    Context_split_closure: function Context_split_closure() {
+    },
+    _validateArgList_closure: function _validateArgList_closure() {
+    },
+    InternalStyle: function InternalStyle() {
+    },
+    ParsedPath_ParsedPath$parse(path, style) {
+      var t1, parts, separators, t2, start, i,
+        root = style.getRoot$1(path);
+      style.isRootRelative$1(path);
+      if (root != null)
+        path = B.JSString_methods.substring$1(path, root.length);
+      t1 = type$.JSArray_String;
+      parts = A._setArrayType([], t1);
+      separators = A._setArrayType([], t1);
+      t1 = path.length;
+      if (t1 !== 0) {
+        if (0 >= t1)
+          return A.ioore(path, 0);
+        t2 = style.isSeparator$1(path.charCodeAt(0));
+      } else
+        t2 = false;
+      if (t2) {
+        if (0 >= t1)
+          return A.ioore(path, 0);
+        B.JSArray_methods.add$1(separators, path[0]);
+        start = 1;
+      } else {
+        B.JSArray_methods.add$1(separators, "");
+        start = 0;
+      }
+      for (i = start; i < t1; ++i)
+        if (style.isSeparator$1(path.charCodeAt(i))) {
+          B.JSArray_methods.add$1(parts, B.JSString_methods.substring$2(path, start, i));
+          B.JSArray_methods.add$1(separators, path[i]);
+          start = i + 1;
+        }
+      if (start < t1) {
+        B.JSArray_methods.add$1(parts, B.JSString_methods.substring$1(path, start));
+        B.JSArray_methods.add$1(separators, "");
+      }
+      return new A.ParsedPath(style, root, parts, separators);
+    },
+    ParsedPath: function ParsedPath(t0, t1, t2, t3) {
+      var _ = this;
+      _.style = t0;
+      _.root = t1;
+      _.parts = t2;
+      _.separators = t3;
+    },
+    PathException$(message) {
+      return new A.PathException(message);
+    },
+    PathException: function PathException(t0) {
+      this.message = t0;
+    },
+    Style__getPlatformStyle() {
+      var t1, userInfo, host, query, fragment, port, hasAuthority, path, _null = null;
+      if (A.Uri_base().get$scheme() !== "file")
+        return $.$get$Style_url();
+      t1 = A.Uri_base();
+      if (!B.JSString_methods.endsWith$1(t1.get$path(t1), "/"))
+        return $.$get$Style_url();
+      userInfo = A._Uri__makeUserInfo(_null, 0, 0);
+      host = A._Uri__makeHost(_null, 0, 0, false);
+      query = A._Uri__makeQuery(_null, 0, 0, _null);
+      fragment = A._Uri__makeFragment(_null, 0, 0);
+      port = A._Uri__makePort(_null, "");
+      if (host == null)
+        if (userInfo.length === 0)
+          t1 = port != null;
+        else
+          t1 = true;
+      else
+        t1 = false;
+      if (t1)
+        host = "";
+      t1 = host == null;
+      hasAuthority = !t1;
+      path = A._Uri__makePath("a/b", 0, 3, _null, "", hasAuthority);
+      if (t1 && !B.JSString_methods.startsWith$1(path, "/"))
+        path = A._Uri__normalizeRelativePath(path, hasAuthority);
+      else
+        path = A._Uri__removeDotSegments(path);
+      if (A._Uri$_internal("", userInfo, t1 && B.JSString_methods.startsWith$1(path, "//") ? "" : host, port, path, query, fragment).toFilePath$0() === "a\\b")
+        return $.$get$Style_windows();
+      return $.$get$Style_posix();
+    },
+    Style: function Style() {
+    },
+    PosixStyle: function PosixStyle(t0, t1, t2) {
+      this.separatorPattern = t0;
+      this.needsSeparatorPattern = t1;
+      this.rootPattern = t2;
+    },
+    UrlStyle: function UrlStyle(t0, t1, t2, t3) {
+      var _ = this;
+      _.separatorPattern = t0;
+      _.needsSeparatorPattern = t1;
+      _.rootPattern = t2;
+      _.relativeRootPattern = t3;
+    },
+    WindowsStyle: function WindowsStyle(t0, t1, t2, t3) {
+      var _ = this;
+      _.separatorPattern = t0;
+      _.needsSeparatorPattern = t1;
+      _.rootPattern = t2;
+      _.relativeRootPattern = t3;
+    },
+    FileLocation$_(file, offset) {
+      if (offset < 0)
+        A.throwExpression(A.RangeError$("Offset may not be negative, was " + offset + "."));
+      else if (offset > file._decodedChars.length)
+        A.throwExpression(A.RangeError$("Offset " + offset + string$._must_ + file.get$length(0) + "."));
+      return new A.FileLocation(file, offset);
+    },
+    SourceFile: function SourceFile(t0, t1, t2) {
+      var _ = this;
+      _.url = t0;
+      _._lineStarts = t1;
+      _._decodedChars = t2;
+      _._cachedLine = null;
+    },
+    FileLocation: function FileLocation(t0, t1) {
+      this.file = t0;
+      this.offset = t1;
+    },
+    _FileSpan: function _FileSpan(t0, t1, t2) {
+      this.file = t0;
+      this._file$_start = t1;
+      this._end = t2;
+    },
+    Highlighter$(span, color) {
+      var t1 = A.Highlighter__collateLines(A._setArrayType([A._Highlight$(span, true)], type$.JSArray__Highlight)),
+        t2 = new A.Highlighter_closure(color).call$0(),
+        t3 = B.JSInt_methods.toString$0(B.JSArray_methods.get$last(t1).number + 1),
+        t4 = A.Highlighter__contiguous(t1) ? 0 : 3,
+        t5 = A._arrayInstanceType(t1);
+      return new A.Highlighter(t1, t2, null, 1 + Math.max(t3.length, t4), new A.MappedListIterable(t1, t5._eval$1("int(1)")._as(new A.Highlighter$__closure()), t5._eval$1("MappedListIterable<1,int>")).reduce$1(0, B.CONSTANT), !A.isAllTheSame(new A.MappedListIterable(t1, t5._eval$1("Object?(1)")._as(new A.Highlighter$__closure0()), t5._eval$1("MappedListIterable<1,Object?>"))), new A.StringBuffer(""));
+    },
+    Highlighter__contiguous(lines) {
+      var i, thisLine, nextLine;
+      for (i = 0; i < lines.length - 1;) {
+        thisLine = lines[i];
+        ++i;
+        nextLine = lines[i];
+        if (thisLine.number + 1 !== nextLine.number && J.$eq$(thisLine.url, nextLine.url))
+          return false;
+      }
+      return true;
+    },
+    Highlighter__collateLines(highlights) {
+      var t1, t2, t3,
+        highlightsByUrl = A.groupBy(highlights, new A.Highlighter__collateLines_closure(), type$._Highlight, type$.Object);
+      for (t1 = highlightsByUrl.get$values(0), t2 = A._instanceType(t1), t2 = t2._eval$1("@<1>")._bind$1(t2._rest[1]), t1 = new A.MappedIterator(J.get$iterator$ax(t1.__internal$_iterable), t1._f, t2._eval$1("MappedIterator<1,2>")), t2 = t2._rest[1]; t1.moveNext$0();) {
+        t3 = t1.__internal$_current;
+        if (t3 == null)
+          t3 = t2._as(t3);
+        J.sort$1$ax(t3, new A.Highlighter__collateLines_closure0());
+      }
+      t1 = highlightsByUrl.get$entries(highlightsByUrl);
+      t2 = A._instanceType(t1);
+      t3 = t2._eval$1("ExpandIterable<Iterable.E,_Line>");
+      return A.List_List$of(new A.ExpandIterable(t1, t2._eval$1("Iterable<_Line>(Iterable.E)")._as(new A.Highlighter__collateLines_closure1()), t3), true, t3._eval$1("Iterable.E"));
+    },
+    _Highlight$(span, primary) {
+      var t1 = new A._Highlight_closure(span).call$0();
+      return new A._Highlight(t1, true, null);
+    },
+    _Highlight__normalizeNewlines(span) {
+      var t1, endOffset, i, t2, t3, t4,
+        text = span.get$text(span);
+      if (!B.JSString_methods.contains$1(text, "\r\n"))
+        return span;
+      t1 = span.get$end();
+      endOffset = t1.get$offset(t1);
+      for (t1 = text.length - 1, i = 0; i < t1; ++i)
+        if (text.charCodeAt(i) === 13 && text.charCodeAt(i + 1) === 10)
+          --endOffset;
+      t1 = span.get$start(span);
+      t2 = span.get$sourceUrl();
+      t3 = span.get$end().get$line();
+      t2 = A.SourceLocation$(endOffset, span.get$end().get$column(), t3, t2);
+      t3 = A.stringReplaceAllUnchecked(text, "\r\n", "\n");
+      t4 = span.get$context();
+      return A.SourceSpanWithContext$(t1, t2, t3, A.stringReplaceAllUnchecked(t4, "\r\n", "\n"));
+    },
+    _Highlight__normalizeTrailingNewline(span) {
+      var context, text, start, end, t1, t2, t3;
+      if (!B.JSString_methods.endsWith$1(span.get$context(), "\n"))
+        return span;
+      if (B.JSString_methods.endsWith$1(span.get$text(span), "\n\n"))
+        return span;
+      context = B.JSString_methods.substring$2(span.get$context(), 0, span.get$context().length - 1);
+      text = span.get$text(span);
+      start = span.get$start(span);
+      end = span.get$end();
+      if (B.JSString_methods.endsWith$1(span.get$text(span), "\n")) {
+        t1 = A.findLineStart(span.get$context(), span.get$text(span), span.get$start(span).get$column());
+        t1.toString;
+        t1 = t1 + span.get$start(span).get$column() + span.get$length(span) === span.get$context().length;
+      } else
+        t1 = false;
+      if (t1) {
+        text = B.JSString_methods.substring$2(span.get$text(span), 0, span.get$text(span).length - 1);
+        if (text.length === 0)
+          end = start;
+        else {
+          t1 = span.get$end();
+          t1 = t1.get$offset(t1);
+          t2 = span.get$sourceUrl();
+          t3 = span.get$end().get$line();
+          end = A.SourceLocation$(t1 - 1, A._Highlight__lastLineLength(context), t3 - 1, t2);
+          t1 = span.get$start(span);
+          t1 = t1.get$offset(t1);
+          t2 = span.get$end();
+          start = t1 === t2.get$offset(t2) ? end : span.get$start(span);
+        }
+      }
+      return A.SourceSpanWithContext$(start, end, text, context);
+    },
+    _Highlight__normalizeEndOfLine(span) {
+      var text, t1, t2, t3, t4;
+      if (span.get$end().get$column() !== 0)
+        return span;
+      if (span.get$end().get$line() === span.get$start(span).get$line())
+        return span;
+      text = B.JSString_methods.substring$2(span.get$text(span), 0, span.get$text(span).length - 1);
+      t1 = span.get$start(span);
+      t2 = span.get$end();
+      t2 = t2.get$offset(t2);
+      t3 = span.get$sourceUrl();
+      t4 = span.get$end().get$line();
+      t3 = A.SourceLocation$(t2 - 1, text.length - B.JSString_methods.lastIndexOf$1(text, "\n") - 1, t4 - 1, t3);
+      return A.SourceSpanWithContext$(t1, t3, text, B.JSString_methods.endsWith$1(span.get$context(), "\n") ? B.JSString_methods.substring$2(span.get$context(), 0, span.get$context().length - 1) : span.get$context());
+    },
+    _Highlight__lastLineLength(text) {
+      var t2,
+        t1 = text.length;
+      if (t1 === 0)
+        return 0;
+      else {
+        t2 = t1 - 1;
+        if (!(t2 >= 0))
+          return A.ioore(text, t2);
+        if (text.charCodeAt(t2) === 10)
+          return t1 === 1 ? 0 : t1 - B.JSString_methods.lastIndexOf$2(text, "\n", t1 - 2) - 1;
+        else
+          return t1 - B.JSString_methods.lastIndexOf$1(text, "\n") - 1;
+      }
+    },
+    Highlighter: function Highlighter(t0, t1, t2, t3, t4, t5, t6) {
+      var _ = this;
+      _._lines = t0;
+      _._primaryColor = t1;
+      _._secondaryColor = t2;
+      _._paddingBeforeSidebar = t3;
+      _._maxMultilineSpans = t4;
+      _._multipleFiles = t5;
+      _._highlighter$_buffer = t6;
+    },
+    Highlighter_closure: function Highlighter_closure(t0) {
+      this.color = t0;
+    },
+    Highlighter$__closure: function Highlighter$__closure() {
+    },
+    Highlighter$___closure: function Highlighter$___closure() {
+    },
+    Highlighter$__closure0: function Highlighter$__closure0() {
+    },
+    Highlighter__collateLines_closure: function Highlighter__collateLines_closure() {
+    },
+    Highlighter__collateLines_closure0: function Highlighter__collateLines_closure0() {
+    },
+    Highlighter__collateLines_closure1: function Highlighter__collateLines_closure1() {
+    },
+    Highlighter__collateLines__closure: function Highlighter__collateLines__closure(t0) {
+      this.line = t0;
+    },
+    Highlighter_highlight_closure: function Highlighter_highlight_closure() {
+    },
+    Highlighter__writeFileStart_closure: function Highlighter__writeFileStart_closure(t0) {
+      this.$this = t0;
+    },
+    Highlighter__writeMultilineHighlights_closure: function Highlighter__writeMultilineHighlights_closure(t0, t1, t2) {
+      this.$this = t0;
+      this.startLine = t1;
+      this.line = t2;
+    },
+    Highlighter__writeMultilineHighlights_closure0: function Highlighter__writeMultilineHighlights_closure0(t0, t1) {
+      this.$this = t0;
+      this.highlight = t1;
+    },
+    Highlighter__writeMultilineHighlights_closure1: function Highlighter__writeMultilineHighlights_closure1(t0) {
+      this.$this = t0;
+    },
+    Highlighter__writeMultilineHighlights_closure2: function Highlighter__writeMultilineHighlights_closure2(t0, t1, t2, t3, t4, t5, t6) {
+      var _ = this;
+      _._box_0 = t0;
+      _.$this = t1;
+      _.current = t2;
+      _.startLine = t3;
+      _.line = t4;
+      _.highlight = t5;
+      _.endLine = t6;
+    },
+    Highlighter__writeMultilineHighlights__closure: function Highlighter__writeMultilineHighlights__closure(t0, t1) {
+      this._box_0 = t0;
+      this.$this = t1;
+    },
+    Highlighter__writeMultilineHighlights__closure0: function Highlighter__writeMultilineHighlights__closure0(t0, t1) {
+      this.$this = t0;
+      this.vertical = t1;
+    },
+    Highlighter__writeHighlightedText_closure: function Highlighter__writeHighlightedText_closure(t0, t1, t2, t3) {
+      var _ = this;
+      _.$this = t0;
+      _.text = t1;
+      _.startColumn = t2;
+      _.endColumn = t3;
+    },
+    Highlighter__writeIndicator_closure: function Highlighter__writeIndicator_closure(t0, t1, t2) {
+      this.$this = t0;
+      this.line = t1;
+      this.highlight = t2;
+    },
+    Highlighter__writeIndicator_closure0: function Highlighter__writeIndicator_closure0(t0, t1, t2) {
+      this.$this = t0;
+      this.line = t1;
+      this.highlight = t2;
+    },
+    Highlighter__writeIndicator_closure1: function Highlighter__writeIndicator_closure1(t0, t1, t2, t3) {
+      var _ = this;
+      _.$this = t0;
+      _.coversWholeLine = t1;
+      _.line = t2;
+      _.highlight = t3;
+    },
+    Highlighter__writeSidebar_closure: function Highlighter__writeSidebar_closure(t0, t1, t2) {
+      this._box_0 = t0;
+      this.$this = t1;
+      this.end = t2;
+    },
+    _Highlight: function _Highlight(t0, t1, t2) {
+      this.span = t0;
+      this.isPrimary = t1;
+      this.label = t2;
+    },
+    _Highlight_closure: function _Highlight_closure(t0) {
+      this.span = t0;
+    },
+    _Line: function _Line(t0, t1, t2, t3) {
+      var _ = this;
+      _.text = t0;
+      _.number = t1;
+      _.url = t2;
+      _.highlights = t3;
+    },
+    SourceLocation$(offset, column, line, sourceUrl) {
+      if (offset < 0)
+        A.throwExpression(A.RangeError$("Offset may not be negative, was " + offset + "."));
+      else if (line < 0)
+        A.throwExpression(A.RangeError$("Line may not be negative, was " + line + "."));
+      else if (column < 0)
+        A.throwExpression(A.RangeError$("Column may not be negative, was " + column + "."));
+      return new A.SourceLocation(sourceUrl, offset, line, column);
+    },
+    SourceLocation: function SourceLocation(t0, t1, t2, t3) {
+      var _ = this;
+      _.sourceUrl = t0;
+      _.offset = t1;
+      _.line = t2;
+      _.column = t3;
+    },
+    SourceLocationMixin: function SourceLocationMixin() {
+    },
+    SourceSpanBase: function SourceSpanBase() {
+    },
+    SourceSpanFormatException$(message, span, source) {
+      return new A.SourceSpanFormatException(source, message, span);
+    },
+    SourceSpanException: function SourceSpanException() {
+    },
+    SourceSpanFormatException: function SourceSpanFormatException(t0, t1, t2) {
+      this.source = t0;
+      this._span_exception$_message = t1;
+      this._span = t2;
+    },
+    SourceSpanMixin: function SourceSpanMixin() {
+    },
+    SourceSpanWithContext$(start, end, text, _context) {
+      var t1 = new A.SourceSpanWithContext(_context, start, end, text);
+      t1.SourceSpanBase$3(start, end, text);
+      if (!B.JSString_methods.contains$1(_context, text))
+        A.throwExpression(A.ArgumentError$('The context line "' + _context + '" must contain "' + text + '".', null));
+      if (A.findLineStart(_context, text, start.get$column()) == null)
+        A.throwExpression(A.ArgumentError$('The span text "' + text + '" must start at column ' + (start.get$column() + 1) + ' in a line within "' + _context + '".', null));
+      return t1;
+    },
+    SourceSpanWithContext: function SourceSpanWithContext(t0, t1, t2, t3) {
+      var _ = this;
+      _._context = t0;
+      _.start = t1;
+      _.end = t2;
+      _.text = t3;
+    },
+    StringScannerException: function StringScannerException(t0, t1, t2) {
+      this.source = t0;
+      this._span_exception$_message = t1;
+      this._span = t2;
+    },
+    StringScanner: function StringScanner(t0, t1) {
+      var _ = this;
+      _.sourceUrl = t0;
+      _.string = t1;
+      _._string_scanner$_position = 0;
+      _._lastMatchPosition = _._lastMatch = null;
+    },
+    AuthController: function AuthController(t0, t1, t2, t3) {
+      var _ = this;
+      _.clientId = t0;
+      _.clientSecret = t1;
+      _.redirectUri = t2;
+      _.accessToken = null;
+      _._dio = t3;
+    },
+    CanvasController: function CanvasController(t0, t1, t2, t3) {
+      var _ = this;
+      _.context = _.canvas = null;
+      _.shapes = t0;
+      _.screenshots = t1;
+      _.circleCount = 0;
+      _.commentsList = t2;
+      _.isDrawing = false;
+      _.startPoint = null;
+      _._toolBar = t3;
+    },
+    CanvasController_showCanvas_closure: function CanvasController_showCanvas_closure(t0) {
+      this.$this = t0;
+    },
+    CanvasController_showCanvas_closure0: function CanvasController_showCanvas_closure0(t0) {
+      this.$this = t0;
+    },
+    CanvasController_showCanvas_closure1: function CanvasController_showCanvas_closure1(t0) {
+      this.$this = t0;
+    },
+    CanvasController_showCanvas_closure2: function CanvasController_showCanvas_closure2(t0) {
+      this.$this = t0;
+    },
+    CanvasController_handleCanvasClick_closure: function CanvasController_handleCanvasClick_closure(t0, t1) {
+      this.input = t0;
+      this.commentMap = t1;
+    },
+    CanvasController_handleCanvasClick_closure0: function CanvasController_handleCanvasClick_closure0(t0, t1, t2) {
+      this.$this = t0;
+      this.handleDiv = t1;
+      this.commentMap = t2;
     },
     main() {
       var $async$goto = 0,
         $async$completer = A._makeAsyncAwaitCompleter(type$.void),
-        link, bootstrap, feedbackButton, t2, popup, t3, t1;
+        link, bootstrap, feedbackButton, authButton, popup, t1, t2, t3, t4;
       var $async$main = A._wrapJsFunctionForAsync(function($async$errorCode, $async$result) {
         if ($async$errorCode === 1)
           return A._asyncRethrow($async$result, $async$completer);
@@ -4689,12 +8756,18 @@
           switch ($async$goto) {
             case 0:
               // Function start
-              t1 = new A.BaseOptions($, $, null);
-              t1._RequestConfig$16$contentType$extra$followRedirects$headers$listFormat$maxRedirects$method$persistentConnection$preserveHeaderCase$receiveDataWhenStatusError$receiveTimeout$requestEncoder$responseDecoder$responseType$sendTimeout$validateStatus(null, null, null, null, null, null, null, null, false, null, null, null, null, B.ResponseType_0, null, null);
-              t1.OptionsMixin___OptionsMixin__baseUrl_A = "";
-              t1.set$__OptionsMixin_queryParameters_A(type$.Map_String_dynamic._as(A.LinkedHashMap_LinkedHashMap$_empty(type$.String, type$.dynamic)));
-              t1.OptionsMixin__connectTimeout = null;
-              type$.BaseOptions._as(t1);
+              t1 = new A.DioForBrowser($, new A.Interceptors(A._setArrayType([B.C_ImplyContentTypeInterceptor], type$.JSArray_nullable_Interceptor)), $, new A.FusedTransformer(51200), false);
+              t2 = type$.String;
+              t3 = type$.dynamic;
+              t4 = new A.BaseOptions($, $, null, "GET", false, null, null, B.ResponseType_0, A.options___defaultValidateStatus$closure(), true, A.LinkedHashMap_LinkedHashMap$_empty(t2, t3), true, 5, true, null, null, B.ListFormat_4);
+              t4._RequestConfig$16$contentType$extra$followRedirects$headers$listFormat$maxRedirects$method$persistentConnection$preserveHeaderCase$receiveDataWhenStatusError$receiveTimeout$requestEncoder$responseDecoder$responseType$sendTimeout$validateStatus(null, null, null, null, null, null, null, null, false, null, null, null, null, B.ResponseType_0, null, null);
+              t4.set$baseUrl("");
+              t4.set$__OptionsMixin_queryParameters_A(type$.Map_String_dynamic._as(A.LinkedHashMap_LinkedHashMap$_empty(t2, t3)));
+              t4.set$connectTimeout(null);
+              t2 = t4;
+              t1.DioMixin___DioMixin_options_A = type$.BaseOptions._as(t2);
+              t1.DioMixin___DioMixin_httpClientAdapter_A = new A.BrowserHttpClientAdapter(A.LinkedHashSet_LinkedHashSet$_empty(type$.HttpRequest));
+              A.auth(new A.AuthController("1207894088371778", "de154df256c664c6d534198326431c49", "http://localhost:63342/plugin/index.html", t1));
               t1 = document;
               link = t1.createElement("link");
               link.rel = "stylesheet";
@@ -4707,9 +8780,13 @@
               feedbackButton = t1.createElement("button");
               feedbackButton.id = "feedbackButton";
               B.ButtonElement_methods.setInnerHtml$1(feedbackButton, '<i class="bi bi-chat-right-dots-fill"></i>');
+              authButton = t1.createElement("button");
+              authButton.id = "authButton";
+              B.ButtonElement_methods.setInnerHtml$1(authButton, '<img src="assets/asana.png" alt="Asana Icon" />');
               t2 = type$._ElementEventStreamImpl_MouseEvent;
               A._EventStreamSubscription$(feedbackButton, "click", t2._eval$1("~(1)?")._as(new A.main_closure()), false, t2._precomputed1);
               t1.body.appendChild(feedbackButton).toString;
+              t1.body.appendChild(authButton).toString;
               popup = t1.createElement("div");
               popup.id = "feedbackPopup";
               t2 = popup.style;
@@ -4732,61 +8809,60 @@
       });
       return A._asyncStartSync($async$main, $async$completer);
     },
+    auth(authController) {
+      var $async$goto = 0,
+        $async$completer = A._makeAsyncAwaitCompleter(type$.dynamic),
+        code, t1, t2;
+      var $async$auth = A._wrapJsFunctionForAsync(function($async$errorCode, $async$result) {
+        if ($async$errorCode === 1)
+          return A._asyncRethrow($async$result, $async$completer);
+        while (true)
+          switch ($async$goto) {
+            case 0:
+              // Function start
+              t1 = type$.Location;
+              t2 = t1._as(window.location).href;
+              t2.toString;
+              $async$goto = B.JSString_methods.contains$1(t2, "code=") ? 2 : 3;
+              break;
+            case 2:
+              // then
+              t1 = t1._as(window.location).href;
+              t1.toString;
+              code = A.Uri_parse(t1).get$queryParameters().$index(0, "code");
+              A.print("CODE:-  " + A.S(code) + "  ");
+              $async$goto = code != null ? 4 : 5;
+              break;
+            case 4:
+              // then
+              $async$goto = 6;
+              return A._asyncAwait(authController.fetchToken$1(code), $async$auth);
+            case 6:
+              // returning from await.
+              t1 = authController.accessToken;
+              t1.toString;
+              A.print("authController.accessToken!" + t1);
+              t1 = window.localStorage;
+              t1.toString;
+              t2 = authController.accessToken;
+              t2.toString;
+              t1.setItem("asana_token", t2);
+              A.print("window.localStorage:-" + A.S(window.localStorage.getItem("asana_token")));
+            case 5:
+              // join
+            case 3:
+              // join
+              // implicit return
+              return A._asyncReturn(null, $async$completer);
+          }
+      });
+      return A._asyncStartSync($async$auth, $async$completer);
+    },
     main_closure: function main_closure() {
     },
     main_closure0: function main_closure0() {
     },
     main_closure1: function main_closure1() {
-    },
-    Shape: function Shape(t0, t1, t2) {
-      this.type = t0;
-      this.start = t1;
-      this.end = t2;
-    },
-    CanvasController: function CanvasController(t0, t1, t2, t3) {
-      var _ = this;
-      _.toolbar = _.context = _.canvas = null;
-      _.shapes = t0;
-      _.screenshots = t1;
-      _.circleCount = 0;
-      _.commentsList = t2;
-      _.isDrawing = false;
-      _.currentTool = "";
-      _.startPoint = null;
-      _._reporter = t3;
-    },
-    CanvasController_showCanvas_closure: function CanvasController_showCanvas_closure(t0) {
-      this.$this = t0;
-    },
-    CanvasController_showCanvas_closure0: function CanvasController_showCanvas_closure0(t0) {
-      this.$this = t0;
-    },
-    CanvasController_showCanvas_closure1: function CanvasController_showCanvas_closure1(t0) {
-      this.$this = t0;
-    },
-    CanvasController_showCanvas_closure2: function CanvasController_showCanvas_closure2(t0) {
-      this.$this = t0;
-    },
-    CanvasController_showCanvas_closure3: function CanvasController_showCanvas_closure3(t0) {
-      this.$this = t0;
-    },
-    CanvasController_showCanvas_closure4: function CanvasController_showCanvas_closure4(t0) {
-      this.$this = t0;
-    },
-    CanvasController_showCanvas_closure5: function CanvasController_showCanvas_closure5(t0) {
-      this.$this = t0;
-    },
-    CanvasController_showCanvas_closure6: function CanvasController_showCanvas_closure6(t0) {
-      this.$this = t0;
-    },
-    CanvasController_handleCanvasClick_closure: function CanvasController_handleCanvasClick_closure(t0, t1) {
-      this.input = t0;
-      this.commentMap = t1;
-    },
-    CanvasController_handleCanvasClick_closure0: function CanvasController_handleCanvasClick_closure0(t0, t1, t2) {
-      this.$this = t0;
-      this.handleDiv = t1;
-      this.commentMap = t2;
     },
     Reporter: function Reporter(t0, t1) {
       this.reportPopup = null;
@@ -4812,7 +8888,7 @@
       var _ = this;
       _.canvas = t0;
       _.context = t1;
-      _.backupImageData = _.selectionOverlay = _.end = _.start = null;
+      _.overlayContext = _.overlayCanvas = _.selectionOverlay = _.end = _.start = null;
       _.onScreenshotTaken = t2;
     },
     ScreenshotController_startSelection_closure: function ScreenshotController_startSelection_closure(t0) {
@@ -4824,7 +8900,40 @@
     ScreenshotController_startSelection_closure1: function ScreenshotController_startSelection_closure1(t0) {
       this.$this = t0;
     },
-    ScreenshotController__takeScreenshot_closure: function ScreenshotController__takeScreenshot_closure(t0) {
+    ScreenshotController__takeScreenshot_closure: function ScreenshotController__takeScreenshot_closure(t0, t1, t2) {
+      this.$this = t0;
+      this.end = t1;
+      this.start = t2;
+    },
+    ScreenshotController__takeScreenshot__closure: function ScreenshotController__takeScreenshot__closure(t0, t1, t2, t3, t4, t5) {
+      var _ = this;
+      _.$this = t0;
+      _.cropContext = t1;
+      _.image = t2;
+      _.start = t3;
+      _.end = t4;
+      _.cropCanvas = t5;
+    },
+    Shape: function Shape(t0, t1, t2) {
+      this.type = t0;
+      this.start = t1;
+      this.end = t2;
+    },
+    ToolBar: function ToolBar(t0, t1) {
+      this.currentTool = "";
+      this._reporter = t0;
+      this.commentsList = t1;
+    },
+    ToolBar_createToolBar_closure: function ToolBar_createToolBar_closure(t0) {
+      this.$this = t0;
+    },
+    ToolBar_createToolBar_closure0: function ToolBar_createToolBar_closure0(t0) {
+      this.$this = t0;
+    },
+    ToolBar_createToolBar_closure1: function ToolBar_createToolBar_closure1(t0) {
+      this.$this = t0;
+    },
+    ToolBar_createToolBar_closure2: function ToolBar_createToolBar_closure2(t0) {
       this.$this = t0;
     },
     isBrowserObject(o) {
@@ -4845,11 +8954,260 @@
       }
       throw "Unable to print message: " + String(string);
     },
-    throwLateFieldNI(fieldName) {
-      A.throwExpressionWithWrapper(new A.LateError("Field '" + fieldName + "' has not been initialized."), new Error());
+    groupBy(values, key, $S, $T) {
+      var t1, _i, element, t2, t3,
+        map = A.LinkedHashMap_LinkedHashMap$_empty($T, $S._eval$1("List<0>"));
+      for (t1 = $S._eval$1("JSArray<0>"), _i = 0; _i < 1; ++_i) {
+        element = values[_i];
+        t2 = key.call$1(element);
+        t3 = map.$index(0, t2);
+        if (t3 == null) {
+          t3 = A._setArrayType([], t1);
+          map.$indexSet(0, t2, t3);
+          t2 = t3;
+        } else
+          t2 = t3;
+        J.add$1$ax(t2, element);
+      }
+      return map;
     },
-    throwLateFieldADI(fieldName) {
-      A.throwExpressionWithWrapper(new A.LateError("Field '" + fieldName + "' has been assigned during initialization."), new Error());
+    consolidateBytes(stream) {
+      return A.consolidateBytes$body(stream);
+    },
+    consolidateBytes$body(stream) {
+      var $async$goto = 0,
+        $async$completer = A._makeAsyncAwaitCompleter(type$.Uint8List),
+        $async$returnValue, $async$handler = 2, $async$currentError, $async$next = [], chunk, t1, builder, $async$temp1;
+      var $async$consolidateBytes = A._wrapJsFunctionForAsync(function($async$errorCode, $async$result) {
+        if ($async$errorCode === 1) {
+          $async$currentError = $async$result;
+          $async$goto = $async$handler;
+        }
+        while (true)
+          switch ($async$goto) {
+            case 0:
+              // Function start
+              t1 = A._setArrayType([], type$.JSArray_Uint8List);
+              builder = new A._BytesBuilder(t1);
+              t1 = new A._StreamIterator(A.checkNotNullable(stream, "stream", type$.Object), type$._StreamIterator_Uint8List);
+              $async$handler = 3;
+            case 6:
+              // for condition
+              $async$temp1 = A;
+              $async$goto = 8;
+              return A._asyncAwait(t1.moveNext$0(), $async$consolidateBytes);
+            case 8:
+              // returning from await.
+              if (!$async$temp1.boolConversionCheck($async$result)) {
+                // goto after for
+                $async$goto = 7;
+                break;
+              }
+              chunk = t1.get$current();
+              J.add$1$ax(builder, chunk);
+              // goto for condition
+              $async$goto = 6;
+              break;
+            case 7:
+              // after for
+              $async$next.push(5);
+              // goto finally
+              $async$goto = 4;
+              break;
+            case 3:
+              // uncaught
+              $async$next = [2];
+            case 4:
+              // finally
+              $async$handler = 2;
+              $async$goto = 9;
+              return A._asyncAwait(t1.cancel$0(), $async$consolidateBytes);
+            case 9:
+              // returning from await.
+              // goto the next finally handler
+              $async$goto = $async$next.pop();
+              break;
+            case 5:
+              // after finally
+              $async$returnValue = builder.takeBytes$0();
+              // goto return
+              $async$goto = 1;
+              break;
+            case 1:
+              // return
+              return A._asyncReturn($async$returnValue, $async$completer);
+            case 2:
+              // rethrow
+              return A._asyncRethrow($async$currentError, $async$completer);
+          }
+      });
+      return A._asyncStartSync($async$consolidateBytes, $async$completer);
+    },
+    compute(callback, message, debugLabel, $Q, $R) {
+      return A.compute$body($R._eval$1("@<0>")._bind$1($Q)._eval$1("1/(2)")._as(callback), $Q._as(message), debugLabel, $Q, $R, $R);
+    },
+    compute$body(callback, message, debugLabel, $Q, $R, $async$type) {
+      var $async$goto = 0,
+        $async$completer = A._makeAsyncAwaitCompleter($async$type),
+        $async$returnValue, t1;
+      var $async$compute = A._wrapJsFunctionForAsync(function($async$errorCode, $async$result) {
+        if ($async$errorCode === 1)
+          return A._asyncRethrow($async$result, $async$completer);
+        while (true)
+          switch ($async$goto) {
+            case 0:
+              // Function start
+              t1 = A._Future$value(null, type$.Null);
+              $async$goto = 3;
+              return A._asyncAwait(t1, $async$compute);
+            case 3:
+              // returning from await.
+              $async$returnValue = callback.call$1(message);
+              // goto return
+              $async$goto = 1;
+              break;
+            case 1:
+              // return
+              return A._asyncReturn($async$returnValue, $async$completer);
+          }
+      });
+      return A._asyncStartSync($async$compute, $async$completer);
+    },
+    wrapFormatException($name, value, body, $T) {
+      var error, error0, t1, exception;
+      try {
+        t1 = body.call$0();
+        return t1;
+      } catch (exception) {
+        t1 = A.unwrapException(exception);
+        if (t1 instanceof A.SourceSpanFormatException) {
+          error = t1;
+          throw A.wrapException(A.SourceSpanFormatException$("Invalid " + $name + ": " + error._span_exception$_message, error._span, J.get$source$z(error)));
+        } else if (type$.FormatException._is(t1)) {
+          error0 = t1;
+          throw A.wrapException(A.FormatException$("Invalid " + $name + ' "' + value + '": ' + J.get$message$z(error0), J.get$source$z(error0), J.get$offset$x(error0)));
+        } else
+          throw exception;
+      }
+    },
+    current() {
+      var exception, t1, path, lastIndex, uri = null;
+      try {
+        uri = A.Uri_base();
+      } catch (exception) {
+        if (type$.Exception._is(A.unwrapException(exception))) {
+          t1 = $._current;
+          if (t1 != null)
+            return t1;
+          throw exception;
+        } else
+          throw exception;
+      }
+      if (J.$eq$(uri, $._currentUriBase)) {
+        t1 = $._current;
+        t1.toString;
+        return t1;
+      }
+      $._currentUriBase = uri;
+      if ($.$get$Style_platform() === $.$get$Style_url())
+        t1 = $._current = uri.resolve$1(".").toString$0(0);
+      else {
+        path = uri.toFilePath$0();
+        lastIndex = path.length - 1;
+        t1 = $._current = lastIndex === 0 ? path : B.JSString_methods.substring$2(path, 0, lastIndex);
+      }
+      return t1;
+    },
+    isAlphabetic(char) {
+      var t1;
+      if (!(char >= 65 && char <= 90))
+        t1 = char >= 97 && char <= 122;
+      else
+        t1 = true;
+      return t1;
+    },
+    driveLetterEnd(path, index) {
+      var t2, t3, _null = null,
+        t1 = path.length,
+        index0 = index + 2;
+      if (t1 < index0)
+        return _null;
+      if (!(index >= 0 && index < t1))
+        return A.ioore(path, index);
+      if (!A.isAlphabetic(path.charCodeAt(index)))
+        return _null;
+      t2 = index + 1;
+      if (!(t2 < t1))
+        return A.ioore(path, t2);
+      if (path.charCodeAt(t2) !== 58) {
+        t3 = index + 4;
+        if (t1 < t3)
+          return _null;
+        if (B.JSString_methods.substring$2(path, t2, t3).toLowerCase() !== "%3a")
+          return _null;
+        index = index0;
+      }
+      t2 = index + 2;
+      if (t1 === t2)
+        return t2;
+      if (!(t2 >= 0 && t2 < t1))
+        return A.ioore(path, t2);
+      if (path.charCodeAt(t2) !== 47)
+        return _null;
+      return index + 3;
+    },
+    isAllTheSame(iter) {
+      var firstValue, t1, t2, value;
+      if (iter.get$length(0) === 0)
+        return true;
+      firstValue = iter.get$first(0);
+      for (t1 = A.SubListIterable$(iter, 1, null, iter.$ti._eval$1("ListIterable.E")), t2 = t1.$ti, t1 = new A.ListIterator(t1, t1.get$length(0), t2._eval$1("ListIterator<ListIterable.E>")), t2 = t2._eval$1("ListIterable.E"); t1.moveNext$0();) {
+        value = t1.__internal$_current;
+        if (!J.$eq$(value == null ? t2._as(value) : value, firstValue))
+          return false;
+      }
+      return true;
+    },
+    replaceFirstNull(list, element, $E) {
+      var index = B.JSArray_methods.indexOf$1(list, null);
+      if (index < 0)
+        throw A.wrapException(A.ArgumentError$(A.S(list) + " contains no null elements.", null));
+      B.JSArray_methods.$indexSet(list, index, element);
+    },
+    replaceWithNull(list, element, $E) {
+      var index = B.JSArray_methods.indexOf$1(list, element);
+      if (index < 0)
+        throw A.wrapException(A.ArgumentError$(A.S(list) + " contains no elements matching " + element.toString$0(0) + ".", null));
+      B.JSArray_methods.$indexSet(list, index, null);
+    },
+    countCodeUnits(string, codeUnit) {
+      var t1, t2, count, t3;
+      for (t1 = new A.CodeUnits(string), t2 = type$.CodeUnits, t1 = new A.ListIterator(t1, t1.get$length(0), t2._eval$1("ListIterator<ListBase.E>")), t2 = t2._eval$1("ListBase.E"), count = 0; t1.moveNext$0();) {
+        t3 = t1.__internal$_current;
+        if ((t3 == null ? t2._as(t3) : t3) === codeUnit)
+          ++count;
+      }
+      return count;
+    },
+    findLineStart(context, text, column) {
+      var beginningOfLine, index, lineStart;
+      if (text.length === 0)
+        for (beginningOfLine = 0; true;) {
+          index = B.JSString_methods.indexOf$2(context, "\n", beginningOfLine);
+          if (index === -1)
+            return context.length - beginningOfLine >= column ? beginningOfLine : null;
+          if (index - beginningOfLine >= column)
+            return beginningOfLine;
+          beginningOfLine = index + 1;
+        }
+      index = B.JSString_methods.indexOf$1(context, text);
+      for (; index !== -1;) {
+        lineStart = index === 0 ? 0 : B.JSString_methods.lastIndexOf$2(context, "\n", index - 1) + 1;
+        if (column === index - lineStart)
+          return lineStart;
+        index = B.JSString_methods.indexOf$2(context, text, index + 1);
+      }
+      return null;
     }
   },
   B = {};
@@ -4942,6 +9300,35 @@
         A.throwExpression(A.UnsupportedError$("add"));
       receiver.push(value);
     },
+    removeAt$1(receiver, index) {
+      var t1;
+      if (!!receiver.fixed$length)
+        A.throwExpression(A.UnsupportedError$("removeAt"));
+      t1 = receiver.length;
+      if (index >= t1)
+        throw A.wrapException(A.RangeError$value(index, null));
+      return receiver.splice(index, 1)[0];
+    },
+    insertAll$2(receiver, index, iterable) {
+      var t1, insertionLength, end;
+      A._arrayInstanceType(receiver)._eval$1("Iterable<1>")._as(iterable);
+      if (!!receiver.fixed$length)
+        A.throwExpression(A.UnsupportedError$("insertAll"));
+      t1 = receiver.length;
+      A.RangeError_checkValueInInterval(index, 0, t1, "index");
+      insertionLength = iterable.length;
+      receiver.length = t1 + insertionLength;
+      end = index + insertionLength;
+      this.setRange$4(receiver, end, receiver.length, receiver, index);
+      this.setRange$3(receiver, index, end, iterable);
+    },
+    removeLast$0(receiver) {
+      if (!!receiver.fixed$length)
+        A.throwExpression(A.UnsupportedError$("removeLast"));
+      if (receiver.length === 0)
+        throw A.wrapException(A.diagnoseIndexError(receiver, -1));
+      return receiver.pop();
+    },
     remove$1(receiver, element) {
       var i;
       if (!!receiver.fixed$length)
@@ -4952,6 +9339,25 @@
           return true;
         }
       return false;
+    },
+    _removeWhere$2(receiver, test, removeMatching) {
+      var retained, end, i, element, t1;
+      A._arrayInstanceType(receiver)._eval$1("bool(1)")._as(test);
+      retained = [];
+      end = receiver.length;
+      for (i = 0; i < end; ++i) {
+        element = receiver[i];
+        if (!A.boolConversionCheck(test.call$1(element)))
+          retained.push(element);
+        if (receiver.length !== end)
+          throw A.wrapException(A.ConcurrentModificationError$(receiver));
+      }
+      t1 = retained.length;
+      if (t1 === end)
+        return;
+      this.set$length(receiver, t1);
+      for (i = 0; i < retained.length; ++i)
+        receiver[i] = retained[i];
     },
     addAll$1(receiver, collection) {
       var t1;
@@ -4976,14 +9382,79 @@
       for (i = 0; i < len; ++i)
         receiver.push(array[i]);
     },
+    clear$0(receiver) {
+      if (!!receiver.fixed$length)
+        A.throwExpression(A.UnsupportedError$("clear"));
+      receiver.length = 0;
+    },
     map$1$1(receiver, f, $T) {
       var t1 = A._arrayInstanceType(receiver);
       return new A.MappedListIterable(receiver, t1._bind$1($T)._eval$1("1(2)")._as(f), t1._eval$1("@<1>")._bind$1($T)._eval$1("MappedListIterable<1,2>"));
+    },
+    join$1(receiver, separator) {
+      var i,
+        list = A.List_List$filled(receiver.length, "", false, type$.String);
+      for (i = 0; i < receiver.length; ++i)
+        this.$indexSet(list, i, A.S(receiver[i]));
+      return list.join(separator);
+    },
+    take$1(receiver, n) {
+      return A.SubListIterable$(receiver, 0, A.checkNotNullable(n, "count", type$.int), A._arrayInstanceType(receiver)._precomputed1);
+    },
+    skip$1(receiver, n) {
+      return A.SubListIterable$(receiver, n, null, A._arrayInstanceType(receiver)._precomputed1);
+    },
+    fold$1$2(receiver, initialValue, combine, $T) {
+      var $length, value, i;
+      $T._as(initialValue);
+      A._arrayInstanceType(receiver)._bind$1($T)._eval$1("1(1,2)")._as(combine);
+      $length = receiver.length;
+      for (value = initialValue, i = 0; i < $length; ++i) {
+        value = combine.call$2(value, receiver[i]);
+        if (receiver.length !== $length)
+          throw A.wrapException(A.ConcurrentModificationError$(receiver));
+      }
+      return value;
     },
     elementAt$1(receiver, index) {
       if (!(index >= 0 && index < receiver.length))
         return A.ioore(receiver, index);
       return receiver[index];
+    },
+    get$first(receiver) {
+      if (receiver.length > 0)
+        return receiver[0];
+      throw A.wrapException(A.IterableElementError_noElement());
+    },
+    get$last(receiver) {
+      var t1 = receiver.length;
+      if (t1 > 0)
+        return receiver[t1 - 1];
+      throw A.wrapException(A.IterableElementError_noElement());
+    },
+    setRange$4(receiver, start, end, iterable, skipCount) {
+      var $length, otherList, t1, i;
+      A._arrayInstanceType(receiver)._eval$1("Iterable<1>")._as(iterable);
+      if (!!receiver.immutable$list)
+        A.throwExpression(A.UnsupportedError$("setRange"));
+      A.RangeError_checkValidRange(start, end, receiver.length);
+      $length = end - start;
+      if ($length === 0)
+        return;
+      A.RangeError_checkNotNegative(skipCount, "skipCount");
+      otherList = iterable;
+      t1 = J.getInterceptor$asx(otherList);
+      if (skipCount + $length > t1.get$length(otherList))
+        throw A.wrapException(A.IterableElementError_tooFew());
+      if (skipCount < start)
+        for (i = $length - 1; i >= 0; --i)
+          receiver[start + i] = t1.$index(otherList, skipCount + i);
+      else
+        for (i = 0; i < $length; ++i)
+          receiver[start + i] = t1.$index(otherList, skipCount + i);
+    },
+    setRange$3(receiver, start, end, iterable) {
+      return this.setRange$4(receiver, start, end, iterable, 0);
     },
     any$1(receiver, test) {
       var end, i;
@@ -4997,12 +9468,75 @@
       }
       return false;
     },
+    sort$1(receiver, compare) {
+      var len, a, b, undefineds, i,
+        t1 = A._arrayInstanceType(receiver);
+      t1._eval$1("int(1,1)?")._as(compare);
+      if (!!receiver.immutable$list)
+        A.throwExpression(A.UnsupportedError$("sort"));
+      len = receiver.length;
+      if (len < 2)
+        return;
+      if (len === 2) {
+        a = receiver[0];
+        b = receiver[1];
+        t1 = compare.call$2(a, b);
+        if (typeof t1 !== "number")
+          return t1.$gt();
+        if (t1 > 0) {
+          receiver[0] = b;
+          receiver[1] = a;
+        }
+        return;
+      }
+      if (t1._precomputed1._is(null)) {
+        for (undefineds = 0, i = 0; i < receiver.length; ++i)
+          if (receiver[i] === void 0) {
+            receiver[i] = null;
+            ++undefineds;
+          }
+      } else
+        undefineds = 0;
+      receiver.sort(A.convertDartClosureToJS(compare, 2));
+      if (undefineds > 0)
+        this._replaceSomeNullsWithUndefined$1(receiver, undefineds);
+    },
+    _replaceSomeNullsWithUndefined$1(receiver, count) {
+      var i0,
+        i = receiver.length;
+      for (; i0 = i - 1, i > 0; i = i0)
+        if (receiver[i0] === null) {
+          receiver[i0] = void 0;
+          --count;
+          if (count === 0)
+            break;
+        }
+    },
+    indexOf$1(receiver, element) {
+      var i,
+        $length = receiver.length;
+      if (0 >= $length)
+        return -1;
+      for (i = 0; i < $length; ++i) {
+        if (!(i < receiver.length))
+          return A.ioore(receiver, i);
+        if (J.$eq$(receiver[i], element))
+          return i;
+      }
+      return -1;
+    },
     contains$1(receiver, other) {
       var i;
       for (i = 0; i < receiver.length; ++i)
         if (J.$eq$(receiver[i], other))
           return true;
       return false;
+    },
+    get$isEmpty(receiver) {
+      return receiver.length === 0;
+    },
+    get$isNotEmpty(receiver) {
+      return receiver.length !== 0;
     },
     toString$0(receiver) {
       return A.Iterable_iterableToFullString(receiver, "[", "]");
@@ -5016,11 +9550,40 @@
     get$length(receiver) {
       return receiver.length;
     },
+    set$length(receiver, newLength) {
+      if (!!receiver.fixed$length)
+        A.throwExpression(A.UnsupportedError$("set length"));
+      if (newLength < 0)
+        throw A.wrapException(A.RangeError$range(newLength, 0, null, "newLength", null));
+      if (newLength > receiver.length)
+        A._arrayInstanceType(receiver)._precomputed1._as(null);
+      receiver.length = newLength;
+    },
     $index(receiver, index) {
+      A._asInt(index);
       if (!(index >= 0 && index < receiver.length))
         throw A.wrapException(A.diagnoseIndexError(receiver, index));
       return receiver[index];
     },
+    $indexSet(receiver, index, value) {
+      A._arrayInstanceType(receiver)._precomputed1._as(value);
+      if (!!receiver.immutable$list)
+        A.throwExpression(A.UnsupportedError$("indexed set"));
+      if (!(index >= 0 && index < receiver.length))
+        throw A.wrapException(A.diagnoseIndexError(receiver, index));
+      receiver[index] = value;
+    },
+    indexWhere$1(receiver, test) {
+      var i;
+      A._arrayInstanceType(receiver)._eval$1("bool(1)")._as(test);
+      if (0 >= receiver.length)
+        return -1;
+      for (i = 0; i < receiver.length; ++i)
+        if (A.boolConversionCheck(test.call$1(receiver[i])))
+          return i;
+      return -1;
+    },
+    $isJSIndexable: 1,
     $isEfficientLengthIterable: 1,
     $isIterable: 1,
     $isList: 1
@@ -5054,6 +9617,33 @@
     $isIterator: 1
   };
   J.JSNumber.prototype = {
+    compareTo$1(receiver, b) {
+      var bIsNegative;
+      A._asNum(b);
+      if (receiver < b)
+        return -1;
+      else if (receiver > b)
+        return 1;
+      else if (receiver === b) {
+        if (receiver === 0) {
+          bIsNegative = this.get$isNegative(b);
+          if (this.get$isNegative(receiver) === bIsNegative)
+            return 0;
+          if (this.get$isNegative(receiver))
+            return -1;
+          return 1;
+        }
+        return 0;
+      } else if (isNaN(receiver)) {
+        if (isNaN(b))
+          return 0;
+        return 1;
+      } else
+        return -1;
+    },
+    get$isNegative(receiver) {
+      return receiver === 0 ? 1 / receiver < 0 : receiver < 0;
+    },
     toInt$0(receiver) {
       var t1;
       if (receiver >= -2147483648 && receiver <= 2147483647)
@@ -5064,6 +9654,20 @@
       }
       throw A.wrapException(A.UnsupportedError$("" + receiver + ".toInt()"));
     },
+    floor$0(receiver) {
+      var truncated, d;
+      if (receiver >= 0) {
+        if (receiver <= 2147483647)
+          return receiver | 0;
+      } else if (receiver >= -2147483648) {
+        truncated = receiver | 0;
+        return receiver === truncated ? truncated : truncated - 1;
+      }
+      d = Math.floor(receiver);
+      if (isFinite(d))
+        return d;
+      throw A.wrapException(A.UnsupportedError$("" + receiver + ".floor()"));
+    },
     round$0(receiver) {
       if (receiver > 0) {
         if (receiver !== 1 / 0)
@@ -5071,6 +9675,34 @@
       } else if (receiver > -1 / 0)
         return 0 - Math.round(0 - receiver);
       throw A.wrapException(A.UnsupportedError$("" + receiver + ".round()"));
+    },
+    toRadixString$1(receiver, radix) {
+      var result, t1, t2, match, exponent;
+      if (radix < 2 || radix > 36)
+        throw A.wrapException(A.RangeError$range(radix, 2, 36, "radix", null));
+      result = receiver.toString(radix);
+      t1 = result.length;
+      t2 = t1 - 1;
+      if (!(t2 >= 0))
+        return A.ioore(result, t2);
+      if (result.charCodeAt(t2) !== 41)
+        return result;
+      match = /^([\da-z]+)(?:\.([\da-z]+))?\(e\+(\d+)\)$/.exec(result);
+      if (match == null)
+        A.throwExpression(A.UnsupportedError$("Unexpected toString result: " + result));
+      t1 = match.length;
+      if (1 >= t1)
+        return A.ioore(match, 1);
+      result = match[1];
+      if (3 >= t1)
+        return A.ioore(match, 3);
+      exponent = +match[3];
+      t1 = match[2];
+      if (t1 != null) {
+        result += t1;
+        exponent -= t1.length;
+      }
+      return result + B.JSString_methods.$mul("0", exponent);
     },
     toString$0(receiver) {
       if (receiver === 0 && 1 / receiver < 0)
@@ -5089,6 +9721,31 @@
       scaled = absolute < 1 ? absolute / factor : factor / absolute;
       return ((scaled * 9007199254740992 | 0) + (scaled * 3542243181176521 | 0)) * 599197 + floorLog2 * 1259 & 536870911;
     },
+    $add(receiver, other) {
+      return receiver + other;
+    },
+    $mod(receiver, other) {
+      var result = receiver % other;
+      if (result === 0)
+        return 0;
+      if (result > 0)
+        return result;
+      return result + other;
+    },
+    _tdivFast$1(receiver, other) {
+      return (receiver | 0) === receiver ? receiver / other | 0 : this._tdivSlow$1(receiver, other);
+    },
+    _tdivSlow$1(receiver, other) {
+      var quotient = receiver / other;
+      if (quotient >= -2147483648 && quotient <= 2147483647)
+        return quotient | 0;
+      if (quotient > 0) {
+        if (quotient !== 1 / 0)
+          return Math.floor(quotient);
+      } else if (quotient > -1 / 0)
+        return Math.ceil(quotient);
+      throw A.wrapException(A.UnsupportedError$("Result of truncating division is " + A.S(quotient) + ": " + A.S(receiver) + " ~/ " + other));
+    },
     _shrOtherPositive$1(receiver, other) {
       var t1;
       if (receiver > 0)
@@ -5098,6 +9755,11 @@
         t1 = receiver >> t1 >>> 0;
       }
       return t1;
+    },
+    _shrReceiverPositive$1(receiver, other) {
+      if (0 > other)
+        throw A.wrapException(A.argumentErrorValue(other));
+      return this._shrBothPositive$1(receiver, other);
     },
     _shrBothPositive$1(receiver, other) {
       return other > 31 ? 0 : receiver >>> other;
@@ -5122,29 +9784,155 @@
     $isTrustedGetRuntimeType: 1
   };
   J.JSString.prototype = {
+    allMatches$2(receiver, string, start) {
+      var t1 = string.length;
+      if (start > t1)
+        throw A.wrapException(A.RangeError$range(start, 0, t1, null, null));
+      return new A._StringAllMatchesIterable(string, receiver, start);
+    },
+    allMatches$1(receiver, string) {
+      return this.allMatches$2(receiver, string, 0);
+    },
+    matchAsPrefix$2(receiver, string, start) {
+      var t1, t2, i, t3, _null = null;
+      if (start < 0 || start > string.length)
+        throw A.wrapException(A.RangeError$range(start, 0, string.length, _null, _null));
+      t1 = receiver.length;
+      t2 = string.length;
+      if (start + t1 > t2)
+        return _null;
+      for (i = 0; i < t1; ++i) {
+        t3 = start + i;
+        if (!(t3 >= 0 && t3 < t2))
+          return A.ioore(string, t3);
+        if (string.charCodeAt(t3) !== receiver.charCodeAt(i))
+          return _null;
+      }
+      return new A.StringMatch(start, receiver);
+    },
     $add(receiver, other) {
       return receiver + other;
+    },
+    endsWith$1(receiver, other) {
+      var otherLength = other.length,
+        t1 = receiver.length;
+      if (otherLength > t1)
+        return false;
+      return other === this.substring$1(receiver, t1 - otherLength);
+    },
+    replaceRange$3(receiver, start, end, replacement) {
+      var e = A.RangeError_checkValidRange(start, end, receiver.length);
+      return A.stringReplaceRangeUnchecked(receiver, start, e, replacement);
     },
     startsWith$2(receiver, pattern, index) {
       var endIndex;
       if (index < 0 || index > receiver.length)
         throw A.wrapException(A.RangeError$range(index, 0, receiver.length, null, null));
-      endIndex = index + pattern.length;
-      if (endIndex > receiver.length)
-        return false;
-      return pattern === receiver.substring(index, endIndex);
+      if (typeof pattern == "string") {
+        endIndex = index + pattern.length;
+        if (endIndex > receiver.length)
+          return false;
+        return pattern === receiver.substring(index, endIndex);
+      }
+      return J.matchAsPrefix$2$s(pattern, receiver, index) != null;
     },
     startsWith$1(receiver, pattern) {
       return this.startsWith$2(receiver, pattern, 0);
     },
+    substring$2(receiver, start, end) {
+      return receiver.substring(start, A.RangeError_checkValidRange(start, end, receiver.length));
+    },
+    substring$1(receiver, start) {
+      return this.substring$2(receiver, start, null);
+    },
     toLowerCase$0(receiver) {
       return receiver.toLowerCase();
+    },
+    trim$0(receiver) {
+      var startIndex, t1, endIndex0,
+        result = receiver.trim(),
+        endIndex = result.length;
+      if (endIndex === 0)
+        return result;
+      if (0 >= endIndex)
+        return A.ioore(result, 0);
+      if (result.charCodeAt(0) === 133) {
+        startIndex = J.JSString__skipLeadingWhitespace(result, 1);
+        if (startIndex === endIndex)
+          return "";
+      } else
+        startIndex = 0;
+      t1 = endIndex - 1;
+      if (!(t1 >= 0))
+        return A.ioore(result, t1);
+      endIndex0 = result.charCodeAt(t1) === 133 ? J.JSString__skipTrailingWhitespace(result, t1) : endIndex;
+      if (startIndex === 0 && endIndex0 === endIndex)
+        return result;
+      return result.substring(startIndex, endIndex0);
+    },
+    $mul(receiver, times) {
+      var s, result;
+      if (0 >= times)
+        return "";
+      if (times === 1 || receiver.length === 0)
+        return receiver;
+      if (times !== times >>> 0)
+        throw A.wrapException(B.C_OutOfMemoryError);
+      for (s = receiver, result = ""; true;) {
+        if ((times & 1) === 1)
+          result = s + result;
+        times = times >>> 1;
+        if (times === 0)
+          break;
+        s += s;
+      }
+      return result;
+    },
+    padLeft$2(receiver, width, padding) {
+      var delta = width - receiver.length;
+      if (delta <= 0)
+        return receiver;
+      return this.$mul(padding, delta) + receiver;
+    },
+    padRight$1(receiver, width) {
+      var delta = width - receiver.length;
+      if (delta <= 0)
+        return receiver;
+      return receiver + this.$mul(" ", delta);
+    },
+    indexOf$2(receiver, pattern, start) {
+      var t1;
+      if (start < 0 || start > receiver.length)
+        throw A.wrapException(A.RangeError$range(start, 0, receiver.length, null, null));
+      t1 = receiver.indexOf(pattern, start);
+      return t1;
+    },
+    indexOf$1(receiver, pattern) {
+      return this.indexOf$2(receiver, pattern, 0);
+    },
+    lastIndexOf$2(receiver, pattern, start) {
+      var t1, t2;
+      if (start == null)
+        start = receiver.length;
+      else if (start < 0 || start > receiver.length)
+        throw A.wrapException(A.RangeError$range(start, 0, receiver.length, null, null));
+      t1 = pattern.length;
+      t2 = receiver.length;
+      if (start + t1 > t2)
+        start = t2 - t1;
+      return receiver.lastIndexOf(pattern, start);
+    },
+    lastIndexOf$1(receiver, pattern) {
+      return this.lastIndexOf$2(receiver, pattern, null);
     },
     contains$2(receiver, other, startIndex) {
       var t1 = receiver.length;
       if (startIndex > t1)
         throw A.wrapException(A.RangeError$range(startIndex, 0, t1, null, null));
       return A.stringContainsUnchecked(receiver, other, startIndex);
+    },
+    contains$1(receiver, other) {
+      return this.contains$2(receiver, other, 0);
     },
     toString$0(receiver) {
       return receiver;
@@ -5166,14 +9954,75 @@
     get$length(receiver) {
       return receiver.length;
     },
+    $index(receiver, index) {
+      A._asInt(index);
+      if (!(index >= 0 && index < receiver.length))
+        throw A.wrapException(A.diagnoseIndexError(receiver, index));
+      return receiver[index];
+    },
+    $isJSIndexable: 1,
     $isTrustedGetRuntimeType: 1,
     $isPattern: 1,
     $isString: 1
+  };
+  A._BytesBuilder.prototype = {
+    add$1(_, bytes) {
+      type$.List_int._as(bytes);
+      B.JSArray_methods.add$1(this._chunks, bytes);
+      this.__internal$_length = this.__internal$_length + bytes.length;
+    },
+    takeBytes$0() {
+      var t2, t3, buffer, offset, _i, chunk, offset0, _this = this,
+        t1 = _this.__internal$_length;
+      if (t1 === 0)
+        return $.$get$_CopyingBytesBuilder__emptyList();
+      t2 = _this._chunks;
+      t3 = t2.length;
+      if (t3 === 1) {
+        if (0 >= t3)
+          return A.ioore(t2, 0);
+        buffer = t2[0];
+        _this.__internal$_length = 0;
+        B.JSArray_methods.clear$0(t2);
+        return buffer;
+      }
+      buffer = new Uint8Array(t1);
+      for (offset = 0, _i = 0; _i < t2.length; t2.length === t3 || (0, A.throwConcurrentModificationError)(t2), ++_i, offset = offset0) {
+        chunk = t2[_i];
+        offset0 = offset + chunk.length;
+        B.NativeUint8List_methods.setRange$3(buffer, offset, offset0, chunk);
+      }
+      _this.__internal$_length = 0;
+      B.JSArray_methods.clear$0(t2);
+      return buffer;
+    },
+    get$length(_) {
+      return this.__internal$_length;
+    }
   };
   A.LateError.prototype = {
     toString$0(_) {
       return "LateInitializationError: " + this._message;
     }
+  };
+  A.CodeUnits.prototype = {
+    get$length(_) {
+      return this.__internal$_string.length;
+    },
+    $index(_, i) {
+      var t1;
+      A._asInt(i);
+      t1 = this.__internal$_string;
+      if (!(i >= 0 && i < t1.length))
+        return A.ioore(t1, i);
+      return t1.charCodeAt(i);
+    }
+  };
+  A.nullFuture_closure.prototype = {
+    call$0() {
+      return A.Future_Future$value(null, type$.Null);
+    },
+    $signature: 35
   };
   A.SentinelValue.prototype = {};
   A.EfficientLengthIterable.prototype = {};
@@ -5182,12 +10031,139 @@
       var _this = this;
       return new A.ListIterator(_this, _this.get$length(_this), A._instanceType(_this)._eval$1("ListIterator<ListIterable.E>"));
     },
+    get$isEmpty(_) {
+      return this.get$length(this) === 0;
+    },
+    get$first(_) {
+      if (this.get$length(this) === 0)
+        throw A.wrapException(A.IterableElementError_noElement());
+      return this.elementAt$1(0, 0);
+    },
+    join$1(_, separator) {
+      var first, t1, i, _this = this,
+        $length = _this.get$length(_this);
+      if (separator.length !== 0) {
+        if ($length === 0)
+          return "";
+        first = A.S(_this.elementAt$1(0, 0));
+        if ($length !== _this.get$length(_this))
+          throw A.wrapException(A.ConcurrentModificationError$(_this));
+        for (t1 = first, i = 1; i < $length; ++i) {
+          t1 = t1 + separator + A.S(_this.elementAt$1(0, i));
+          if ($length !== _this.get$length(_this))
+            throw A.wrapException(A.ConcurrentModificationError$(_this));
+        }
+        return t1.charCodeAt(0) == 0 ? t1 : t1;
+      } else {
+        for (i = 0, t1 = ""; i < $length; ++i) {
+          t1 += A.S(_this.elementAt$1(0, i));
+          if ($length !== _this.get$length(_this))
+            throw A.wrapException(A.ConcurrentModificationError$(_this));
+        }
+        return t1.charCodeAt(0) == 0 ? t1 : t1;
+      }
+    },
     where$1(_, test) {
       return this.super$Iterable$where(0, A._instanceType(this)._eval$1("bool(ListIterable.E)")._as(test));
     },
     map$1$1(_, toElement, $T) {
       var t1 = A._instanceType(this);
       return new A.MappedListIterable(this, t1._bind$1($T)._eval$1("1(ListIterable.E)")._as(toElement), t1._eval$1("@<ListIterable.E>")._bind$1($T)._eval$1("MappedListIterable<1,2>"));
+    },
+    reduce$1(_, combine) {
+      var $length, value, i, _this = this;
+      A._instanceType(_this)._eval$1("ListIterable.E(ListIterable.E,ListIterable.E)")._as(combine);
+      $length = _this.get$length(_this);
+      if ($length === 0)
+        throw A.wrapException(A.IterableElementError_noElement());
+      value = _this.elementAt$1(0, 0);
+      for (i = 1; i < $length; ++i) {
+        value = combine.call$2(value, _this.elementAt$1(0, i));
+        if ($length !== _this.get$length(_this))
+          throw A.wrapException(A.ConcurrentModificationError$(_this));
+      }
+      return value;
+    },
+    skip$1(_, count) {
+      return A.SubListIterable$(this, count, null, A._instanceType(this)._eval$1("ListIterable.E"));
+    }
+  };
+  A.SubListIterable.prototype = {
+    SubListIterable$3(_iterable, _start, _endOrLength, $E) {
+      var endOrLength,
+        t1 = this.__internal$_start;
+      A.RangeError_checkNotNegative(t1, "start");
+      endOrLength = this._endOrLength;
+      if (endOrLength != null) {
+        A.RangeError_checkNotNegative(endOrLength, "end");
+        if (t1 > endOrLength)
+          throw A.wrapException(A.RangeError$range(t1, 0, endOrLength, "start", null));
+      }
+    },
+    get$_endIndex() {
+      var $length = J.get$length$asx(this.__internal$_iterable),
+        endOrLength = this._endOrLength;
+      if (endOrLength == null || endOrLength > $length)
+        return $length;
+      return endOrLength;
+    },
+    get$_startIndex() {
+      var $length = J.get$length$asx(this.__internal$_iterable),
+        t1 = this.__internal$_start;
+      if (t1 > $length)
+        return $length;
+      return t1;
+    },
+    get$length(_) {
+      var endOrLength,
+        $length = J.get$length$asx(this.__internal$_iterable),
+        t1 = this.__internal$_start;
+      if (t1 >= $length)
+        return 0;
+      endOrLength = this._endOrLength;
+      if (endOrLength == null || endOrLength >= $length)
+        return $length - t1;
+      if (typeof endOrLength !== "number")
+        return endOrLength.$sub();
+      return endOrLength - t1;
+    },
+    elementAt$1(_, index) {
+      var _this = this,
+        realIndex = _this.get$_startIndex() + index;
+      if (index < 0 || realIndex >= _this.get$_endIndex())
+        throw A.wrapException(A.IndexError$withLength(index, _this.get$length(0), _this, "index"));
+      return J.elementAt$1$ax(_this.__internal$_iterable, realIndex);
+    },
+    skip$1(_, count) {
+      var newStart, endOrLength, _this = this;
+      A.RangeError_checkNotNegative(count, "count");
+      newStart = _this.__internal$_start + count;
+      endOrLength = _this._endOrLength;
+      if (endOrLength != null && newStart >= endOrLength)
+        return new A.EmptyIterable(_this.$ti._eval$1("EmptyIterable<1>"));
+      return A.SubListIterable$(_this.__internal$_iterable, newStart, endOrLength, _this.$ti._precomputed1);
+    },
+    toList$1$growable(_, growable) {
+      var $length, result, i, _this = this,
+        start = _this.__internal$_start,
+        t1 = _this.__internal$_iterable,
+        t2 = J.getInterceptor$asx(t1),
+        end = t2.get$length(t1),
+        endOrLength = _this._endOrLength;
+      if (endOrLength != null && endOrLength < end)
+        end = endOrLength;
+      $length = end - start;
+      if ($length <= 0) {
+        t1 = J.JSArray_JSArray$fixed(0, _this.$ti._precomputed1);
+        return t1;
+      }
+      result = A.List_List$filled($length, t2.elementAt$1(t1, start), false, _this.$ti._precomputed1);
+      for (i = 1; i < $length; ++i) {
+        B.JSArray_methods.$indexSet(result, i, t2.elementAt$1(t1, start + i));
+        if (t2.get$length(t1) < end)
+          throw A.wrapException(A.ConcurrentModificationError$(_this));
+      }
+      return result;
     }
   };
   A.ListIterator.prototype = {
@@ -5276,7 +10252,164 @@
     },
     $isIterator: 1
   };
-  A.FixedLengthListMixin.prototype = {};
+  A.ExpandIterable.prototype = {
+    get$iterator(_) {
+      var t1 = this.$ti;
+      return new A.ExpandIterator(J.get$iterator$ax(this.__internal$_iterable), this._f, B.C_EmptyIterator, t1._eval$1("@<1>")._bind$1(t1._rest[1])._eval$1("ExpandIterator<1,2>"));
+    }
+  };
+  A.ExpandIterator.prototype = {
+    get$current() {
+      var t1 = this.__internal$_current;
+      return t1 == null ? this.$ti._rest[1]._as(t1) : t1;
+    },
+    moveNext$0() {
+      var t1, t2, _this = this;
+      if (_this._currentExpansion == null)
+        return false;
+      for (t1 = _this._iterator, t2 = _this._f; !_this._currentExpansion.moveNext$0();) {
+        _this.set$__internal$_current(null);
+        if (t1.moveNext$0()) {
+          _this.set$_currentExpansion(null);
+          _this.set$_currentExpansion(J.get$iterator$ax(t2.call$1(t1.get$current())));
+        } else
+          return false;
+      }
+      _this.set$__internal$_current(_this._currentExpansion.get$current());
+      return true;
+    },
+    set$_currentExpansion(_currentExpansion) {
+      this._currentExpansion = this.$ti._eval$1("Iterator<2>?")._as(_currentExpansion);
+    },
+    set$__internal$_current(_current) {
+      this.__internal$_current = this.$ti._eval$1("2?")._as(_current);
+    },
+    $isIterator: 1
+  };
+  A.SkipIterable.prototype = {
+    skip$1(_, count) {
+      A.ArgumentError_checkNotNull(count, "count", type$.int);
+      A.RangeError_checkNotNegative(count, "count");
+      return new A.SkipIterable(this.__internal$_iterable, this._skipCount + count, A._instanceType(this)._eval$1("SkipIterable<1>"));
+    },
+    get$iterator(_) {
+      return new A.SkipIterator(J.get$iterator$ax(this.__internal$_iterable), this._skipCount, A._instanceType(this)._eval$1("SkipIterator<1>"));
+    }
+  };
+  A.EfficientLengthSkipIterable.prototype = {
+    get$length(_) {
+      var $length = J.get$length$asx(this.__internal$_iterable) - this._skipCount;
+      if ($length >= 0)
+        return $length;
+      return 0;
+    },
+    skip$1(_, count) {
+      A.ArgumentError_checkNotNull(count, "count", type$.int);
+      A.RangeError_checkNotNegative(count, "count");
+      return new A.EfficientLengthSkipIterable(this.__internal$_iterable, this._skipCount + count, this.$ti);
+    },
+    $isEfficientLengthIterable: 1
+  };
+  A.SkipIterator.prototype = {
+    moveNext$0() {
+      var t1, i;
+      for (t1 = this._iterator, i = 0; i < this._skipCount; ++i)
+        t1.moveNext$0();
+      this._skipCount = 0;
+      return t1.moveNext$0();
+    },
+    get$current() {
+      return this._iterator.get$current();
+    },
+    $isIterator: 1
+  };
+  A.EmptyIterable.prototype = {
+    get$iterator(_) {
+      return B.C_EmptyIterator;
+    },
+    get$length(_) {
+      return 0;
+    },
+    join$1(_, separator) {
+      return "";
+    },
+    map$1$1(_, toElement, $T) {
+      this.$ti._bind$1($T)._eval$1("1(2)")._as(toElement);
+      return new A.EmptyIterable($T._eval$1("EmptyIterable<0>"));
+    },
+    skip$1(_, count) {
+      A.RangeError_checkNotNegative(count, "count");
+      return this;
+    },
+    toList$1$growable(_, growable) {
+      var t1 = J.JSArray_JSArray$fixed(0, this.$ti._precomputed1);
+      return t1;
+    }
+  };
+  A.EmptyIterator.prototype = {
+    moveNext$0() {
+      return false;
+    },
+    get$current() {
+      throw A.wrapException(A.IterableElementError_noElement());
+    },
+    $isIterator: 1
+  };
+  A.WhereTypeIterable.prototype = {
+    get$iterator(_) {
+      return new A.WhereTypeIterator(J.get$iterator$ax(this._source), this.$ti._eval$1("WhereTypeIterator<1>"));
+    }
+  };
+  A.WhereTypeIterator.prototype = {
+    moveNext$0() {
+      var t1, t2;
+      for (t1 = this._source, t2 = this.$ti._precomputed1; t1.moveNext$0();)
+        if (t2._is(t1.get$current()))
+          return true;
+      return false;
+    },
+    get$current() {
+      return this.$ti._precomputed1._as(this._source.get$current());
+    },
+    $isIterator: 1
+  };
+  A.FixedLengthListMixin.prototype = {
+    set$length(receiver, newLength) {
+      throw A.wrapException(A.UnsupportedError$("Cannot change the length of a fixed-length list"));
+    },
+    add$1(receiver, value) {
+      A.instanceType(receiver)._eval$1("FixedLengthListMixin.E")._as(value);
+      throw A.wrapException(A.UnsupportedError$("Cannot add to a fixed-length list"));
+    }
+  };
+  A.UnmodifiableListMixin.prototype = {
+    $indexSet(_, index, value) {
+      A._instanceType(this)._eval$1("UnmodifiableListMixin.E")._as(value);
+      throw A.wrapException(A.UnsupportedError$("Cannot modify an unmodifiable list"));
+    },
+    set$length(_, newLength) {
+      throw A.wrapException(A.UnsupportedError$("Cannot change the length of an unmodifiable list"));
+    },
+    add$1(_, value) {
+      A._instanceType(this)._eval$1("UnmodifiableListMixin.E")._as(value);
+      throw A.wrapException(A.UnsupportedError$("Cannot add to an unmodifiable list"));
+    },
+    sort$1(_, compare) {
+      A._instanceType(this)._eval$1("int(UnmodifiableListMixin.E,UnmodifiableListMixin.E)?")._as(compare);
+      throw A.wrapException(A.UnsupportedError$("Cannot modify an unmodifiable list"));
+    }
+  };
+  A.UnmodifiableListBase.prototype = {};
+  A.ReversedListIterable.prototype = {
+    get$length(_) {
+      return J.get$length$asx(this._source);
+    },
+    elementAt$1(_, index) {
+      var t1 = this._source,
+        t2 = J.getInterceptor$asx(t1);
+      return t2.elementAt$1(t1, t2.get$length(t1) - 1 - index);
+    }
+  };
   A.Symbol.prototype = {
     get$hashCode(_) {
       var hash = this._hashCode;
@@ -5298,8 +10431,17 @@
   };
   A.ConstantMapView.prototype = {};
   A.ConstantMap.prototype = {
+    get$isEmpty(_) {
+      return this.get$length(this) === 0;
+    },
     toString$0(_) {
       return A.MapBase_mapToString(this);
+    },
+    $indexSet(_, key, value) {
+      var t1 = A._instanceType(this);
+      t1._precomputed1._as(key);
+      t1._rest[1]._as(value);
+      A.ConstantMap__throwUnmodifiable();
     },
     $isMap: 1
   };
@@ -5315,7 +10457,7 @@
       }
       return keys;
     },
-    containsKey$1(key) {
+    containsKey$1(_, key) {
       if (typeof key != "string")
         return false;
       if ("__proto__" === key)
@@ -5323,7 +10465,7 @@
       return this._jsIndex.hasOwnProperty(key);
     },
     $index(_, key) {
-      if (!this.containsKey$1(key))
+      if (!this.containsKey$1(0, key))
         return null;
       return this._values[this._jsIndex[key]];
     },
@@ -5335,7 +10477,7 @@
       for (t1 = keys.length, i = 0; i < t1; ++i)
         f.call$2(keys[i], values[i]);
     },
-    get$keys() {
+    get$keys(_) {
       return new A._KeysOrValues(this.get$_keys(), this.$ti._eval$1("_KeysOrValues<1>"));
     }
   };
@@ -5369,6 +10511,28 @@
     },
     $isIterator: 1
   };
+  A.Instantiation.prototype = {
+    $eq(_, other) {
+      if (other == null)
+        return false;
+      return other instanceof A.Instantiation1 && this._genericClosure.$eq(0, other._genericClosure) && A.getRuntimeTypeOfClosure(this) === A.getRuntimeTypeOfClosure(other);
+    },
+    get$hashCode(_) {
+      return A.Object_hash(this._genericClosure, A.getRuntimeTypeOfClosure(this), B.C_SentinelValue, B.C_SentinelValue);
+    },
+    toString$0(_) {
+      var t1 = B.JSArray_methods.join$1([A.createRuntimeType(this.$ti._precomputed1)], ", ");
+      return this._genericClosure.toString$0(0) + " with " + ("<" + t1 + ">");
+    }
+  };
+  A.Instantiation1.prototype = {
+    call$2(a0, a1) {
+      return this._genericClosure.call$1$2(a0, a1, this.$ti._rest[0]);
+    },
+    $signature() {
+      return A.instantiatedGenericFunctionType(A.closureFunctionType(this._genericClosure), this.$ti);
+    }
+  };
   A.JSInvocationMirror.prototype = {
     get$memberName() {
       var t1 = this._memberName;
@@ -5388,9 +10552,7 @@
       list = [];
       for (index = 0; index < argumentCount; ++index)
         list.push(t2.$index(t1, index));
-      list.fixed$length = Array;
-      list.immutable$list = Array;
-      return list;
+      return J.JSArray_markUnmodifiableList(list);
     },
     get$namedArguments() {
       var t1, t2, namedArgumentCount, t3, t4, namedArgumentsStartIndex, map, i, _this = this;
@@ -5411,6 +10573,12 @@
     },
     $isInvocation: 1
   };
+  A.Primitives_initTicker_closure.prototype = {
+    call$0() {
+      return B.JSNumber_methods.floor$0(1000 * this.performance.now());
+    },
+    $signature: 4
+  };
   A.Primitives_functionNoSuchMethod_closure.prototype = {
     call$2($name, argument) {
       var t1;
@@ -5421,7 +10589,7 @@
       B.JSArray_methods.add$1(this.$arguments, argument);
       ++t1.argumentCount;
     },
-    $signature: 17
+    $signature: 31
   };
   A.TypeErrorDecoder.prototype = {
     matchTypeError$1(message) {
@@ -5475,7 +10643,8 @@
   A.NullThrownFromJavaScriptException.prototype = {
     toString$0(_) {
       return "Throw of null ('" + (this._irritant === null ? "null" : "undefined") + "' from JavaScript)";
-    }
+    },
+    $isException: 1
   };
   A.ExceptionAndStackTrace.prototype = {};
   A._StackTrace.prototype = {
@@ -5552,20 +10721,39 @@
     get$length(_) {
       return this.__js_helper$_length;
     },
-    get$keys() {
+    get$isEmpty(_) {
+      return this.__js_helper$_length === 0;
+    },
+    get$keys(_) {
       return new A.LinkedHashMapKeyIterable(this, A._instanceType(this)._eval$1("LinkedHashMapKeyIterable<1>"));
     },
-    containsKey$1(key) {
-      var strings = this._strings;
-      if (strings == null)
-        return false;
-      return strings[key] != null;
+    get$values(_) {
+      var t1 = A._instanceType(this);
+      return A.MappedIterable_MappedIterable(new A.LinkedHashMapKeyIterable(this, t1._eval$1("LinkedHashMapKeyIterable<1>")), new A.JsLinkedHashMap_values_closure(this), t1._precomputed1, t1._rest[1]);
+    },
+    containsKey$1(_, key) {
+      var strings, nums;
+      if (typeof key == "string") {
+        strings = this._strings;
+        if (strings == null)
+          return false;
+        return strings[key] != null;
+      } else if (typeof key == "number" && (key & 0x3fffffff) === key) {
+        nums = this._nums;
+        if (nums == null)
+          return false;
+        return nums[key] != null;
+      } else
+        return this.internalContainsKey$1(key);
     },
     internalContainsKey$1(key) {
       var rest = this.__js_helper$_rest;
       if (rest == null)
         return false;
       return this.internalFindBucketIndex$2(rest[this.internalComputeHashCode$1(key)], key) >= 0;
+    },
+    addAll$1(_, other) {
+      A._instanceType(this)._eval$1("Map<1,2>")._as(other).forEach$1(0, new A.JsLinkedHashMap_addAll_closure(this));
     },
     $index(_, key) {
       var strings, cell, t1, nums, _null = null;
@@ -5632,8 +10820,13 @@
       }
     },
     remove$1(_, key) {
-      var t1 = this._removeHashTableEntry$2(this._strings, key);
-      return t1;
+      var _this = this;
+      if (typeof key == "string")
+        return _this._removeHashTableEntry$2(_this._strings, key);
+      else if (typeof key == "number" && (key & 0x3fffffff) === key)
+        return _this._removeHashTableEntry$2(_this._nums, key);
+      else
+        return _this.internalRemove$1(key);
     },
     internalRemove$1(key) {
       var hash, bucket, index, cell, _this = this,
@@ -5743,10 +10936,34 @@
     },
     $isLinkedHashMap: 1
   };
+  A.JsLinkedHashMap_values_closure.prototype = {
+    call$1(each) {
+      var t1 = this.$this,
+        t2 = A._instanceType(t1);
+      t1 = t1.$index(0, t2._precomputed1._as(each));
+      return t1 == null ? t2._rest[1]._as(t1) : t1;
+    },
+    $signature() {
+      return A._instanceType(this.$this)._eval$1("2(1)");
+    }
+  };
+  A.JsLinkedHashMap_addAll_closure.prototype = {
+    call$2(key, value) {
+      var t1 = this.$this,
+        t2 = A._instanceType(t1);
+      t1.$indexSet(0, t2._precomputed1._as(key), t2._rest[1]._as(value));
+    },
+    $signature() {
+      return A._instanceType(this.$this)._eval$1("~(1,2)");
+    }
+  };
   A.LinkedHashMapCell.prototype = {};
   A.LinkedHashMapKeyIterable.prototype = {
     get$length(_) {
       return this._map.__js_helper$_length;
+    },
+    get$isEmpty(_) {
+      return this._map.__js_helper$_length === 0;
     },
     get$iterator(_) {
       var t1 = this._map,
@@ -5800,21 +11017,231 @@
     call$1(o) {
       return this.getTag(o);
     },
-    $signature: 3
+    $signature: 5
   };
   A.initHooks_closure0.prototype = {
     call$2(o, tag) {
       return this.getUnknownTag(o, tag);
     },
-    $signature: 32
+    $signature: 43
   };
   A.initHooks_closure1.prototype = {
     call$1(tag) {
       return this.prototypeForTag(A._asString(tag));
     },
-    $signature: 11
+    $signature: 34
   };
-  A.NativeTypedData.prototype = {$isTypedData: 1};
+  A.JSSyntaxRegExp.prototype = {
+    toString$0(_) {
+      return "RegExp/" + this.pattern + "/" + this._nativeRegExp.flags;
+    },
+    get$_nativeGlobalVersion() {
+      var _this = this,
+        t1 = _this._nativeGlobalRegExp;
+      if (t1 != null)
+        return t1;
+      t1 = _this._nativeRegExp;
+      return _this._nativeGlobalRegExp = A.JSSyntaxRegExp_makeNative(_this.pattern, t1.multiline, !t1.ignoreCase, t1.unicode, t1.dotAll, true);
+    },
+    get$_nativeAnchoredVersion() {
+      var _this = this,
+        t1 = _this._nativeAnchoredRegExp;
+      if (t1 != null)
+        return t1;
+      t1 = _this._nativeRegExp;
+      return _this._nativeAnchoredRegExp = A.JSSyntaxRegExp_makeNative(_this.pattern + "|()", t1.multiline, !t1.ignoreCase, t1.unicode, t1.dotAll, true);
+    },
+    allMatches$2(_, string, start) {
+      var t1 = string.length;
+      if (start > t1)
+        throw A.wrapException(A.RangeError$range(start, 0, t1, null, null));
+      return new A._AllMatchesIterable(this, string, start);
+    },
+    allMatches$1(_, string) {
+      return this.allMatches$2(0, string, 0);
+    },
+    _execGlobal$2(string, start) {
+      var match,
+        regexp = this.get$_nativeGlobalVersion();
+      if (regexp == null)
+        regexp = type$.Object._as(regexp);
+      regexp.lastIndex = start;
+      match = regexp.exec(string);
+      if (match == null)
+        return null;
+      return new A._MatchImplementation(match);
+    },
+    _execAnchored$2(string, start) {
+      var match,
+        regexp = this.get$_nativeAnchoredVersion();
+      if (regexp == null)
+        regexp = type$.Object._as(regexp);
+      regexp.lastIndex = start;
+      match = regexp.exec(string);
+      if (match == null)
+        return null;
+      if (0 >= match.length)
+        return A.ioore(match, -1);
+      if (match.pop() != null)
+        return null;
+      return new A._MatchImplementation(match);
+    },
+    matchAsPrefix$2(_, string, start) {
+      if (start < 0 || start > string.length)
+        throw A.wrapException(A.RangeError$range(start, 0, string.length, null, null));
+      return this._execAnchored$2(string, start);
+    },
+    $isPattern: 1,
+    $isRegExp: 1
+  };
+  A._MatchImplementation.prototype = {
+    get$start(_) {
+      return this._match.index;
+    },
+    get$end() {
+      var t1 = this._match;
+      return t1.index + t1[0].length;
+    },
+    $index(_, index) {
+      var t1;
+      A._asInt(index);
+      t1 = this._match;
+      if (!(index < t1.length))
+        return A.ioore(t1, index);
+      return t1[index];
+    },
+    $isMatch: 1,
+    $isRegExpMatch: 1
+  };
+  A._AllMatchesIterable.prototype = {
+    get$iterator(_) {
+      return new A._AllMatchesIterator(this._re, this._string, this._start);
+    }
+  };
+  A._AllMatchesIterator.prototype = {
+    get$current() {
+      var t1 = this.__js_helper$_current;
+      return t1 == null ? type$.RegExpMatch._as(t1) : t1;
+    },
+    moveNext$0() {
+      var t1, t2, t3, match, nextIndex, _this = this,
+        string = _this._string;
+      if (string == null)
+        return false;
+      t1 = _this._nextIndex;
+      t2 = string.length;
+      if (t1 <= t2) {
+        t3 = _this._regExp;
+        match = t3._execGlobal$2(string, t1);
+        if (match != null) {
+          _this.__js_helper$_current = match;
+          nextIndex = match.get$end();
+          if (match._match.index === nextIndex) {
+            if (t3._nativeRegExp.unicode) {
+              t1 = _this._nextIndex;
+              t3 = t1 + 1;
+              if (t3 < t2) {
+                if (!(t1 >= 0 && t1 < t2))
+                  return A.ioore(string, t1);
+                t1 = string.charCodeAt(t1);
+                if (t1 >= 55296 && t1 <= 56319) {
+                  if (!(t3 >= 0))
+                    return A.ioore(string, t3);
+                  t1 = string.charCodeAt(t3);
+                  t1 = t1 >= 56320 && t1 <= 57343;
+                } else
+                  t1 = false;
+              } else
+                t1 = false;
+            } else
+              t1 = false;
+            nextIndex = (t1 ? nextIndex + 1 : nextIndex) + 1;
+          }
+          _this._nextIndex = nextIndex;
+          return true;
+        }
+      }
+      _this._string = _this.__js_helper$_current = null;
+      return false;
+    },
+    $isIterator: 1
+  };
+  A.StringMatch.prototype = {
+    get$end() {
+      return this.start + this.pattern.length;
+    },
+    $index(_, g) {
+      A._asInt(g);
+      if (g !== 0)
+        A.throwExpression(A.RangeError$value(g, null));
+      return this.pattern;
+    },
+    $isMatch: 1,
+    get$start(receiver) {
+      return this.start;
+    }
+  };
+  A._StringAllMatchesIterable.prototype = {
+    get$iterator(_) {
+      return new A._StringAllMatchesIterator(this._input, this._pattern, this.__js_helper$_index);
+    }
+  };
+  A._StringAllMatchesIterator.prototype = {
+    moveNext$0() {
+      var index, end, _this = this,
+        t1 = _this.__js_helper$_index,
+        t2 = _this._pattern,
+        t3 = t2.length,
+        t4 = _this._input,
+        t5 = t4.length;
+      if (t1 + t3 > t5) {
+        _this.__js_helper$_current = null;
+        return false;
+      }
+      index = t4.indexOf(t2, t1);
+      if (index < 0) {
+        _this.__js_helper$_index = t5 + 1;
+        _this.__js_helper$_current = null;
+        return false;
+      }
+      end = index + t3;
+      _this.__js_helper$_current = new A.StringMatch(index, t2);
+      _this.__js_helper$_index = end === _this.__js_helper$_index ? end + 1 : end;
+      return true;
+    },
+    get$current() {
+      var t1 = this.__js_helper$_current;
+      t1.toString;
+      return t1;
+    },
+    $isIterator: 1
+  };
+  A._Cell.prototype = {
+    _readLocal$0() {
+      var t1 = this.__late_helper$_value;
+      if (t1 === this)
+        throw A.wrapException(new A.LateError("Local '" + this.__late_helper$_name + "' has not been initialized."));
+      return t1;
+    }
+  };
+  A.NativeByteBuffer.prototype = {
+    get$runtimeType(receiver) {
+      return B.Type_ByteBuffer_EOZ;
+    },
+    $isTrustedGetRuntimeType: 1,
+    $isByteBuffer: 1
+  };
+  A.NativeTypedData.prototype = {
+    _invalidPosition$3(receiver, position, $length, $name) {
+      var t1 = A.RangeError$range(position, 0, $length, $name, null);
+      throw A.wrapException(t1);
+    },
+    _checkPosition$3(receiver, position, $length, $name) {
+      if (position >>> 0 !== position || position > $length)
+        this._invalidPosition$3(receiver, position, $length, $name);
+    },
+    $isTypedData: 1
+  };
   A.NativeByteData.prototype = {
     get$runtimeType(receiver) {
       return B.Type_ByteData_mF8;
@@ -5825,18 +11252,60 @@
     get$length(receiver) {
       return receiver.length;
     },
+    _setRangeFast$4(receiver, start, end, source, skipCount) {
+      var count, sourceLength,
+        targetLength = receiver.length;
+      this._checkPosition$3(receiver, start, targetLength, "start");
+      this._checkPosition$3(receiver, end, targetLength, "end");
+      if (start > end)
+        throw A.wrapException(A.RangeError$range(start, 0, end, null, null));
+      count = end - start;
+      sourceLength = source.length;
+      if (sourceLength - skipCount < count)
+        throw A.wrapException(A.StateError$("Not enough elements"));
+      if (skipCount !== 0 || sourceLength !== count)
+        source = source.subarray(skipCount, skipCount + count);
+      receiver.set(source, start);
+    },
+    $isJSIndexable: 1,
     $isJavaScriptIndexingBehavior: 1
   };
   A.NativeTypedArrayOfDouble.prototype = {
     $index(receiver, index) {
+      A._asInt(index);
       A._checkValidIndex(index, receiver, receiver.length);
       return receiver[index];
+    },
+    $indexSet(receiver, index, value) {
+      A._asDouble(value);
+      A._checkValidIndex(index, receiver, receiver.length);
+      receiver[index] = value;
     },
     $isEfficientLengthIterable: 1,
     $isIterable: 1,
     $isList: 1
   };
-  A.NativeTypedArrayOfInt.prototype = {$isEfficientLengthIterable: 1, $isIterable: 1, $isList: 1};
+  A.NativeTypedArrayOfInt.prototype = {
+    $indexSet(receiver, index, value) {
+      A._asInt(value);
+      A._checkValidIndex(index, receiver, receiver.length);
+      receiver[index] = value;
+    },
+    setRange$4(receiver, start, end, iterable, skipCount) {
+      type$.Iterable_int._as(iterable);
+      if (type$.NativeTypedArrayOfInt._is(iterable)) {
+        this._setRangeFast$4(receiver, start, end, iterable, skipCount);
+        return;
+      }
+      this.super$ListBase$setRange(receiver, start, end, iterable, skipCount);
+    },
+    setRange$3(receiver, start, end, iterable) {
+      return this.setRange$4(receiver, start, end, iterable, 0);
+    },
+    $isEfficientLengthIterable: 1,
+    $isIterable: 1,
+    $isList: 1
+  };
   A.NativeFloat32List.prototype = {
     get$runtimeType(receiver) {
       return B.Type_Float32List_Ymk;
@@ -5854,6 +11323,7 @@
       return B.Type_Int16List_cot;
     },
     $index(receiver, index) {
+      A._asInt(index);
       A._checkValidIndex(index, receiver, receiver.length);
       return receiver[index];
     },
@@ -5864,6 +11334,7 @@
       return B.Type_Int32List_m1p;
     },
     $index(receiver, index) {
+      A._asInt(index);
       A._checkValidIndex(index, receiver, receiver.length);
       return receiver[index];
     },
@@ -5874,6 +11345,7 @@
       return B.Type_Int8List_woc;
     },
     $index(receiver, index) {
+      A._asInt(index);
       A._checkValidIndex(index, receiver, receiver.length);
       return receiver[index];
     },
@@ -5884,6 +11356,7 @@
       return B.Type_Uint16List_2mh;
     },
     $index(receiver, index) {
+      A._asInt(index);
       A._checkValidIndex(index, receiver, receiver.length);
       return receiver[index];
     },
@@ -5894,10 +11367,15 @@
       return B.Type_Uint32List_2mh;
     },
     $index(receiver, index) {
+      A._asInt(index);
       A._checkValidIndex(index, receiver, receiver.length);
       return receiver[index];
     },
-    $isTrustedGetRuntimeType: 1
+    sublist$2(receiver, start, end) {
+      return new Uint32Array(receiver.subarray(start, A._checkValidRange(start, end, receiver.length)));
+    },
+    $isTrustedGetRuntimeType: 1,
+    $isUint32List: 1
   };
   A.NativeUint8ClampedList.prototype = {
     get$runtimeType(receiver) {
@@ -5907,6 +11385,7 @@
       return receiver.length;
     },
     $index(receiver, index) {
+      A._asInt(index);
       A._checkValidIndex(index, receiver, receiver.length);
       return receiver[index];
     },
@@ -5921,10 +11400,16 @@
       return receiver.length;
     },
     $index(receiver, index) {
+      A._asInt(index);
       A._checkValidIndex(index, receiver, receiver.length);
       return receiver[index];
     },
-    $isTrustedGetRuntimeType: 1
+    sublist$2(receiver, start, end) {
+      return new Uint8Array(receiver.subarray(start, A._checkValidRange(start, end, receiver.length)));
+    },
+    $isTrustedGetRuntimeType: 1,
+    $isNativeUint8List: 1,
+    $isUint8List: 1
   };
   A._NativeTypedArrayOfDouble_NativeTypedArray_ListMixin.prototype = {};
   A._NativeTypedArrayOfDouble_NativeTypedArray_ListMixin_FixedLengthListMixin.prototype = {};
@@ -5957,7 +11442,7 @@
       t1.storedCallback = null;
       f.call$0();
     },
-    $signature: 4
+    $signature: 12
   };
   A._AsyncRun__initializeScheduleImmediate_closure.prototype = {
     call$1(callback) {
@@ -5967,33 +11452,44 @@
       t2 = this.span;
       t1.firstChild ? t1.removeChild(t2) : t1.appendChild(t2);
     },
-    $signature: 34
+    $signature: 76
   };
   A._AsyncRun__scheduleImmediateJsOverride_internalCallback.prototype = {
     call$0() {
       this.callback.call$0();
     },
-    $signature: 6
+    $signature: 2
   };
   A._AsyncRun__scheduleImmediateWithSetImmediate_internalCallback.prototype = {
     call$0() {
       this.callback.call$0();
     },
-    $signature: 6
+    $signature: 2
   };
   A._TimerImpl.prototype = {
     _TimerImpl$2(milliseconds, callback) {
       if (self.setTimeout != null)
-        self.setTimeout(A.convertDartClosureToJS(new A._TimerImpl_internalCallback(this, callback), 0), milliseconds);
+        this._handle = self.setTimeout(A.convertDartClosureToJS(new A._TimerImpl_internalCallback(this, callback), 0), milliseconds);
       else
         throw A.wrapException(A.UnsupportedError$("`setTimeout()` not found."));
+    },
+    cancel$0() {
+      if (self.setTimeout != null) {
+        var t1 = this._handle;
+        if (t1 == null)
+          return;
+        self.clearTimeout(t1);
+        this._handle = null;
+      } else
+        throw A.wrapException(A.UnsupportedError$("Canceling a timer."));
     }
   };
   A._TimerImpl_internalCallback.prototype = {
     call$0() {
+      this.$this._handle = null;
       this.callback.call$0();
     },
-    $signature: 1
+    $signature: 0
   };
   A._AsyncAwaitCompleter.prototype = {
     complete$1(_, value) {
@@ -6018,25 +11514,26 @@
         t1._completeError$2(e, st);
       else
         t1._asyncCompleteError$2(e, st);
-    }
+    },
+    $isCompleter: 1
   };
   A._awaitOnObject_closure.prototype = {
     call$1(result) {
       return this.bodyFunction.call$2(0, result);
     },
-    $signature: 12
+    $signature: 6
   };
   A._awaitOnObject_closure0.prototype = {
     call$2(error, stackTrace) {
       this.bodyFunction.call$2(1, new A.ExceptionAndStackTrace(error, type$.StackTrace._as(stackTrace)));
     },
-    $signature: 13
+    $signature: 37
   };
   A._wrapJsFunctionForAsync_closure.prototype = {
     call$2(errorCode, result) {
       this.$protected(A._asInt(errorCode), result);
     },
-    $signature: 14
+    $signature: 46
   };
   A.AsyncError.prototype = {
     toString$0(_) {
@@ -6047,20 +11544,32 @@
       return this.stackTrace;
     }
   };
+  A.Future_Future_closure.prototype = {
+    call$0() {
+      var e, s, exception;
+      try {
+        this.result._complete$1(this.computation.call$0());
+      } catch (exception) {
+        e = A.unwrapException(exception);
+        s = A.getTraceFromException(exception);
+        A._completeWithErrorCallback(this.result, e, s);
+      }
+    },
+    $signature: 0
+  };
   A._Completer.prototype = {
     completeError$2(error, stackTrace) {
-      var t1;
       A.checkNotNullable(error, "error", type$.Object);
-      t1 = this.future;
-      if ((t1._state & 30) !== 0)
+      if ((this.future._state & 30) !== 0)
         throw A.wrapException(A.StateError$("Future already completed"));
       if (stackTrace == null)
         stackTrace = A.AsyncError_defaultStackTrace(error);
-      t1._asyncCompleteError$2(error, stackTrace);
+      this._completeError$2(error, stackTrace);
     },
     completeError$1(error) {
       return this.completeError$2(error, null);
-    }
+    },
+    $isCompleter: 1
   };
   A._AsyncCompleter.prototype = {
     complete$1(_, value) {
@@ -6071,6 +11580,12 @@
       if ((t2._state & 30) !== 0)
         throw A.wrapException(A.StateError$("Future already completed"));
       t2._asyncComplete$1(t1._eval$1("1/")._as(value));
+    },
+    complete$0(_) {
+      return this.complete$1(0, null);
+    },
+    _completeError$2(error, stackTrace) {
+      this.future._asyncCompleteError$2(error, stackTrace);
     }
   };
   A._FutureListener.prototype = {
@@ -6136,6 +11651,20 @@
       t1._bind$1($E)._eval$1("1/(2)")._as(f);
       result = new A._Future($.Zone__current, $E._eval$1("_Future<0>"));
       this._addListener$1(new A._FutureListener(result, 19, f, onError, t1._eval$1("@<1>")._bind$1($E)._eval$1("_FutureListener<1,2>")));
+      return result;
+    },
+    _ignore$0() {
+      var t1, source, t2;
+      for (t1 = type$._Future_dynamic, source = this; t2 = source._state, (t2 & 4) !== 0;)
+        source = t1._as(source._resultOrListeners);
+      source._state = t2 | 1;
+    },
+    whenComplete$1(action) {
+      var t1, result;
+      type$.dynamic_Function._as(action);
+      t1 = this.$ti;
+      result = new A._Future($.Zone__current, t1);
+      this._addListener$1(new A._FutureListener(result, 8, action, null, t1._eval$1("@<1>")._bind$1(t1._precomputed1)._eval$1("_FutureListener<1,2>")));
       return result;
     },
     _setErrorObject$1(error) {
@@ -6216,6 +11745,23 @@
         A.scheduleMicrotask(new A._Future__chainForeignFuture_closure1(_this, e, s));
       }
     },
+    _complete$1(value) {
+      var listeners, _this = this,
+        t1 = _this.$ti;
+      t1._eval$1("1/")._as(value);
+      if (t1._eval$1("Future<1>")._is(value))
+        if (t1._is(value))
+          A._Future__chainCoreFutureSync(value, _this);
+        else
+          _this._chainForeignFuture$1(value);
+      else {
+        listeners = _this._removeListeners$0();
+        t1._precomputed1._as(value);
+        _this._state = 8;
+        _this._resultOrListeners = value;
+        A._Future__propagateToListeners(_this, listeners);
+      }
+    },
     _completeWithValue$1(value) {
       var listeners, _this = this;
       _this.$ti._precomputed1._as(value);
@@ -6226,6 +11772,7 @@
     },
     _completeError$2(error, stackTrace) {
       var listeners;
+      type$.Object._as(error);
       type$.StackTrace._as(stackTrace);
       listeners = this._removeListeners$0();
       this._setErrorObject$1(A.AsyncError$(error, stackTrace));
@@ -6256,6 +11803,7 @@
       this._chainForeignFuture$1(value);
     },
     _asyncCompleteError$2(error, stackTrace) {
+      type$.StackTrace._as(stackTrace);
       this._state ^= 2;
       A._rootScheduleMicrotask(null, null, this._zone, type$.void_Function._as(new A._Future__asyncCompleteError_closure(this, error, stackTrace)));
     },
@@ -6265,13 +11813,13 @@
     call$0() {
       A._Future__propagateToListeners(this.$this, this.listener);
     },
-    $signature: 1
+    $signature: 0
   };
   A._Future__prependListeners_closure.prototype = {
     call$0() {
       A._Future__propagateToListeners(this.$this, this._box_0.listeners);
     },
-    $signature: 1
+    $signature: 0
   };
   A._Future__chainForeignFuture_closure.prototype = {
     call$1(value) {
@@ -6286,37 +11834,37 @@
         t1._completeError$2(error, stackTrace);
       }
     },
-    $signature: 4
+    $signature: 12
   };
   A._Future__chainForeignFuture_closure0.prototype = {
     call$2(error, stackTrace) {
       this.$this._completeError$2(type$.Object._as(error), type$.StackTrace._as(stackTrace));
     },
-    $signature: 16
+    $signature: 25
   };
   A._Future__chainForeignFuture_closure1.prototype = {
     call$0() {
       this.$this._completeError$2(this.e, this.s);
     },
-    $signature: 1
+    $signature: 0
   };
   A._Future__chainCoreFutureAsync_closure.prototype = {
     call$0() {
       A._Future__chainCoreFutureSync(this._box_0.source, this.target);
     },
-    $signature: 1
+    $signature: 0
   };
   A._Future__asyncCompleteWithValue_closure.prototype = {
     call$0() {
       this.$this._completeWithValue$1(this.value);
     },
-    $signature: 1
+    $signature: 0
   };
   A._Future__asyncCompleteError_closure.prototype = {
     call$0() {
       this.$this._completeError$2(this.error, this.stackTrace);
     },
-    $signature: 1
+    $signature: 0
   };
   A._Future__propagateToListeners_handleWhenCompleteCallback.prototype = {
     call$0() {
@@ -6351,13 +11899,13 @@
         t1.listenerHasError = false;
       }
     },
-    $signature: 1
+    $signature: 0
   };
   A._Future__propagateToListeners_handleWhenCompleteCallback_closure.prototype = {
     call$1(_) {
       return this.originalSource;
     },
-    $signature: 23
+    $signature: 84
   };
   A._Future__propagateToListeners_handleValueCallback.prototype = {
     call$0() {
@@ -6377,7 +11925,7 @@
         t1.listenerHasError = true;
       }
     },
-    $signature: 1
+    $signature: 0
   };
   A._Future__propagateToListeners_handleError.prototype = {
     call$0() {
@@ -6401,50 +11949,921 @@
         t2.listenerHasError = true;
       }
     },
-    $signature: 1
+    $signature: 0
   };
   A._AsyncCallbackEntry.prototype = {};
   A.Stream.prototype = {
     get$length(_) {
-      var t2, t3, _this = this, t1 = {},
+      var t1 = {},
         future = new A._Future($.Zone__current, type$._Future_int);
       t1.count = 0;
-      t2 = A._instanceType(_this);
-      t3 = t2._eval$1("~(1)?")._as(new A.Stream_length_closure(t1, _this));
-      type$.nullable_void_Function._as(new A.Stream_length_closure0(t1, future));
-      A._EventStreamSubscription$(_this._target, _this._eventType, t3, false, t2._precomputed1);
+      this.listen$4$cancelOnError$onDone$onError(new A.Stream_length_closure(t1, this), true, new A.Stream_length_closure0(t1, future), future.get$_completeError());
+      return future;
+    },
+    toList$0(_) {
+      var t1 = A._instanceType(this),
+        result = A._setArrayType([], t1._eval$1("JSArray<Stream.T>")),
+        future = new A._Future($.Zone__current, t1._eval$1("_Future<List<Stream.T>>"));
+      this.listen$4$cancelOnError$onDone$onError(new A.Stream_toList_closure(this, result), true, new A.Stream_toList_closure0(future, result), future.get$_completeError());
+      return future;
+    },
+    get$first(_) {
+      var future = new A._Future($.Zone__current, A._instanceType(this)._eval$1("_Future<Stream.T>")),
+        subscription = this.listen$4$cancelOnError$onDone$onError(null, true, new A.Stream_first_closure(future), future.get$_completeError());
+      subscription.onData$1(new A.Stream_first_closure0(this, subscription, future));
       return future;
     }
   };
   A.Stream_length_closure.prototype = {
     call$1(_) {
-      A._instanceType(this.$this)._precomputed1._as(_);
+      A._instanceType(this.$this)._eval$1("Stream.T")._as(_);
       ++this._box_0.count;
     },
     $signature() {
-      return A._instanceType(this.$this)._eval$1("~(1)");
+      return A._instanceType(this.$this)._eval$1("~(Stream.T)");
     }
   };
   A.Stream_length_closure0.prototype = {
     call$0() {
-      var t1 = this.future,
-        t2 = t1.$ti,
-        t3 = t2._eval$1("1/")._as(this._box_0.count),
-        listeners = t1._removeListeners$0();
-      t2._precomputed1._as(t3);
-      t1._state = 8;
-      t1._resultOrListeners = t3;
-      A._Future__propagateToListeners(t1, listeners);
+      this.future._complete$1(this._box_0.count);
     },
-    $signature: 1
+    $signature: 0
   };
-  A._StreamIterator.prototype = {};
+  A.Stream_toList_closure.prototype = {
+    call$1(data) {
+      B.JSArray_methods.add$1(this.result, A._instanceType(this.$this)._eval$1("Stream.T")._as(data));
+    },
+    $signature() {
+      return A._instanceType(this.$this)._eval$1("~(Stream.T)");
+    }
+  };
+  A.Stream_toList_closure0.prototype = {
+    call$0() {
+      this.future._complete$1(this.result);
+    },
+    $signature: 0
+  };
+  A.Stream_first_closure.prototype = {
+    call$0() {
+      var e, s, t1, exception;
+      try {
+        t1 = A.IterableElementError_noElement();
+        throw A.wrapException(t1);
+      } catch (exception) {
+        e = A.unwrapException(exception);
+        s = A.getTraceFromException(exception);
+        A._completeWithErrorCallback(this.future, e, s);
+      }
+    },
+    $signature: 0
+  };
+  A.Stream_first_closure0.prototype = {
+    call$1(value) {
+      A._cancelAndValue(this.subscription, this.future, A._instanceType(this.$this)._eval$1("Stream.T")._as(value));
+    },
+    $signature() {
+      return A._instanceType(this.$this)._eval$1("~(Stream.T)");
+    }
+  };
+  A.StreamTransformerBase.prototype = {$isStreamTransformer: 1};
+  A._StreamController.prototype = {
+    get$_pendingEvents() {
+      var t1, _this = this;
+      if ((_this._state & 8) === 0)
+        return A._instanceType(_this)._eval$1("_PendingEvents<1>?")._as(_this._varData);
+      t1 = A._instanceType(_this);
+      return t1._eval$1("_PendingEvents<1>?")._as(t1._eval$1("_StreamControllerAddStreamState<1>")._as(_this._varData).get$_varData());
+    },
+    _ensurePendingEvents$0() {
+      var events, t1, _this = this;
+      if ((_this._state & 8) === 0) {
+        events = _this._varData;
+        if (events == null)
+          events = _this._varData = new A._PendingEvents(A._instanceType(_this)._eval$1("_PendingEvents<1>"));
+        return A._instanceType(_this)._eval$1("_PendingEvents<1>")._as(events);
+      }
+      t1 = A._instanceType(_this);
+      events = t1._eval$1("_StreamControllerAddStreamState<1>")._as(_this._varData).get$_varData();
+      return t1._eval$1("_PendingEvents<1>")._as(events);
+    },
+    get$_subscription() {
+      var varData = this._varData;
+      if ((this._state & 8) !== 0)
+        varData = type$._StreamControllerAddStreamState_nullable_Object._as(varData).get$_varData();
+      return A._instanceType(this)._eval$1("_ControllerSubscription<1>")._as(varData);
+    },
+    _badEventState$0() {
+      if ((this._state & 4) !== 0)
+        return new A.StateError("Cannot add event after closing");
+      return new A.StateError("Cannot add event while adding a stream");
+    },
+    _ensureDoneFuture$0() {
+      var t1 = this._doneFuture;
+      if (t1 == null)
+        t1 = this._doneFuture = (this._state & 2) !== 0 ? $.$get$Future__nullFuture() : new A._Future($.Zone__current, type$._Future_void);
+      return t1;
+    },
+    add$1(_, value) {
+      var _this = this;
+      A._instanceType(_this)._precomputed1._as(value);
+      if (_this._state >= 4)
+        throw A.wrapException(_this._badEventState$0());
+      _this._async$_add$1(value);
+    },
+    addError$2(error, stackTrace) {
+      var t1, _this = this;
+      type$.nullable_StackTrace._as(stackTrace);
+      A.checkNotNullable(error, "error", type$.Object);
+      if (_this._state >= 4)
+        throw A.wrapException(_this._badEventState$0());
+      if (stackTrace == null)
+        stackTrace = A.AsyncError_defaultStackTrace(error);
+      t1 = _this._state;
+      if ((t1 & 1) !== 0)
+        _this._sendError$2(error, stackTrace);
+      else if ((t1 & 3) === 0)
+        _this._ensurePendingEvents$0().add$1(0, new A._DelayedError(error, stackTrace));
+    },
+    addError$1(error) {
+      return this.addError$2(error, null);
+    },
+    close$0(_) {
+      var _this = this,
+        t1 = _this._state;
+      if ((t1 & 4) !== 0)
+        return _this._ensureDoneFuture$0();
+      if (t1 >= 4)
+        throw A.wrapException(_this._badEventState$0());
+      _this._closeUnchecked$0();
+      return _this._ensureDoneFuture$0();
+    },
+    _closeUnchecked$0() {
+      var t1 = this._state |= 4;
+      if ((t1 & 1) !== 0)
+        this._sendDone$0();
+      else if ((t1 & 3) === 0)
+        this._ensurePendingEvents$0().add$1(0, B.C__DelayedDone);
+    },
+    _async$_add$1(value) {
+      var t2, _this = this,
+        t1 = A._instanceType(_this);
+      t1._precomputed1._as(value);
+      t2 = _this._state;
+      if ((t2 & 1) !== 0)
+        _this._sendData$1(value);
+      else if ((t2 & 3) === 0)
+        _this._ensurePendingEvents$0().add$1(0, new A._DelayedData(value, t1._eval$1("_DelayedData<1>")));
+    },
+    _subscribe$4(onData, onError, onDone, cancelOnError) {
+      var t2, t3, t4, t5, subscription, pendingEvents, addState, _this = this,
+        t1 = A._instanceType(_this);
+      t1._eval$1("~(1)?")._as(onData);
+      type$.nullable_void_Function._as(onDone);
+      if ((_this._state & 3) !== 0)
+        throw A.wrapException(A.StateError$("Stream has already been listened to."));
+      t2 = $.Zone__current;
+      t3 = cancelOnError ? 1 : 0;
+      t4 = A._BufferingStreamSubscription__registerDataHandler(t2, onData, t1._precomputed1);
+      t5 = A._BufferingStreamSubscription__registerErrorHandler(t2, onError);
+      subscription = new A._ControllerSubscription(_this, t4, t5, type$.void_Function._as(onDone), t2, t3 | 32, t1._eval$1("_ControllerSubscription<1>"));
+      pendingEvents = _this.get$_pendingEvents();
+      t2 = _this._state |= 1;
+      if ((t2 & 8) !== 0) {
+        addState = t1._eval$1("_StreamControllerAddStreamState<1>")._as(_this._varData);
+        addState.set$_varData(subscription);
+        addState.resume$0();
+      } else
+        _this._varData = subscription;
+      subscription._setPendingEvents$1(pendingEvents);
+      subscription._guardCallback$1(new A._StreamController__subscribe_closure(_this));
+      return subscription;
+    },
+    _recordCancel$1(subscription) {
+      var result, onCancel, cancelResult, e, s, exception, result0, _this = this,
+        t1 = A._instanceType(_this);
+      t1._eval$1("StreamSubscription<1>")._as(subscription);
+      result = null;
+      if ((_this._state & 8) !== 0)
+        result = t1._eval$1("_StreamControllerAddStreamState<1>")._as(_this._varData).cancel$0();
+      _this._varData = null;
+      _this._state = _this._state & 4294967286 | 2;
+      onCancel = _this.onCancel;
+      if (onCancel != null)
+        if (result == null)
+          try {
+            cancelResult = onCancel.call$0();
+            if (cancelResult instanceof A._Future)
+              result = cancelResult;
+          } catch (exception) {
+            e = A.unwrapException(exception);
+            s = A.getTraceFromException(exception);
+            result0 = new A._Future($.Zone__current, type$._Future_void);
+            result0._asyncCompleteError$2(e, s);
+            result = result0;
+          }
+        else
+          result = result.whenComplete$1(onCancel);
+      t1 = new A._StreamController__recordCancel_complete(_this);
+      if (result != null)
+        result = result.whenComplete$1(t1);
+      else
+        t1.call$0();
+      return result;
+    },
+    $isEventSink: 1,
+    $is_StreamControllerLifecycle: 1,
+    $is_EventSink: 1,
+    $is_EventDispatch: 1,
+    $isSink: 1
+  };
+  A._StreamController__subscribe_closure.prototype = {
+    call$0() {
+      A._runGuarded(this.$this.onListen);
+    },
+    $signature: 0
+  };
+  A._StreamController__recordCancel_complete.prototype = {
+    call$0() {
+      var doneFuture = this.$this._doneFuture;
+      if (doneFuture != null && (doneFuture._state & 30) === 0)
+        doneFuture._asyncComplete$1(null);
+    },
+    $signature: 0
+  };
+  A._AsyncStreamControllerDispatch.prototype = {
+    _sendData$1(data) {
+      var t1 = A._instanceType(this);
+      t1._precomputed1._as(data);
+      this.get$_subscription()._addPending$1(new A._DelayedData(data, t1._eval$1("_DelayedData<1>")));
+    },
+    _sendError$2(error, stackTrace) {
+      this.get$_subscription()._addPending$1(new A._DelayedError(error, stackTrace));
+    },
+    _sendDone$0() {
+      this.get$_subscription()._addPending$1(B.C__DelayedDone);
+    }
+  };
+  A._AsyncStreamController.prototype = {};
+  A._ControllerStream.prototype = {
+    get$hashCode(_) {
+      return (A.Primitives_objectHashCode(this._controller) ^ 892482866) >>> 0;
+    },
+    $eq(_, other) {
+      if (other == null)
+        return false;
+      if (this === other)
+        return true;
+      return other instanceof A._ControllerStream && other._controller === this._controller;
+    }
+  };
+  A._ControllerSubscription.prototype = {
+    _async$_onCancel$0() {
+      return this._controller._recordCancel$1(this);
+    },
+    _onPause$0() {
+      var t1 = this._controller,
+        t2 = A._instanceType(t1);
+      t2._eval$1("StreamSubscription<1>")._as(this);
+      if ((t1._state & 8) !== 0)
+        t2._eval$1("_StreamControllerAddStreamState<1>")._as(t1._varData).pause$0(0);
+      A._runGuarded(t1.onPause);
+    },
+    _onResume$0() {
+      var t1 = this._controller,
+        t2 = A._instanceType(t1);
+      t2._eval$1("StreamSubscription<1>")._as(this);
+      if ((t1._state & 8) !== 0)
+        t2._eval$1("_StreamControllerAddStreamState<1>")._as(t1._varData).resume$0();
+      A._runGuarded(t1.onResume);
+    }
+  };
+  A._BufferingStreamSubscription.prototype = {
+    _setPendingEvents$1(pendingEvents) {
+      var _this = this;
+      A._instanceType(_this)._eval$1("_PendingEvents<_BufferingStreamSubscription.T>?")._as(pendingEvents);
+      if (pendingEvents == null)
+        return;
+      _this.set$_pending(pendingEvents);
+      if (pendingEvents.lastPendingEvent != null) {
+        _this._state = (_this._state | 128) >>> 0;
+        pendingEvents.schedule$1(_this);
+      }
+    },
+    onData$1(handleData) {
+      var t1 = A._instanceType(this);
+      this.set$_async$_onData(A._BufferingStreamSubscription__registerDataHandler(this._zone, t1._eval$1("~(_BufferingStreamSubscription.T)?")._as(handleData), t1._eval$1("_BufferingStreamSubscription.T")));
+    },
+    pause$0(_) {
+      var t2, t3, _this = this,
+        t1 = _this._state;
+      if ((t1 & 8) !== 0)
+        return;
+      t2 = (t1 + 256 | 4) >>> 0;
+      _this._state = t2;
+      if (t1 < 256) {
+        t3 = _this._pending;
+        if (t3 != null)
+          if (t3._state === 1)
+            t3._state = 3;
+      }
+      if ((t1 & 4) === 0 && (t2 & 64) === 0)
+        _this._guardCallback$1(_this.get$_onPause());
+    },
+    resume$0() {
+      var _this = this,
+        t1 = _this._state;
+      if ((t1 & 8) !== 0)
+        return;
+      if (t1 >= 256) {
+        t1 = _this._state = t1 - 256;
+        if (t1 < 256)
+          if ((t1 & 128) !== 0 && _this._pending.lastPendingEvent != null)
+            _this._pending.schedule$1(_this);
+          else {
+            t1 = (t1 & 4294967291) >>> 0;
+            _this._state = t1;
+            if ((t1 & 64) === 0)
+              _this._guardCallback$1(_this.get$_onResume());
+          }
+      }
+    },
+    cancel$0() {
+      var _this = this,
+        t1 = (_this._state & 4294967279) >>> 0;
+      _this._state = t1;
+      if ((t1 & 8) === 0)
+        _this._cancel$0();
+      t1 = _this._cancelFuture;
+      return t1 == null ? $.$get$Future__nullFuture() : t1;
+    },
+    _cancel$0() {
+      var t2, _this = this,
+        t1 = _this._state = (_this._state | 8) >>> 0;
+      if ((t1 & 128) !== 0) {
+        t2 = _this._pending;
+        if (t2._state === 1)
+          t2._state = 3;
+      }
+      if ((t1 & 64) === 0)
+        _this.set$_pending(null);
+      _this._cancelFuture = _this._async$_onCancel$0();
+    },
+    _async$_add$1(data) {
+      var t2, _this = this,
+        t1 = A._instanceType(_this);
+      t1._eval$1("_BufferingStreamSubscription.T")._as(data);
+      t2 = _this._state;
+      if ((t2 & 8) !== 0)
+        return;
+      if (t2 < 64)
+        _this._sendData$1(data);
+      else
+        _this._addPending$1(new A._DelayedData(data, t1._eval$1("_DelayedData<_BufferingStreamSubscription.T>")));
+    },
+    _addError$2(error, stackTrace) {
+      var t1 = this._state;
+      if ((t1 & 8) !== 0)
+        return;
+      if (t1 < 64)
+        this._sendError$2(error, stackTrace);
+      else
+        this._addPending$1(new A._DelayedError(error, stackTrace));
+    },
+    _close$0() {
+      var _this = this,
+        t1 = _this._state;
+      if ((t1 & 8) !== 0)
+        return;
+      t1 = (t1 | 2) >>> 0;
+      _this._state = t1;
+      if (t1 < 64)
+        _this._sendDone$0();
+      else
+        _this._addPending$1(B.C__DelayedDone);
+    },
+    _onPause$0() {
+    },
+    _onResume$0() {
+    },
+    _async$_onCancel$0() {
+      return null;
+    },
+    _addPending$1($event) {
+      var t1, _this = this,
+        pending = _this._pending;
+      if (pending == null) {
+        pending = new A._PendingEvents(A._instanceType(_this)._eval$1("_PendingEvents<_BufferingStreamSubscription.T>"));
+        _this.set$_pending(pending);
+      }
+      pending.add$1(0, $event);
+      t1 = _this._state;
+      if ((t1 & 128) === 0) {
+        t1 = (t1 | 128) >>> 0;
+        _this._state = t1;
+        if (t1 < 256)
+          pending.schedule$1(_this);
+      }
+    },
+    _sendData$1(data) {
+      var t2, _this = this,
+        t1 = A._instanceType(_this)._eval$1("_BufferingStreamSubscription.T");
+      t1._as(data);
+      t2 = _this._state;
+      _this._state = (t2 | 64) >>> 0;
+      _this._zone.runUnaryGuarded$1$2(_this._async$_onData, data, t1);
+      _this._state = (_this._state & 4294967231) >>> 0;
+      _this._checkState$1((t2 & 4) !== 0);
+    },
+    _sendError$2(error, stackTrace) {
+      var cancelFuture, _this = this,
+        t1 = _this._state,
+        t2 = new A._BufferingStreamSubscription__sendError_sendError(_this, error, stackTrace);
+      if ((t1 & 1) !== 0) {
+        _this._state = (t1 | 16) >>> 0;
+        _this._cancel$0();
+        cancelFuture = _this._cancelFuture;
+        if (cancelFuture != null && cancelFuture !== $.$get$Future__nullFuture())
+          cancelFuture.whenComplete$1(t2);
+        else
+          t2.call$0();
+      } else {
+        t2.call$0();
+        _this._checkState$1((t1 & 4) !== 0);
+      }
+    },
+    _sendDone$0() {
+      var cancelFuture, _this = this,
+        t1 = new A._BufferingStreamSubscription__sendDone_sendDone(_this);
+      _this._cancel$0();
+      _this._state = (_this._state | 16) >>> 0;
+      cancelFuture = _this._cancelFuture;
+      if (cancelFuture != null && cancelFuture !== $.$get$Future__nullFuture())
+        cancelFuture.whenComplete$1(t1);
+      else
+        t1.call$0();
+    },
+    _guardCallback$1(callback) {
+      var t1, _this = this;
+      type$.void_Function._as(callback);
+      t1 = _this._state;
+      _this._state = (t1 | 64) >>> 0;
+      callback.call$0();
+      _this._state = (_this._state & 4294967231) >>> 0;
+      _this._checkState$1((t1 & 4) !== 0);
+    },
+    _checkState$1(wasInputPaused) {
+      var t2, isInputPaused, _this = this,
+        t1 = _this._state;
+      if ((t1 & 128) !== 0 && _this._pending.lastPendingEvent == null) {
+        t1 = _this._state = (t1 & 4294967167) >>> 0;
+        if ((t1 & 4) !== 0)
+          if (t1 < 256) {
+            t2 = _this._pending;
+            t2 = t2 == null ? null : t2.lastPendingEvent == null;
+            t2 = t2 !== false;
+          } else
+            t2 = false;
+        else
+          t2 = false;
+        if (t2) {
+          t1 = (t1 & 4294967291) >>> 0;
+          _this._state = t1;
+        }
+      }
+      for (; true; wasInputPaused = isInputPaused) {
+        if ((t1 & 8) !== 0) {
+          _this.set$_pending(null);
+          return;
+        }
+        isInputPaused = (t1 & 4) !== 0;
+        if (wasInputPaused === isInputPaused)
+          break;
+        _this._state = (t1 ^ 64) >>> 0;
+        if (isInputPaused)
+          _this._onPause$0();
+        else
+          _this._onResume$0();
+        t1 = (_this._state & 4294967231) >>> 0;
+        _this._state = t1;
+      }
+      if ((t1 & 128) !== 0 && t1 < 256)
+        _this._pending.schedule$1(_this);
+    },
+    set$_async$_onData(_onData) {
+      this._async$_onData = A._instanceType(this)._eval$1("~(_BufferingStreamSubscription.T)")._as(_onData);
+    },
+    set$_pending(_pending) {
+      this._pending = A._instanceType(this)._eval$1("_PendingEvents<_BufferingStreamSubscription.T>?")._as(_pending);
+    },
+    $isStreamSubscription: 1,
+    $is_EventSink: 1,
+    $is_EventDispatch: 1
+  };
+  A._BufferingStreamSubscription__sendError_sendError.prototype = {
+    call$0() {
+      var onError, t3, t4,
+        t1 = this.$this,
+        t2 = t1._state;
+      if ((t2 & 8) !== 0 && (t2 & 16) === 0)
+        return;
+      t1._state = (t2 | 64) >>> 0;
+      onError = t1._onError;
+      t2 = this.error;
+      t3 = type$.Object;
+      t4 = t1._zone;
+      if (type$.void_Function_Object_StackTrace._is(onError))
+        t4.runBinaryGuarded$2$3(onError, t2, this.stackTrace, t3, type$.StackTrace);
+      else
+        t4.runUnaryGuarded$1$2(type$.void_Function_Object._as(onError), t2, t3);
+      t1._state = (t1._state & 4294967231) >>> 0;
+    },
+    $signature: 0
+  };
+  A._BufferingStreamSubscription__sendDone_sendDone.prototype = {
+    call$0() {
+      var t1 = this.$this,
+        t2 = t1._state;
+      if ((t2 & 16) === 0)
+        return;
+      t1._state = (t2 | 74) >>> 0;
+      t1._zone.runGuarded$1(t1._onDone);
+      t1._state = (t1._state & 4294967231) >>> 0;
+    },
+    $signature: 0
+  };
+  A._StreamImpl.prototype = {
+    listen$4$cancelOnError$onDone$onError(onData, cancelOnError, onDone, onError) {
+      var t1 = this.$ti;
+      t1._eval$1("~(1)?")._as(onData);
+      type$.nullable_void_Function._as(onDone);
+      return this._controller._subscribe$4(t1._eval$1("~(1)?")._as(onData), onError, onDone, cancelOnError === true);
+    },
+    listen$3$onDone$onError(onData, onDone, onError) {
+      return this.listen$4$cancelOnError$onDone$onError(onData, null, onDone, onError);
+    }
+  };
+  A._DelayedEvent.prototype = {
+    set$next(next) {
+      this.next = type$.nullable__DelayedEvent_dynamic._as(next);
+    },
+    get$next() {
+      return this.next;
+    }
+  };
+  A._DelayedData.prototype = {
+    perform$1(dispatch) {
+      this.$ti._eval$1("_EventDispatch<1>")._as(dispatch)._sendData$1(this.value);
+    }
+  };
+  A._DelayedError.prototype = {
+    perform$1(dispatch) {
+      dispatch._sendError$2(this.error, this.stackTrace);
+    }
+  };
+  A._DelayedDone.prototype = {
+    perform$1(dispatch) {
+      dispatch._sendDone$0();
+    },
+    get$next() {
+      return null;
+    },
+    set$next(_) {
+      throw A.wrapException(A.StateError$("No events after a done."));
+    },
+    $is_DelayedEvent: 1
+  };
+  A._PendingEvents.prototype = {
+    schedule$1(dispatch) {
+      var t1, _this = this;
+      _this.$ti._eval$1("_EventDispatch<1>")._as(dispatch);
+      t1 = _this._state;
+      if (t1 === 1)
+        return;
+      if (t1 >= 1) {
+        _this._state = 1;
+        return;
+      }
+      A.scheduleMicrotask(new A._PendingEvents_schedule_closure(_this, dispatch));
+      _this._state = 1;
+    },
+    add$1(_, $event) {
+      var _this = this,
+        lastEvent = _this.lastPendingEvent;
+      if (lastEvent == null)
+        _this.firstPendingEvent = _this.lastPendingEvent = $event;
+      else {
+        lastEvent.set$next($event);
+        _this.lastPendingEvent = $event;
+      }
+    }
+  };
+  A._PendingEvents_schedule_closure.prototype = {
+    call$0() {
+      var t2, $event, nextEvent,
+        t1 = this.$this,
+        oldState = t1._state;
+      t1._state = 0;
+      if (oldState === 3)
+        return;
+      t2 = t1.$ti._eval$1("_EventDispatch<1>")._as(this.dispatch);
+      $event = t1.firstPendingEvent;
+      nextEvent = $event.get$next();
+      t1.firstPendingEvent = nextEvent;
+      if (nextEvent == null)
+        t1.lastPendingEvent = null;
+      $event.perform$1(t2);
+    },
+    $signature: 0
+  };
+  A._StreamIterator.prototype = {
+    get$current() {
+      var _this = this;
+      if (_this._async$_hasValue)
+        return _this.$ti._precomputed1._as(_this._stateData);
+      return _this.$ti._precomputed1._as(null);
+    },
+    moveNext$0() {
+      var future, _this = this,
+        subscription = _this._subscription;
+      if (subscription != null) {
+        if (_this._async$_hasValue) {
+          future = new A._Future($.Zone__current, type$._Future_bool);
+          _this._stateData = future;
+          _this._async$_hasValue = false;
+          subscription.resume$0();
+          return future;
+        }
+        throw A.wrapException(A.StateError$("Already waiting for next."));
+      }
+      return _this._initializeOrDone$0();
+    },
+    _initializeOrDone$0() {
+      var future, subscription, _this = this,
+        stateData = _this._stateData;
+      if (stateData != null) {
+        _this.$ti._eval$1("Stream<1>")._as(stateData);
+        future = new A._Future($.Zone__current, type$._Future_bool);
+        _this._stateData = future;
+        subscription = stateData.listen$4$cancelOnError$onDone$onError(_this.get$_async$_onData(), true, _this.get$_onDone(), _this.get$_onError());
+        if (_this._stateData != null)
+          _this.set$_subscription(subscription);
+        return future;
+      }
+      return $.$get$Future__falseFuture();
+    },
+    cancel$0() {
+      var _this = this,
+        subscription = _this._subscription,
+        stateData = _this._stateData;
+      _this._stateData = null;
+      if (subscription != null) {
+        _this.set$_subscription(null);
+        if (!_this._async$_hasValue)
+          type$._Future_bool._as(stateData)._asyncComplete$1(false);
+        else
+          _this._async$_hasValue = false;
+        return subscription.cancel$0();
+      }
+      return $.$get$Future__nullFuture();
+    },
+    _async$_onData$1(data) {
+      var moveNextFuture, t1, _this = this;
+      _this.$ti._precomputed1._as(data);
+      if (_this._subscription == null)
+        return;
+      moveNextFuture = type$._Future_bool._as(_this._stateData);
+      _this._stateData = data;
+      _this._async$_hasValue = true;
+      moveNextFuture._complete$1(true);
+      if (_this._async$_hasValue) {
+        t1 = _this._subscription;
+        if (t1 != null)
+          t1.pause$0(0);
+      }
+    },
+    _onError$2(error, stackTrace) {
+      var subscription, moveNextFuture, _this = this;
+      type$.Object._as(error);
+      type$.StackTrace._as(stackTrace);
+      subscription = _this._subscription;
+      moveNextFuture = type$._Future_bool._as(_this._stateData);
+      _this.set$_subscription(null);
+      _this._stateData = null;
+      if (subscription != null)
+        moveNextFuture._completeError$2(error, stackTrace);
+      else
+        moveNextFuture._asyncCompleteError$2(error, stackTrace);
+    },
+    _onDone$0() {
+      var _this = this,
+        subscription = _this._subscription,
+        moveNextFuture = type$._Future_bool._as(_this._stateData);
+      _this.set$_subscription(null);
+      _this._stateData = null;
+      if (subscription != null)
+        moveNextFuture._completeWithValue$1(false);
+      else
+        moveNextFuture._asyncCompleteWithValue$1(false);
+    },
+    set$_subscription(_subscription) {
+      this._subscription = this.$ti._eval$1("StreamSubscription<1>?")._as(_subscription);
+    }
+  };
+  A._cancelAndValue_closure.prototype = {
+    call$0() {
+      return this.future._complete$1(this.value);
+    },
+    $signature: 0
+  };
+  A._EventSinkWrapper.prototype = {
+    add$1(_, data) {
+      var t1 = this._async$_sink;
+      data = t1.$ti._rest[1]._as(this.$ti._precomputed1._as(data));
+      if ((t1._state & 2) !== 0)
+        A.throwExpression(A.StateError$("Stream is already closed"));
+      t1.super$_BufferingStreamSubscription$_add(data);
+    },
+    addError$2(error, stackTrace) {
+      var t1 = this._async$_sink,
+        t2 = stackTrace == null ? A.AsyncError_defaultStackTrace(error) : stackTrace;
+      if ((t1._state & 2) !== 0)
+        A.throwExpression(A.StateError$("Stream is already closed"));
+      t1.super$_BufferingStreamSubscription$_addError(error, t2);
+    },
+    close$0(_) {
+      var t1 = this._async$_sink;
+      if ((t1._state & 2) !== 0)
+        A.throwExpression(A.StateError$("Stream is already closed"));
+      t1.super$_BufferingStreamSubscription$_close();
+    },
+    $isEventSink: 1,
+    $isSink: 1
+  };
+  A._SinkTransformerStreamSubscription.prototype = {
+    _onPause$0() {
+      var t1 = this._subscription;
+      if (t1 != null)
+        t1.pause$0(0);
+    },
+    _onResume$0() {
+      var t1 = this._subscription;
+      if (t1 != null)
+        t1.resume$0();
+    },
+    _async$_onCancel$0() {
+      var subscription = this._subscription;
+      if (subscription != null) {
+        this.set$_subscription(null);
+        return subscription.cancel$0();
+      }
+      return null;
+    },
+    _handleData$1(data) {
+      var e, s, t1, exception, t2, _this = this;
+      _this.$ti._precomputed1._as(data);
+      try {
+        t1 = _this.___SinkTransformerStreamSubscription__transformerSink_A;
+        t1 === $ && A.throwLateFieldNI("_transformerSink");
+        t1.add$1(0, data);
+      } catch (exception) {
+        e = A.unwrapException(exception);
+        s = A.getTraceFromException(exception);
+        t1 = type$.Object._as(e);
+        t2 = type$.StackTrace._as(s);
+        if ((_this._state & 2) !== 0)
+          A.throwExpression(A.StateError$("Stream is already closed"));
+        _this.super$_BufferingStreamSubscription$_addError(t1, t2);
+      }
+    },
+    _handleError$2(error, stackTrace) {
+      var e, s, t2, t3, exception, _this = this,
+        _s24_ = "Stream is already closed",
+        t1 = type$.Object;
+      t1._as(error);
+      t2 = type$.StackTrace;
+      t2._as(stackTrace);
+      try {
+        t3 = _this.___SinkTransformerStreamSubscription__transformerSink_A;
+        t3 === $ && A.throwLateFieldNI("_transformerSink");
+        t3.addError$2(error, stackTrace);
+      } catch (exception) {
+        e = A.unwrapException(exception);
+        s = A.getTraceFromException(exception);
+        if (e === error) {
+          if ((_this._state & 2) !== 0)
+            A.throwExpression(A.StateError$(_s24_));
+          _this.super$_BufferingStreamSubscription$_addError(error, stackTrace);
+        } else {
+          t1 = t1._as(e);
+          t2 = t2._as(s);
+          if ((_this._state & 2) !== 0)
+            A.throwExpression(A.StateError$(_s24_));
+          _this.super$_BufferingStreamSubscription$_addError(t1, t2);
+        }
+      }
+    },
+    _handleDone$0() {
+      var e, s, t1, exception, t2, _this = this;
+      try {
+        _this.set$_subscription(null);
+        t1 = _this.___SinkTransformerStreamSubscription__transformerSink_A;
+        t1 === $ && A.throwLateFieldNI("_transformerSink");
+        t1.close$0(0);
+      } catch (exception) {
+        e = A.unwrapException(exception);
+        s = A.getTraceFromException(exception);
+        t1 = type$.Object._as(e);
+        t2 = type$.StackTrace._as(s);
+        if ((_this._state & 2) !== 0)
+          A.throwExpression(A.StateError$("Stream is already closed"));
+        _this.super$_BufferingStreamSubscription$_addError(t1, t2);
+      }
+    },
+    set$___SinkTransformerStreamSubscription__transformerSink_A(___SinkTransformerStreamSubscription__transformerSink_A) {
+      this.___SinkTransformerStreamSubscription__transformerSink_A = this.$ti._eval$1("EventSink<1>")._as(___SinkTransformerStreamSubscription__transformerSink_A);
+    },
+    set$_subscription(_subscription) {
+      this._subscription = this.$ti._eval$1("StreamSubscription<1>?")._as(_subscription);
+    }
+  };
+  A._StreamSinkTransformer.prototype = {
+    bind$1(stream) {
+      var t1 = this.$ti;
+      return new A._BoundSinkStream(this._sinkMapper, t1._eval$1("Stream<1>")._as(stream), t1._eval$1("@<1>")._bind$1(t1._rest[1])._eval$1("_BoundSinkStream<1,2>"));
+    }
+  };
+  A._BoundSinkStream.prototype = {
+    listen$4$cancelOnError$onDone$onError(onData, cancelOnError, onDone, onError) {
+      var t2, t3, t4, t5, t6, subscription,
+        t1 = this.$ti;
+      t1._eval$1("~(2)?")._as(onData);
+      type$.nullable_void_Function._as(onDone);
+      t2 = t1._rest[1];
+      t3 = $.Zone__current;
+      t4 = cancelOnError === true ? 1 : 0;
+      t5 = A._BufferingStreamSubscription__registerDataHandler(t3, onData, t2);
+      t6 = A._BufferingStreamSubscription__registerErrorHandler(t3, onError);
+      t2 = t1._eval$1("@<1>")._bind$1(t2);
+      subscription = new A._SinkTransformerStreamSubscription(t5, t6, type$.void_Function._as(onDone), t3, t4 | 32, t2._eval$1("_SinkTransformerStreamSubscription<1,2>"));
+      subscription.set$___SinkTransformerStreamSubscription__transformerSink_A(t2._eval$1("EventSink<1>")._as(this._sinkMapper.call$1(new A._EventSinkWrapper(subscription, t1._eval$1("_EventSinkWrapper<2>")))));
+      subscription.set$_subscription(this._stream.listen$3$onDone$onError(subscription.get$_handleData(), subscription.get$_handleDone(), subscription.get$_handleError()));
+      return subscription;
+    },
+    listen$3$onDone$onError(onData, onDone, onError) {
+      return this.listen$4$cancelOnError$onDone$onError(onData, null, onDone, onError);
+    }
+  };
+  A._HandlerEventSink.prototype = {
+    add$1(_, data) {
+      var sink;
+      this.$ti._precomputed1._as(data);
+      sink = this._async$_sink;
+      if (sink == null)
+        throw A.wrapException(A.StateError$("Sink is closed"));
+      this._handleData.call$2(data, sink);
+    },
+    addError$2(error, stackTrace) {
+      var sink;
+      A.checkNotNullable(error, "error", type$.Object);
+      sink = this._async$_sink;
+      if (sink == null)
+        throw A.wrapException(A.StateError$("Sink is closed"));
+      sink.addError$2(error, stackTrace);
+    },
+    close$0(_) {
+      var t1,
+        sink = this._async$_sink;
+      if (sink == null)
+        return;
+      this.set$_async$_sink(null);
+      t1 = sink._async$_sink;
+      if ((t1._state & 2) !== 0)
+        A.throwExpression(A.StateError$("Stream is already closed"));
+      t1.super$_BufferingStreamSubscription$_close();
+    },
+    set$_async$_sink(_sink) {
+      this._async$_sink = this.$ti._eval$1("EventSink<2>?")._as(_sink);
+    },
+    $isEventSink: 1,
+    $isSink: 1
+  };
+  A._StreamHandlerTransformer.prototype = {};
+  A._StreamHandlerTransformer_closure.prototype = {
+    call$1(outputSink) {
+      var _this = this,
+        t1 = _this.T;
+      return new A._HandlerEventSink(_this.handleData, _this.handleError, _this.handleDone, t1._eval$1("EventSink<0>")._as(outputSink), _this.S._eval$1("@<0>")._bind$1(t1)._eval$1("_HandlerEventSink<1,2>"));
+    },
+    $signature() {
+      return this.S._eval$1("@<0>")._bind$1(this.T)._eval$1("_HandlerEventSink<1,2>(EventSink<2>)");
+    }
+  };
   A._Zone.prototype = {$isZone: 1};
   A._rootHandleError_closure.prototype = {
     call$0() {
       A.Error_throwWithStackTrace(this.error, this.stackTrace);
     },
-    $signature: 1
+    $signature: 0
   };
   A._RootZone.prototype = {
     runGuarded$1(f) {
@@ -6478,11 +12897,31 @@
         A._rootHandleError(type$.Object._as(e), type$.StackTrace._as(s));
       }
     },
+    runBinaryGuarded$2$3(f, arg1, arg2, T1, T2) {
+      var e, s, exception;
+      T1._eval$1("@<0>")._bind$1(T2)._eval$1("~(1,2)")._as(f);
+      T1._as(arg1);
+      T2._as(arg2);
+      try {
+        if (B.C__RootZone === $.Zone__current) {
+          f.call$2(arg1, arg2);
+          return;
+        }
+        A._rootRunBinary(null, null, this, f, arg1, arg2, type$.void, T1, T2);
+      } catch (exception) {
+        e = A.unwrapException(exception);
+        s = A.getTraceFromException(exception);
+        A._rootHandleError(type$.Object._as(e), type$.StackTrace._as(s));
+      }
+    },
     bindCallbackGuarded$1(f) {
       return new A._RootZone_bindCallbackGuarded_closure(this, type$.void_Function._as(f));
     },
     bindUnaryCallbackGuarded$1$1(f, $T) {
       return new A._RootZone_bindUnaryCallbackGuarded_closure(this, $T._eval$1("~(0)")._as(f), $T);
+    },
+    $index(_, key) {
+      return null;
     },
     run$1$1(f, $R) {
       $R._eval$1("0()")._as(f);
@@ -6513,7 +12952,7 @@
     call$0() {
       return this.$this.runGuarded$1(this.f);
     },
-    $signature: 1
+    $signature: 0
   };
   A._RootZone_bindUnaryCallbackGuarded_closure.prototype = {
     call$1(arg) {
@@ -6528,10 +12967,13 @@
     get$length(_) {
       return this._collection$_length;
     },
-    get$keys() {
+    get$isEmpty(_) {
+      return this._collection$_length === 0;
+    },
+    get$keys(_) {
       return new A._HashMapKeyIterable(this, this.$ti._eval$1("_HashMapKeyIterable<1>"));
     },
-    containsKey$1(key) {
+    containsKey$1(_, key) {
       var strings, nums;
       if (typeof key == "string" && key !== "__proto__") {
         strings = this._collection$_strings;
@@ -6571,27 +13013,32 @@
       return index < 0 ? null : bucket[index + 1];
     },
     $indexSet(_, key, value) {
-      var rest, hash, bucket, index, _this = this,
+      var strings, rest, hash, bucket, index, _this = this,
         t1 = _this.$ti;
       t1._precomputed1._as(key);
       t1._rest[1]._as(value);
-      rest = _this._collection$_rest;
-      if (rest == null)
-        rest = _this._collection$_rest = A._HashMap__newHashTable();
-      hash = A.objectHashCode(key) & 1073741823;
-      bucket = rest[hash];
-      if (bucket == null) {
-        A._HashMap__setTableEntry(rest, hash, [key, value]);
-        ++_this._collection$_length;
-        _this._collection$_keys = null;
+      if (typeof key == "string" && key !== "__proto__") {
+        strings = _this._collection$_strings;
+        _this._collection$_addHashTableEntry$3(strings == null ? _this._collection$_strings = A._HashMap__newHashTable() : strings, key, value);
       } else {
-        index = _this._findBucketIndex$2(bucket, key);
-        if (index >= 0)
-          bucket[index + 1] = value;
-        else {
-          bucket.push(key, value);
+        rest = _this._collection$_rest;
+        if (rest == null)
+          rest = _this._collection$_rest = A._HashMap__newHashTable();
+        hash = A.objectHashCode(key) & 1073741823;
+        bucket = rest[hash];
+        if (bucket == null) {
+          A._HashMap__setTableEntry(rest, hash, [key, value]);
           ++_this._collection$_length;
           _this._collection$_keys = null;
+        } else {
+          index = _this._findBucketIndex$2(bucket, key);
+          if (index >= 0)
+            bucket[index + 1] = value;
+          else {
+            bucket.push(key, value);
+            ++_this._collection$_length;
+            _this._collection$_keys = null;
+          }
         }
       }
     },
@@ -6649,6 +13096,16 @@
       }
       return _this._collection$_keys = result;
     },
+    _collection$_addHashTableEntry$3(table, key, value) {
+      var t1 = this.$ti;
+      t1._precomputed1._as(key);
+      t1._rest[1]._as(value);
+      if (table[key] == null) {
+        ++this._collection$_length;
+        this._collection$_keys = null;
+      }
+      A._HashMap__setTableEntry(table, key, value);
+    },
     _getBucket$2(table, key) {
       return table[A.objectHashCode(key) & 1073741823];
     }
@@ -6670,6 +13127,9 @@
   A._HashMapKeyIterable.prototype = {
     get$length(_) {
       return this._collection$_map._collection$_length;
+    },
+    get$isEmpty(_) {
+      return this._collection$_map._collection$_length === 0;
     },
     get$iterator(_) {
       var t1 = this._collection$_map;
@@ -6712,7 +13172,7 @@
       var t1 = this.$ti;
       this.super$JsLinkedHashMap$internalSet(t1._precomputed1._as(key), t1._rest[1]._as(value));
     },
-    containsKey$1(key) {
+    containsKey$1(_, key) {
       if (!A.boolConversionCheck(this._validKey.call$1(key)))
         return false;
       return this.super$JsLinkedHashMap$internalContainsKey(key);
@@ -6740,7 +13200,7 @@
     call$1(v) {
       return this.K._is(v);
     },
-    $signature: 18
+    $signature: 89
   };
   A._LinkedHashSet.prototype = {
     get$iterator(_) {
@@ -6799,6 +13259,26 @@
       }
       return true;
     },
+    remove$1(_, object) {
+      var t1 = this._remove$1(object);
+      return t1;
+    },
+    _remove$1(object) {
+      var hash, bucket, index, cell, _this = this,
+        rest = _this._collection$_rest;
+      if (rest == null)
+        return false;
+      hash = _this._computeHashCode$1(object);
+      bucket = rest[hash];
+      index = _this._findBucketIndex$2(bucket, object);
+      if (index < 0)
+        return false;
+      cell = bucket.splice(index, 1)[0];
+      if (0 === bucket.length)
+        delete rest[hash];
+      _this._collection$_unlinkCell$1(cell);
+      return true;
+    },
     _collection$_addHashTableEntry$2(table, element) {
       A._instanceType(this)._precomputed1._as(element);
       if (type$.nullable__LinkedHashSetCell._as(table[element]) != null)
@@ -6806,16 +13286,38 @@
       table[element] = this._collection$_newLinkedCell$1(element);
       return true;
     },
+    _collection$_modified$0() {
+      this._collection$_modifications = this._collection$_modifications + 1 & 1073741823;
+    },
     _collection$_newLinkedCell$1(element) {
-      var _this = this,
+      var t1, _this = this,
         cell = new A._LinkedHashSetCell(A._instanceType(_this)._precomputed1._as(element));
       if (_this._collection$_first == null)
         _this._collection$_first = _this._collection$_last = cell;
-      else
-        _this._collection$_last = _this._collection$_last._collection$_next = cell;
+      else {
+        t1 = _this._collection$_last;
+        t1.toString;
+        cell._collection$_previous = t1;
+        _this._collection$_last = t1._collection$_next = cell;
+      }
       ++_this._collection$_length;
-      _this._collection$_modifications = _this._collection$_modifications + 1 & 1073741823;
+      _this._collection$_modified$0();
       return cell;
+    },
+    _collection$_unlinkCell$1(cell) {
+      var _this = this,
+        previous = cell._collection$_previous,
+        next = cell._collection$_next;
+      if (previous == null)
+        _this._collection$_first = next;
+      else
+        previous._collection$_next = next;
+      if (next == null)
+        _this._collection$_last = previous;
+      else
+        next._collection$_previous = previous;
+      --_this._collection$_length;
+      _this._collection$_modified$0();
     },
     _computeHashCode$1(element) {
       return J.get$hashCode$(element) & 1073741823;
@@ -6857,6 +13359,12 @@
     },
     $isIterator: 1
   };
+  A.LinkedHashMap_LinkedHashMap$from_closure.prototype = {
+    call$2(k, v) {
+      this.result.$indexSet(0, this.K._as(k), this.V._as(v));
+    },
+    $signature: 18
+  };
   A.ListBase.prototype = {
     get$iterator(receiver) {
       return new A.ListIterator(receiver, this.get$length(receiver), A.instanceType(receiver)._eval$1("ListIterator<ListBase.E>"));
@@ -6864,9 +13372,93 @@
     elementAt$1(receiver, index) {
       return this.$index(receiver, index);
     },
+    get$isEmpty(receiver) {
+      return this.get$length(receiver) === 0;
+    },
+    get$isNotEmpty(receiver) {
+      return this.get$length(receiver) !== 0;
+    },
+    get$first(receiver) {
+      if (this.get$length(receiver) === 0)
+        throw A.wrapException(A.IterableElementError_noElement());
+      return this.$index(receiver, 0);
+    },
+    join$1(receiver, separator) {
+      var t1;
+      if (this.get$length(receiver) === 0)
+        return "";
+      t1 = A.StringBuffer__writeAll("", receiver, separator);
+      return t1.charCodeAt(0) == 0 ? t1 : t1;
+    },
     map$1$1(receiver, f, $T) {
       var t1 = A.instanceType(receiver);
       return new A.MappedListIterable(receiver, t1._bind$1($T)._eval$1("1(ListBase.E)")._as(f), t1._eval$1("@<ListBase.E>")._bind$1($T)._eval$1("MappedListIterable<1,2>"));
+    },
+    skip$1(receiver, count) {
+      return A.SubListIterable$(receiver, count, null, A.instanceType(receiver)._eval$1("ListBase.E"));
+    },
+    take$1(receiver, count) {
+      return A.SubListIterable$(receiver, 0, A.checkNotNullable(count, "count", type$.int), A.instanceType(receiver)._eval$1("ListBase.E"));
+    },
+    toList$1$growable(receiver, growable) {
+      var t1, first, result, i, _this = this;
+      if (_this.get$length(receiver) === 0) {
+        t1 = J.JSArray_JSArray$growable(0, A.instanceType(receiver)._eval$1("ListBase.E"));
+        return t1;
+      }
+      first = _this.$index(receiver, 0);
+      result = A.List_List$filled(_this.get$length(receiver), first, true, A.instanceType(receiver)._eval$1("ListBase.E"));
+      for (i = 1; i < _this.get$length(receiver); ++i)
+        B.JSArray_methods.$indexSet(result, i, _this.$index(receiver, i));
+      return result;
+    },
+    toList$0(receiver) {
+      return this.toList$1$growable(receiver, true);
+    },
+    add$1(receiver, element) {
+      var t1;
+      A.instanceType(receiver)._eval$1("ListBase.E")._as(element);
+      t1 = this.get$length(receiver);
+      this.set$length(receiver, t1 + 1);
+      this.$indexSet(receiver, t1, element);
+    },
+    sort$1(receiver, compare) {
+      var t1 = A.instanceType(receiver);
+      t1._eval$1("int(ListBase.E,ListBase.E)?")._as(compare);
+      A.Sort__doSort(receiver, 0, this.get$length(receiver) - 1, compare, t1._eval$1("ListBase.E"));
+    },
+    fillRange$3(receiver, start, end, fill) {
+      var i;
+      A.instanceType(receiver)._eval$1("ListBase.E?")._as(fill);
+      A.RangeError_checkValidRange(start, end, this.get$length(receiver));
+      for (i = start; i < end; ++i)
+        this.$indexSet(receiver, i, fill);
+    },
+    setRange$4(receiver, start, end, iterable, skipCount) {
+      var $length, otherStart, otherList, i,
+        t1 = A.instanceType(receiver);
+      t1._eval$1("Iterable<ListBase.E>")._as(iterable);
+      A.RangeError_checkValidRange(start, end, this.get$length(receiver));
+      $length = end - start;
+      if ($length === 0)
+        return;
+      A.RangeError_checkNotNegative(skipCount, "skipCount");
+      if (t1._eval$1("List<ListBase.E>")._is(iterable)) {
+        otherStart = skipCount;
+        otherList = iterable;
+      } else {
+        otherList = J.skip$1$ax(iterable, skipCount).toList$1$growable(0, false);
+        otherStart = 0;
+      }
+      t1 = J.getInterceptor$asx(otherList);
+      if (otherStart + $length > t1.get$length(otherList))
+        throw A.wrapException(A.IterableElementError_tooFew());
+      if (otherStart < start)
+        for (i = $length - 1; i >= 0; --i)
+          this.$indexSet(receiver, start + i, t1.$index(otherList, otherStart + i));
+      else
+        for (i = 0; i < $length; ++i)
+          this.$indexSet(receiver, start + i, t1.$index(otherList, otherStart + i));
     },
     toString$0(receiver) {
       return A.Iterable_iterableToFullString(receiver, "[", "]");
@@ -6876,23 +13468,56 @@
     $isList: 1
   };
   A.MapBase.prototype = {
-    forEach$1(_, action) {
+    forEach$1(receiver, action) {
       var t2, key, t3,
-        t1 = A._instanceType(this);
+        t1 = A.instanceType(receiver);
       t1._eval$1("~(MapBase.K,MapBase.V)")._as(action);
-      for (t2 = J.get$iterator$ax(this.get$keys()), t1 = t1._eval$1("MapBase.V"); t2.moveNext$0();) {
+      for (t2 = J.get$iterator$ax(this.get$keys(receiver)), t1 = t1._eval$1("MapBase.V"); t2.moveNext$0();) {
         key = t2.get$current();
-        t3 = this.$index(0, key);
+        t3 = this.$index(receiver, key);
         action.call$2(key, t3 == null ? t1._as(t3) : t3);
       }
     },
-    get$length(_) {
-      return J.get$length$asx(this.get$keys());
+    get$entries(receiver) {
+      return J.map$1$1$ax(this.get$keys(receiver), new A.MapBase_entries_closure(receiver), A.instanceType(receiver)._eval$1("MapEntry<MapBase.K,MapBase.V>"));
     },
-    toString$0(_) {
-      return A.MapBase_mapToString(this);
+    map$2$1(receiver, transform, K2, V2) {
+      var result, t2, key, t3, entry,
+        t1 = A.instanceType(receiver);
+      t1._bind$1(K2)._bind$1(V2)._eval$1("MapEntry<1,2>(MapBase.K,MapBase.V)")._as(transform);
+      result = A.LinkedHashMap_LinkedHashMap$_empty(K2, V2);
+      for (t2 = J.get$iterator$ax(this.get$keys(receiver)), t1 = t1._eval$1("MapBase.V"); t2.moveNext$0();) {
+        key = t2.get$current();
+        t3 = this.$index(receiver, key);
+        entry = transform.call$2(key, t3 == null ? t1._as(t3) : t3);
+        result.$indexSet(0, entry.key, entry.value);
+      }
+      return result;
+    },
+    get$length(receiver) {
+      return J.get$length$asx(this.get$keys(receiver));
+    },
+    get$isEmpty(receiver) {
+      return J.get$isEmpty$asx(this.get$keys(receiver));
+    },
+    toString$0(receiver) {
+      return A.MapBase_mapToString(receiver);
     },
     $isMap: 1
+  };
+  A.MapBase_entries_closure.prototype = {
+    call$1(key) {
+      var t1 = this.$this,
+        t2 = A.instanceType(t1);
+      t2._eval$1("MapBase.K")._as(key);
+      t1 = J.$index$asx(t1, key);
+      if (t1 == null)
+        t1 = t2._eval$1("MapBase.V")._as(t1);
+      return new A.MapEntry(key, t1, t2._eval$1("@<MapBase.K>")._bind$1(t2._eval$1("MapBase.V"))._eval$1("MapEntry<1,2>"));
+    },
+    $signature() {
+      return A.instanceType(this.$this)._eval$1("MapEntry<MapBase.K,MapBase.V>(MapBase.K)");
+    }
   };
   A.MapBase_mapToString_closure.prototype = {
     call$2(k, v) {
@@ -6910,23 +13535,36 @@
     },
     $signature: 19
   };
-  A._UnmodifiableMapMixin.prototype = {};
+  A._UnmodifiableMapMixin.prototype = {
+    $indexSet(_, key, value) {
+      var t1 = A._instanceType(this);
+      t1._precomputed1._as(key);
+      t1._rest[1]._as(value);
+      throw A.wrapException(A.UnsupportedError$("Cannot modify unmodifiable map"));
+    }
+  };
   A.MapView.prototype = {
     $index(_, key) {
-      return this._collection$_map.$index(0, key);
+      return J.$index$asx(this._collection$_map, key);
+    },
+    $indexSet(_, key, value) {
+      var t1 = A._instanceType(this);
+      J.$indexSet$ax(this._collection$_map, t1._precomputed1._as(key), t1._rest[1]._as(value));
     },
     forEach$1(_, action) {
-      this._collection$_map.forEach$1(0, this.$ti._eval$1("~(1,2)")._as(action));
+      J.forEach$1$x(this._collection$_map, A._instanceType(this)._eval$1("~(1,2)")._as(action));
+    },
+    get$isEmpty(_) {
+      return J.get$isEmpty$asx(this._collection$_map);
     },
     get$length(_) {
-      return this._collection$_map.__js_helper$_length;
+      return J.get$length$asx(this._collection$_map);
     },
-    get$keys() {
-      var t1 = this._collection$_map;
-      return new A.LinkedHashMapKeyIterable(t1, t1.$ti._eval$1("LinkedHashMapKeyIterable<1>"));
+    get$keys(_) {
+      return J.get$keys$x(this._collection$_map);
     },
     toString$0(_) {
-      return A.MapBase_mapToString(this._collection$_map);
+      return J.toString$0$(this._collection$_map);
     },
     $isMap: 1
   };
@@ -6944,12 +13582,1289 @@
     toString$0(_) {
       return A.Iterable_iterableToFullString(this, "{", "}");
     },
+    join$1(_, separator) {
+      var t1, first, t2, t3,
+        iterator = A._LinkedHashSetIterator$(this, this._collection$_modifications, A._instanceType(this)._precomputed1);
+      if (!iterator.moveNext$0())
+        return "";
+      t1 = iterator._collection$_current;
+      first = J.toString$0$(t1 == null ? iterator.$ti._precomputed1._as(t1) : t1);
+      if (!iterator.moveNext$0())
+        return first;
+      t1 = iterator.$ti._precomputed1;
+      if (separator.length === 0) {
+        t2 = first;
+        do {
+          t3 = iterator._collection$_current;
+          t2 += A.S(t3 == null ? t1._as(t3) : t3);
+        } while (iterator.moveNext$0());
+        t1 = t2;
+      } else {
+        t2 = first;
+        do {
+          t3 = iterator._collection$_current;
+          t2 = t2 + separator + A.S(t3 == null ? t1._as(t3) : t3);
+        } while (iterator.moveNext$0());
+        t1 = t2;
+      }
+      return t1.charCodeAt(0) == 0 ? t1 : t1;
+    },
+    skip$1(_, n) {
+      return A.SkipIterable_SkipIterable(this, n, A._instanceType(this)._precomputed1);
+    },
     $isEfficientLengthIterable: 1,
     $isIterable: 1,
     $isSet: 1
   };
   A._SetBase.prototype = {};
   A._UnmodifiableMapView_MapView__UnmodifiableMapMixin.prototype = {};
+  A._JsonMap.prototype = {
+    $index(_, key) {
+      var result,
+        t1 = this._processed;
+      if (t1 == null)
+        return this._data.$index(0, key);
+      else if (typeof key != "string")
+        return null;
+      else {
+        result = t1[key];
+        return typeof result == "undefined" ? this._process$1(key) : result;
+      }
+    },
+    get$length(_) {
+      return this._processed == null ? this._data.__js_helper$_length : this._convert$_computeKeys$0().length;
+    },
+    get$isEmpty(_) {
+      return this.get$length(0) === 0;
+    },
+    get$keys(_) {
+      var t1;
+      if (this._processed == null) {
+        t1 = this._data;
+        return new A.LinkedHashMapKeyIterable(t1, A._instanceType(t1)._eval$1("LinkedHashMapKeyIterable<1>"));
+      }
+      return new A._JsonMapKeyIterable(this);
+    },
+    $indexSet(_, key, value) {
+      var processed, original, _this = this;
+      if (_this._processed == null)
+        _this._data.$indexSet(0, key, value);
+      else if (_this.containsKey$1(0, key)) {
+        processed = _this._processed;
+        processed[key] = value;
+        original = _this._original;
+        if (original == null ? processed != null : original !== processed)
+          original[key] = null;
+      } else
+        _this._upgrade$0().$indexSet(0, key, value);
+    },
+    containsKey$1(_, key) {
+      if (this._processed == null)
+        return this._data.containsKey$1(0, key);
+      return Object.prototype.hasOwnProperty.call(this._original, key);
+    },
+    forEach$1(_, f) {
+      var keys, i, key, value, _this = this;
+      type$.void_Function_String_dynamic._as(f);
+      if (_this._processed == null)
+        return _this._data.forEach$1(0, f);
+      keys = _this._convert$_computeKeys$0();
+      for (i = 0; i < keys.length; ++i) {
+        key = keys[i];
+        value = _this._processed[key];
+        if (typeof value == "undefined") {
+          value = A._convertJsonToDartLazy(_this._original[key]);
+          _this._processed[key] = value;
+        }
+        f.call$2(key, value);
+        if (keys !== _this._data)
+          throw A.wrapException(A.ConcurrentModificationError$(_this));
+      }
+    },
+    _convert$_computeKeys$0() {
+      var keys = type$.nullable_List_dynamic._as(this._data);
+      if (keys == null)
+        keys = this._data = A._setArrayType(Object.keys(this._original), type$.JSArray_String);
+      return keys;
+    },
+    _upgrade$0() {
+      var result, keys, i, t1, key, _this = this;
+      if (_this._processed == null)
+        return _this._data;
+      result = A.LinkedHashMap_LinkedHashMap$_empty(type$.String, type$.dynamic);
+      keys = _this._convert$_computeKeys$0();
+      for (i = 0; t1 = keys.length, i < t1; ++i) {
+        key = keys[i];
+        result.$indexSet(0, key, _this.$index(0, key));
+      }
+      if (t1 === 0)
+        B.JSArray_methods.add$1(keys, "");
+      else
+        B.JSArray_methods.clear$0(keys);
+      _this._original = _this._processed = null;
+      return _this._data = result;
+    },
+    _process$1(key) {
+      var result;
+      if (!Object.prototype.hasOwnProperty.call(this._original, key))
+        return null;
+      result = A._convertJsonToDartLazy(this._original[key]);
+      return this._processed[key] = result;
+    }
+  };
+  A._JsonMapKeyIterable.prototype = {
+    get$length(_) {
+      return this._parent.get$length(0);
+    },
+    elementAt$1(_, index) {
+      var t1 = this._parent;
+      if (t1._processed == null)
+        t1 = t1.get$keys(0).elementAt$1(0, index);
+      else {
+        t1 = t1._convert$_computeKeys$0();
+        if (!(index >= 0 && index < t1.length))
+          return A.ioore(t1, index);
+        t1 = t1[index];
+      }
+      return t1;
+    },
+    get$iterator(_) {
+      var t1 = this._parent;
+      if (t1._processed == null) {
+        t1 = t1.get$keys(0);
+        t1 = t1.get$iterator(t1);
+      } else {
+        t1 = t1._convert$_computeKeys$0();
+        t1 = new J.ArrayIterator(t1, t1.length, A._arrayInstanceType(t1)._eval$1("ArrayIterator<1>"));
+      }
+      return t1;
+    }
+  };
+  A._JsonDecoderSink.prototype = {
+    close$0(_) {
+      var t1, t2, _this = this;
+      _this.super$_StringSinkConversionSink$close(0);
+      t1 = _this._stringSink;
+      t2 = t1._contents;
+      t1._contents = "";
+      t1 = _this._sink;
+      t1.add$1(0, A._parseJson(t2.charCodeAt(0) == 0 ? t2 : t2, _this._reviver));
+      t1.close$0(0);
+    }
+  };
+  A._Utf8Decoder__decoder_closure.prototype = {
+    call$0() {
+      var t1, exception;
+      try {
+        t1 = new TextDecoder("utf-8", {fatal: true});
+        return t1;
+      } catch (exception) {
+      }
+      return null;
+    },
+    $signature: 20
+  };
+  A._Utf8Decoder__decoderNonfatal_closure.prototype = {
+    call$0() {
+      var t1, exception;
+      try {
+        t1 = new TextDecoder("utf-8", {fatal: false});
+        return t1;
+      } catch (exception) {
+      }
+      return null;
+    },
+    $signature: 20
+  };
+  A.Base64Codec.prototype = {
+    normalize$3(source, start, end) {
+      var inverseAlphabet, t2, i, sliceStart, buffer, firstPadding, firstPaddingSourceIndex, paddingCount, i0, char, i1, digit1, t3, digit2, char0, value, t4, endLength, $length,
+        _s64_ = string$.ABCDEF,
+        _s31_ = "Invalid base64 encoding length ",
+        t1 = source.length;
+      end = A.RangeError_checkValidRange(start, end, t1);
+      inverseAlphabet = $.$get$_Base64Decoder__inverseAlphabet();
+      for (t2 = inverseAlphabet.length, i = start, sliceStart = i, buffer = null, firstPadding = -1, firstPaddingSourceIndex = -1, paddingCount = 0; i < end; i = i0) {
+        i0 = i + 1;
+        if (!(i < t1))
+          return A.ioore(source, i);
+        char = source.charCodeAt(i);
+        if (char === 37) {
+          i1 = i0 + 2;
+          if (i1 <= end) {
+            if (!(i0 < t1))
+              return A.ioore(source, i0);
+            digit1 = A.hexDigitValue(source.charCodeAt(i0));
+            t3 = i0 + 1;
+            if (!(t3 < t1))
+              return A.ioore(source, t3);
+            digit2 = A.hexDigitValue(source.charCodeAt(t3));
+            char0 = digit1 * 16 + digit2 - (digit2 & 256);
+            if (char0 === 37)
+              char0 = -1;
+            i0 = i1;
+          } else
+            char0 = -1;
+        } else
+          char0 = char;
+        if (0 <= char0 && char0 <= 127) {
+          if (!(char0 >= 0 && char0 < t2))
+            return A.ioore(inverseAlphabet, char0);
+          value = inverseAlphabet[char0];
+          if (value >= 0) {
+            if (!(value < 64))
+              return A.ioore(_s64_, value);
+            char0 = _s64_.charCodeAt(value);
+            if (char0 === char)
+              continue;
+            char = char0;
+          } else {
+            if (value === -1) {
+              if (firstPadding < 0) {
+                t3 = buffer == null ? null : buffer._contents.length;
+                if (t3 == null)
+                  t3 = 0;
+                firstPadding = t3 + (i - sliceStart);
+                firstPaddingSourceIndex = i;
+              }
+              ++paddingCount;
+              if (char === 61)
+                continue;
+            }
+            char = char0;
+          }
+          if (value !== -2) {
+            if (buffer == null) {
+              buffer = new A.StringBuffer("");
+              t3 = buffer;
+            } else
+              t3 = buffer;
+            t3._contents += B.JSString_methods.substring$2(source, sliceStart, i);
+            t4 = A.Primitives_stringFromCharCode(char);
+            t3._contents += t4;
+            sliceStart = i0;
+            continue;
+          }
+        }
+        throw A.wrapException(A.FormatException$("Invalid base64 data", source, i));
+      }
+      if (buffer != null) {
+        t1 = B.JSString_methods.substring$2(source, sliceStart, end);
+        t1 = buffer._contents += t1;
+        t2 = t1.length;
+        if (firstPadding >= 0)
+          A.Base64Codec__checkPadding(source, firstPaddingSourceIndex, end, firstPadding, paddingCount, t2);
+        else {
+          endLength = B.JSInt_methods.$mod(t2 - 1, 4) + 1;
+          if (endLength === 1)
+            throw A.wrapException(A.FormatException$(_s31_, source, end));
+          for (; endLength < 4;) {
+            t1 += "=";
+            buffer._contents = t1;
+            ++endLength;
+          }
+        }
+        t1 = buffer._contents;
+        return B.JSString_methods.replaceRange$3(source, start, end, t1.charCodeAt(0) == 0 ? t1 : t1);
+      }
+      $length = end - start;
+      if (firstPadding >= 0)
+        A.Base64Codec__checkPadding(source, firstPaddingSourceIndex, end, firstPadding, paddingCount, $length);
+      else {
+        endLength = B.JSInt_methods.$mod($length, 4);
+        if (endLength === 1)
+          throw A.wrapException(A.FormatException$(_s31_, source, end));
+        if (endLength > 1)
+          source = B.JSString_methods.replaceRange$3(source, end, end, endLength === 2 ? "==" : "=");
+      }
+      return source;
+    }
+  };
+  A.Base64Encoder.prototype = {
+    convert$1(input) {
+      var t1;
+      type$.List_int._as(input);
+      t1 = input.length;
+      if (t1 === 0)
+        return "";
+      t1 = new A._Base64Encoder(string$.ABCDEF).encode$4(input, 0, t1, true);
+      t1.toString;
+      return A.String_String$fromCharCodes(t1, 0, null);
+    },
+    startChunkedConversion$1(sink) {
+      var _s64_ = string$.ABCDEF;
+      type$.Sink_String._as(sink);
+      if (type$.StringConversionSink._is(sink))
+        return new A._Utf8Base64EncoderSink(new A._Utf8StringSinkAdapter(new A._Utf8Decoder(false), sink, sink._stringSink), new A._Base64Encoder(_s64_));
+      return new A._AsciiBase64EncoderSink(sink, new A._BufferCachingBase64Encoder(_s64_));
+    }
+  };
+  A._Base64Encoder.prototype = {
+    createBuffer$1(bufferLength) {
+      return new Uint8Array(bufferLength);
+    },
+    encode$4(bytes, start, end, isLast) {
+      var byteCount, fullChunks, bufferLength, output, _this = this;
+      type$.List_int._as(bytes);
+      byteCount = (_this._convert$_state & 3) + (end - start);
+      fullChunks = B.JSInt_methods._tdivFast$1(byteCount, 3);
+      bufferLength = fullChunks * 4;
+      if (isLast && byteCount - fullChunks * 3 > 0)
+        bufferLength += 4;
+      output = _this.createBuffer$1(bufferLength);
+      _this._convert$_state = A._Base64Encoder_encodeChunk(_this._alphabet, bytes, start, end, isLast, output, 0, _this._convert$_state);
+      if (bufferLength > 0)
+        return output;
+      return null;
+    }
+  };
+  A._BufferCachingBase64Encoder.prototype = {
+    createBuffer$1(bufferLength) {
+      var buffer = this.bufferCache;
+      if (buffer == null || buffer.length < bufferLength)
+        buffer = this.bufferCache = new Uint8Array(bufferLength);
+      return A.NativeUint8List_NativeUint8List$view(buffer.buffer, buffer.byteOffset, bufferLength);
+    }
+  };
+  A._Base64EncoderSink.prototype = {
+    add$1(_, source) {
+      type$.List_int._as(source);
+      this._convert$_add$4(source, 0, J.get$length$asx(source), false);
+    },
+    close$0(_) {
+      this._convert$_add$4(B.List_empty2, 0, 0, true);
+    }
+  };
+  A._AsciiBase64EncoderSink.prototype = {
+    _convert$_add$4(source, start, end, isLast) {
+      var buffer = this._encoder.encode$4(type$.List_int._as(source), start, end, isLast);
+      if (buffer != null)
+        this._sink.add$1(0, A.String_String$fromCharCodes(buffer, 0, null));
+      if (isLast)
+        this._sink.close$0(0);
+    }
+  };
+  A._Utf8Base64EncoderSink.prototype = {
+    _convert$_add$4(source, start, end, isLast) {
+      var buffer = this._encoder.encode$4(type$.List_int._as(source), start, end, isLast);
+      if (buffer != null)
+        this._sink.addSlice$4(buffer, 0, buffer.length, isLast);
+    }
+  };
+  A.ByteConversionSink.prototype = {$isSink: 1};
+  A._ByteAdapterSink.prototype = {
+    add$1(_, chunk) {
+      this._sink.add$1(0, type$.List_int._as(chunk));
+    },
+    close$0(_) {
+      this._sink.close$0(0);
+    }
+  };
+  A._ByteCallbackSink.prototype = {
+    add$1(_, chunk) {
+      var t1, t2, t3, v, grown, _this = this;
+      type$.Iterable_int._as(chunk);
+      t1 = _this._buffer;
+      t2 = _this._bufferIndex;
+      t3 = J.getInterceptor$asx(chunk);
+      if (t3.get$length(chunk) > t1.length - t2) {
+        t1 = _this._buffer;
+        v = t3.get$length(chunk) + t1.length - 1;
+        v |= B.JSInt_methods._shrOtherPositive$1(v, 1);
+        v |= v >>> 2;
+        v |= v >>> 4;
+        v |= v >>> 8;
+        grown = new Uint8Array((((v | v >>> 16) >>> 0) + 1) * 2);
+        t1 = _this._buffer;
+        B.NativeUint8List_methods.setRange$3(grown, 0, t1.length, t1);
+        _this.set$_buffer(grown);
+      }
+      t1 = _this._buffer;
+      t2 = _this._bufferIndex;
+      B.NativeUint8List_methods.setRange$3(t1, t2, t2 + t3.get$length(chunk), chunk);
+      _this._bufferIndex = _this._bufferIndex + t3.get$length(chunk);
+    },
+    close$0(_) {
+      this._callback.call$1(B.NativeUint8List_methods.sublist$2(this._buffer, 0, this._bufferIndex));
+    },
+    set$_buffer(_buffer) {
+      this._buffer = type$.List_int._as(_buffer);
+    }
+  };
+  A.ChunkedConversionSink.prototype = {$isSink: 1};
+  A._ConverterStreamEventSink.prototype = {
+    add$1(_, o) {
+      this._chunkedSink.add$1(0, this.$ti._precomputed1._as(o));
+    },
+    addError$2(error, stackTrace) {
+      A.checkNotNullable(error, "error", type$.Object);
+      this._eventSink.addError$2(error, stackTrace);
+    },
+    close$0(_) {
+      this._chunkedSink.close$0(0);
+    },
+    $isEventSink: 1,
+    $isSink: 1
+  };
+  A.Codec.prototype = {};
+  A.Converter.prototype = {
+    fuse$1$1(other, TT) {
+      var t1 = A._instanceType(this);
+      return new A._FusedConverter(this, t1._bind$1(TT)._eval$1("Converter<Converter.T,1>")._as(other), t1._eval$1("@<Converter.S>")._bind$1(t1._eval$1("Converter.T"))._bind$1(TT)._eval$1("_FusedConverter<1,2,3>"));
+    },
+    startChunkedConversion$1(sink) {
+      A._instanceType(this)._eval$1("Sink<Converter.T>")._as(sink);
+      throw A.wrapException(A.UnsupportedError$("This converter does not support chunked conversions: " + this.toString$0(0)));
+    },
+    bind$1(stream) {
+      var t1 = A._instanceType(this);
+      return new A._BoundSinkStream(new A.Converter_bind_closure(this), t1._eval$1("Stream<Converter.S>")._as(stream), type$.$env_1_1_dynamic._bind$1(t1._eval$1("Converter.T"))._eval$1("_BoundSinkStream<1,2>"));
+    },
+    $isStreamTransformer: 1
+  };
+  A.Converter_bind_closure.prototype = {
+    call$1(sink) {
+      return new A._ConverterStreamEventSink(sink, this.$this.startChunkedConversion$1(sink), type$._ConverterStreamEventSink_dynamic_dynamic);
+    },
+    $signature: 87
+  };
+  A._FusedConverter.prototype = {
+    convert$1(input) {
+      return A._parseJson(A._asString(this._convert$_first.convert$1(this.$ti._precomputed1._as(input))), this._second._reviver);
+    },
+    startChunkedConversion$1(sink) {
+      return this._convert$_first.startChunkedConversion$1(new A._JsonDecoderSink(this._second._reviver, this.$ti._eval$1("Sink<3>")._as(sink), new A.StringBuffer("")));
+    }
+  };
+  A.Encoding.prototype = {};
+  A.JsonUnsupportedObjectError.prototype = {
+    toString$0(_) {
+      var safeString = A.Error_safeToString(this.unsupportedObject);
+      return (this.cause != null ? "Converting object to an encodable object failed:" : "Converting object did not return an encodable object:") + " " + safeString;
+    }
+  };
+  A.JsonCyclicError.prototype = {
+    toString$0(_) {
+      return "Cyclic error in JSON stringify";
+    }
+  };
+  A.JsonCodec.prototype = {
+    encode$2$toEncodable(value, toEncodable) {
+      var t1 = A._JsonStringStringifier_stringify(value, this.get$encoder()._toEncodable, null);
+      return t1;
+    },
+    encode$1(value) {
+      return this.encode$2$toEncodable(value, null);
+    },
+    get$encoder() {
+      return B.JsonEncoder_null;
+    }
+  };
+  A.JsonEncoder.prototype = {
+    convert$1(object) {
+      var t1,
+        output = new A.StringBuffer("");
+      A._JsonStringStringifier_printOn(object, output, this._toEncodable, null);
+      t1 = output._contents;
+      return t1.charCodeAt(0) == 0 ? t1 : t1;
+    },
+    startChunkedConversion$1(sink) {
+      var t1;
+      type$.Sink_String._as(sink);
+      t1 = type$.StringConversionSink._is(sink) ? sink : new A._StringAdapterSink(sink);
+      return new A._JsonEncoderSink(null, this._toEncodable, t1);
+    }
+  };
+  A._JsonEncoderSink.prototype = {
+    add$1(_, o) {
+      var stringSink, _this = this;
+      if (_this._isDone)
+        throw A.wrapException(A.StateError$("Only one call to add allowed"));
+      _this._isDone = true;
+      stringSink = _this._sink.asStringSink$0();
+      A._JsonStringStringifier_printOn(o, stringSink, _this._toEncodable, _this._indent);
+      stringSink.close$0(0);
+    },
+    close$0(_) {
+    }
+  };
+  A.JsonDecoder.prototype = {
+    startChunkedConversion$1(sink) {
+      return new A._JsonDecoderSink(this._reviver, sink, new A.StringBuffer(""));
+    },
+    convert$1(input) {
+      return A._parseJson(A._asString(input), this._reviver);
+    }
+  };
+  A._JsonStringifier.prototype = {
+    writeStringContent$1(s) {
+      var offset, i, charCode, t1, t2, _this = this,
+        $length = s.length;
+      for (offset = 0, i = 0; i < $length; ++i) {
+        charCode = s.charCodeAt(i);
+        if (charCode > 92) {
+          if (charCode >= 55296) {
+            t1 = charCode & 64512;
+            if (t1 === 55296) {
+              t2 = i + 1;
+              t2 = !(t2 < $length && (s.charCodeAt(t2) & 64512) === 56320);
+            } else
+              t2 = false;
+            if (!t2)
+              if (t1 === 56320) {
+                t1 = i - 1;
+                t1 = !(t1 >= 0 && (s.charCodeAt(t1) & 64512) === 55296);
+              } else
+                t1 = false;
+            else
+              t1 = true;
+            if (t1) {
+              if (i > offset)
+                _this.writeStringSlice$3(s, offset, i);
+              offset = i + 1;
+              _this.writeCharCode$1(92);
+              _this.writeCharCode$1(117);
+              _this.writeCharCode$1(100);
+              t1 = charCode >>> 8 & 15;
+              _this.writeCharCode$1(t1 < 10 ? 48 + t1 : 87 + t1);
+              t1 = charCode >>> 4 & 15;
+              _this.writeCharCode$1(t1 < 10 ? 48 + t1 : 87 + t1);
+              t1 = charCode & 15;
+              _this.writeCharCode$1(t1 < 10 ? 48 + t1 : 87 + t1);
+            }
+          }
+          continue;
+        }
+        if (charCode < 32) {
+          if (i > offset)
+            _this.writeStringSlice$3(s, offset, i);
+          offset = i + 1;
+          _this.writeCharCode$1(92);
+          switch (charCode) {
+            case 8:
+              _this.writeCharCode$1(98);
+              break;
+            case 9:
+              _this.writeCharCode$1(116);
+              break;
+            case 10:
+              _this.writeCharCode$1(110);
+              break;
+            case 12:
+              _this.writeCharCode$1(102);
+              break;
+            case 13:
+              _this.writeCharCode$1(114);
+              break;
+            default:
+              _this.writeCharCode$1(117);
+              _this.writeCharCode$1(48);
+              _this.writeCharCode$1(48);
+              t1 = charCode >>> 4 & 15;
+              _this.writeCharCode$1(t1 < 10 ? 48 + t1 : 87 + t1);
+              t1 = charCode & 15;
+              _this.writeCharCode$1(t1 < 10 ? 48 + t1 : 87 + t1);
+              break;
+          }
+        } else if (charCode === 34 || charCode === 92) {
+          if (i > offset)
+            _this.writeStringSlice$3(s, offset, i);
+          offset = i + 1;
+          _this.writeCharCode$1(92);
+          _this.writeCharCode$1(charCode);
+        }
+      }
+      if (offset === 0)
+        _this.writeString$1(s);
+      else if (offset < $length)
+        _this.writeStringSlice$3(s, offset, $length);
+    },
+    _checkCycle$1(object) {
+      var t1, t2, i, t3;
+      for (t1 = this._seen, t2 = t1.length, i = 0; i < t2; ++i) {
+        t3 = t1[i];
+        if (object == null ? t3 == null : object === t3)
+          throw A.wrapException(new A.JsonCyclicError(object, null));
+      }
+      B.JSArray_methods.add$1(t1, object);
+    },
+    writeObject$1(object) {
+      var customJson, e, t1, exception, _this = this;
+      if (_this.writeJsonValue$1(object))
+        return;
+      _this._checkCycle$1(object);
+      try {
+        customJson = _this._toEncodable.call$1(object);
+        if (!_this.writeJsonValue$1(customJson)) {
+          t1 = A.JsonUnsupportedObjectError$(object, null, _this.get$_partialResult());
+          throw A.wrapException(t1);
+        }
+        t1 = _this._seen;
+        if (0 >= t1.length)
+          return A.ioore(t1, -1);
+        t1.pop();
+      } catch (exception) {
+        e = A.unwrapException(exception);
+        t1 = A.JsonUnsupportedObjectError$(object, e, _this.get$_partialResult());
+        throw A.wrapException(t1);
+      }
+    },
+    writeJsonValue$1(object) {
+      var t1, success, _this = this;
+      if (typeof object == "number") {
+        if (!isFinite(object))
+          return false;
+        _this.writeNumber$1(object);
+        return true;
+      } else if (object === true) {
+        _this.writeString$1("true");
+        return true;
+      } else if (object === false) {
+        _this.writeString$1("false");
+        return true;
+      } else if (object == null) {
+        _this.writeString$1("null");
+        return true;
+      } else if (typeof object == "string") {
+        _this.writeString$1('"');
+        _this.writeStringContent$1(object);
+        _this.writeString$1('"');
+        return true;
+      } else if (type$.List_dynamic._is(object)) {
+        _this._checkCycle$1(object);
+        _this.writeList$1(object);
+        t1 = _this._seen;
+        if (0 >= t1.length)
+          return A.ioore(t1, -1);
+        t1.pop();
+        return true;
+      } else if (type$.Map_dynamic_dynamic._is(object)) {
+        _this._checkCycle$1(object);
+        success = _this.writeMap$1(object);
+        t1 = _this._seen;
+        if (0 >= t1.length)
+          return A.ioore(t1, -1);
+        t1.pop();
+        return success;
+      } else
+        return false;
+    },
+    writeList$1(list) {
+      var t1, i, _this = this;
+      _this.writeString$1("[");
+      t1 = J.getInterceptor$asx(list);
+      if (t1.get$isNotEmpty(list)) {
+        _this.writeObject$1(t1.$index(list, 0));
+        for (i = 1; i < t1.get$length(list); ++i) {
+          _this.writeString$1(",");
+          _this.writeObject$1(t1.$index(list, i));
+        }
+      }
+      _this.writeString$1("]");
+    },
+    writeMap$1(map) {
+      var t2, keyValueList, i, separator, _this = this, _box_0 = {},
+        t1 = J.getInterceptor$asx(map);
+      if (t1.get$isEmpty(map)) {
+        _this.writeString$1("{}");
+        return true;
+      }
+      t2 = t1.get$length(map) * 2;
+      keyValueList = A.List_List$filled(t2, null, false, type$.nullable_Object);
+      i = _box_0.i = 0;
+      _box_0.allStringKeys = true;
+      t1.forEach$1(map, new A._JsonStringifier_writeMap_closure(_box_0, keyValueList));
+      if (!_box_0.allStringKeys)
+        return false;
+      _this.writeString$1("{");
+      for (separator = '"'; i < t2; i += 2, separator = ',"') {
+        _this.writeString$1(separator);
+        _this.writeStringContent$1(A._asString(keyValueList[i]));
+        _this.writeString$1('":');
+        t1 = i + 1;
+        if (!(t1 < t2))
+          return A.ioore(keyValueList, t1);
+        _this.writeObject$1(keyValueList[t1]);
+      }
+      _this.writeString$1("}");
+      return true;
+    }
+  };
+  A._JsonStringifier_writeMap_closure.prototype = {
+    call$2(key, value) {
+      var t1, t2;
+      if (typeof key != "string")
+        this._box_0.allStringKeys = false;
+      t1 = this.keyValueList;
+      t2 = this._box_0;
+      B.JSArray_methods.$indexSet(t1, t2.i++, key);
+      B.JSArray_methods.$indexSet(t1, t2.i++, value);
+    },
+    $signature: 19
+  };
+  A._JsonStringStringifier.prototype = {
+    get$_partialResult() {
+      var t1 = this._sink;
+      return t1 instanceof A.StringBuffer ? t1.toString$0(0) : null;
+    },
+    writeNumber$1(number) {
+      this._sink.write$1(B.JSNumber_methods.toString$0(number));
+    },
+    writeString$1(string) {
+      this._sink.write$1(string);
+    },
+    writeStringSlice$3(string, start, end) {
+      this._sink.write$1(B.JSString_methods.substring$2(string, start, end));
+    },
+    writeCharCode$1(charCode) {
+      this._sink.writeCharCode$1(charCode);
+    }
+  };
+  A.StringConversionSink.prototype = {
+    add$1(_, str) {
+      A._asString(str);
+      this.addSlice$4(str, 0, str.length, false);
+    },
+    asUtf8Sink$1(allowMalformed) {
+      return new A._Utf8ConversionSink(new A._Utf8Decoder(allowMalformed), this, new A.StringBuffer(""));
+    },
+    asStringSink$0() {
+      return new A._StringConversionSinkAsStringSinkAdapter(new A.StringBuffer(""), this);
+    },
+    $isSink: 1
+  };
+  A._ClosableStringSink.prototype = {
+    close$0(_) {
+      this._callback.call$0();
+    },
+    writeCharCode$1(charCode) {
+      var t1 = this._sink,
+        t2 = A.Primitives_stringFromCharCode(charCode);
+      t1._contents += t2;
+    },
+    write$1(o) {
+      this._sink._contents += o;
+    },
+    $isStringSink: 1
+  };
+  A._StringConversionSinkAsStringSinkAdapter.prototype = {
+    close$0(_) {
+      if (this._buffer._contents.length !== 0)
+        this._flush$0();
+      this._chunkedSink.close$0(0);
+    },
+    writeCharCode$1(charCode) {
+      var t1 = this._buffer,
+        t2 = A.Primitives_stringFromCharCode(charCode);
+      t2 = t1._contents += t2;
+      if (t2.length > 16)
+        this._flush$0();
+    },
+    write$1(o) {
+      if (this._buffer._contents.length !== 0)
+        this._flush$0();
+      this._chunkedSink.add$1(0, o);
+    },
+    _flush$0() {
+      var t1 = this._buffer,
+        t2 = t1._contents;
+      t1._contents = "";
+      this._chunkedSink.add$1(0, t2.charCodeAt(0) == 0 ? t2 : t2);
+    },
+    $isStringSink: 1
+  };
+  A._StringSinkConversionSink.prototype = {
+    close$0(_) {
+    },
+    addSlice$4(str, start, end, isLast) {
+      var t1, t2, i, t3;
+      if (start !== 0 || end !== str.length)
+        for (t1 = this._stringSink, t2 = str.length, i = start; i < end; ++i) {
+          if (!(i < t2))
+            return A.ioore(str, i);
+          t3 = A.Primitives_stringFromCharCode(str.charCodeAt(i));
+          t1._contents += t3;
+        }
+      else
+        this._stringSink._contents += str;
+      if (isLast)
+        this.close$0(0);
+    },
+    add$1(_, str) {
+      this._stringSink._contents += A._asString(str);
+    },
+    asUtf8Sink$1(allowMalformed) {
+      return new A._Utf8StringSinkAdapter(new A._Utf8Decoder(allowMalformed), this, this._stringSink);
+    },
+    asStringSink$0() {
+      return new A._ClosableStringSink(this.get$close(this), this._stringSink);
+    }
+  };
+  A._StringAdapterSink.prototype = {
+    add$1(_, str) {
+      this._sink.add$1(0, A._asString(str));
+    },
+    addSlice$4(str, start, end, isLast) {
+      var t1 = start === 0 && end === str.length,
+        t2 = this._sink;
+      if (t1)
+        t2.add$1(0, str);
+      else
+        t2.add$1(0, B.JSString_methods.substring$2(str, start, end));
+      if (isLast)
+        t2.close$0(0);
+    },
+    close$0(_) {
+      this._sink.close$0(0);
+    }
+  };
+  A._Utf8StringSinkAdapter.prototype = {
+    close$0(_) {
+      this._decoder.flush$1(this._stringSink);
+      this._sink.close$0(0);
+    },
+    add$1(_, chunk) {
+      type$.List_int._as(chunk);
+      this.addSlice$4(chunk, 0, J.get$length$asx(chunk), false);
+    },
+    addSlice$4(codeUnits, startIndex, endIndex, isLast) {
+      var t1 = this._stringSink,
+        t2 = this._decoder._convertGeneral$4(type$.List_int._as(codeUnits), startIndex, endIndex, false);
+      t1._contents += t2;
+      if (isLast)
+        this.close$0(0);
+    }
+  };
+  A._Utf8ConversionSink.prototype = {
+    close$0(_) {
+      var t2, t3, accumulated,
+        t1 = this._buffer;
+      this._decoder.flush$1(t1);
+      t2 = t1._contents;
+      t3 = this._chunkedSink;
+      if (t2.length !== 0) {
+        accumulated = t2.charCodeAt(0) == 0 ? t2 : t2;
+        t1._contents = "";
+        t3.addSlice$4(accumulated, 0, accumulated.length, true);
+      } else
+        t3.close$0(0);
+    },
+    add$1(_, chunk) {
+      type$.List_int._as(chunk);
+      this.addSlice$4(chunk, 0, J.get$length$asx(chunk), false);
+    },
+    addSlice$4(chunk, startIndex, endIndex, isLast) {
+      var accumulated,
+        t1 = this._buffer,
+        t2 = this._decoder._convertGeneral$4(type$.List_int._as(chunk), startIndex, endIndex, false);
+      t2 = t1._contents += t2;
+      if (t2.length !== 0) {
+        accumulated = t2.charCodeAt(0) == 0 ? t2 : t2;
+        this._chunkedSink.addSlice$4(accumulated, 0, accumulated.length, false);
+        t1._contents = "";
+        return;
+      }
+    }
+  };
+  A.Utf8Codec.prototype = {
+    decode$2$allowMalformed(_, codeUnits, allowMalformed) {
+      type$.List_int._as(codeUnits);
+      return (allowMalformed === true ? B.Utf8Decoder_true : B.Utf8Decoder_false).convert$1(codeUnits);
+    },
+    decode$1(_, codeUnits) {
+      return this.decode$2$allowMalformed(0, codeUnits, null);
+    }
+  };
+  A.Utf8Encoder.prototype = {
+    convert$1(string) {
+      var stringLength, end, $length, t1, encoder, t2;
+      A._asString(string);
+      stringLength = string.length;
+      end = A.RangeError_checkValidRange(0, null, stringLength);
+      $length = end - 0;
+      if ($length === 0)
+        return new Uint8Array(0);
+      t1 = new Uint8Array($length * 3);
+      encoder = new A._Utf8Encoder(t1);
+      if (encoder._fillBuffer$3(string, 0, end) !== end) {
+        t2 = end - 1;
+        if (!(t2 >= 0 && t2 < stringLength))
+          return A.ioore(string, t2);
+        encoder._writeReplacementCharacter$0();
+      }
+      return B.NativeUint8List_methods.sublist$2(t1, 0, encoder._bufferIndex);
+    },
+    startChunkedConversion$1(sink) {
+      type$.Sink_List_int._as(sink);
+      return new A._Utf8EncoderSink(new A._ByteAdapterSink(sink), new Uint8Array(1024));
+    }
+  };
+  A._Utf8Encoder.prototype = {
+    _writeReplacementCharacter$0() {
+      var _this = this,
+        t1 = _this._buffer,
+        t2 = _this._bufferIndex,
+        t3 = _this._bufferIndex = t2 + 1,
+        t4 = t1.length;
+      if (!(t2 < t4))
+        return A.ioore(t1, t2);
+      t1[t2] = 239;
+      t2 = _this._bufferIndex = t3 + 1;
+      if (!(t3 < t4))
+        return A.ioore(t1, t3);
+      t1[t3] = 191;
+      _this._bufferIndex = t2 + 1;
+      if (!(t2 < t4))
+        return A.ioore(t1, t2);
+      t1[t2] = 189;
+    },
+    _writeSurrogate$2(leadingSurrogate, nextCodeUnit) {
+      var rune, t1, t2, t3, t4, _this = this;
+      if ((nextCodeUnit & 64512) === 56320) {
+        rune = 65536 + ((leadingSurrogate & 1023) << 10) | nextCodeUnit & 1023;
+        t1 = _this._buffer;
+        t2 = _this._bufferIndex;
+        t3 = _this._bufferIndex = t2 + 1;
+        t4 = t1.length;
+        if (!(t2 < t4))
+          return A.ioore(t1, t2);
+        t1[t2] = rune >>> 18 | 240;
+        t2 = _this._bufferIndex = t3 + 1;
+        if (!(t3 < t4))
+          return A.ioore(t1, t3);
+        t1[t3] = rune >>> 12 & 63 | 128;
+        t3 = _this._bufferIndex = t2 + 1;
+        if (!(t2 < t4))
+          return A.ioore(t1, t2);
+        t1[t2] = rune >>> 6 & 63 | 128;
+        _this._bufferIndex = t3 + 1;
+        if (!(t3 < t4))
+          return A.ioore(t1, t3);
+        t1[t3] = rune & 63 | 128;
+        return true;
+      } else {
+        _this._writeReplacementCharacter$0();
+        return false;
+      }
+    },
+    _fillBuffer$3(str, start, end) {
+      var t1, t2, t3, stringIndex, codeUnit, t4, t5, _this = this;
+      if (start !== end) {
+        t1 = end - 1;
+        if (!(t1 >= 0 && t1 < str.length))
+          return A.ioore(str, t1);
+        t1 = (str.charCodeAt(t1) & 64512) === 55296;
+      } else
+        t1 = false;
+      if (t1)
+        --end;
+      for (t1 = _this._buffer, t2 = t1.length, t3 = str.length, stringIndex = start; stringIndex < end; ++stringIndex) {
+        if (!(stringIndex < t3))
+          return A.ioore(str, stringIndex);
+        codeUnit = str.charCodeAt(stringIndex);
+        if (codeUnit <= 127) {
+          t4 = _this._bufferIndex;
+          if (t4 >= t2)
+            break;
+          _this._bufferIndex = t4 + 1;
+          t1[t4] = codeUnit;
+        } else {
+          t4 = codeUnit & 64512;
+          if (t4 === 55296) {
+            if (_this._bufferIndex + 4 > t2)
+              break;
+            t4 = stringIndex + 1;
+            if (!(t4 < t3))
+              return A.ioore(str, t4);
+            if (_this._writeSurrogate$2(codeUnit, str.charCodeAt(t4)))
+              stringIndex = t4;
+          } else if (t4 === 56320) {
+            if (_this._bufferIndex + 3 > t2)
+              break;
+            _this._writeReplacementCharacter$0();
+          } else if (codeUnit <= 2047) {
+            t4 = _this._bufferIndex;
+            t5 = t4 + 1;
+            if (t5 >= t2)
+              break;
+            _this._bufferIndex = t5;
+            if (!(t4 < t2))
+              return A.ioore(t1, t4);
+            t1[t4] = codeUnit >>> 6 | 192;
+            _this._bufferIndex = t5 + 1;
+            t1[t5] = codeUnit & 63 | 128;
+          } else {
+            t4 = _this._bufferIndex;
+            if (t4 + 2 >= t2)
+              break;
+            t5 = _this._bufferIndex = t4 + 1;
+            if (!(t4 < t2))
+              return A.ioore(t1, t4);
+            t1[t4] = codeUnit >>> 12 | 224;
+            t4 = _this._bufferIndex = t5 + 1;
+            if (!(t5 < t2))
+              return A.ioore(t1, t5);
+            t1[t5] = codeUnit >>> 6 & 63 | 128;
+            _this._bufferIndex = t4 + 1;
+            if (!(t4 < t2))
+              return A.ioore(t1, t4);
+            t1[t4] = codeUnit & 63 | 128;
+          }
+        }
+      }
+      return stringIndex;
+    }
+  };
+  A._Utf8EncoderSink.prototype = {
+    close$0(_) {
+      if (this._carry !== 0) {
+        this.addSlice$4("", 0, 0, true);
+        return;
+      }
+      this._sink._sink.close$0(0);
+    },
+    addSlice$4(str, start, end, isLast) {
+      var t1, t2, nextCodeUnit, t3, t4, t5, t6, isLastSlice, t7, _this = this;
+      _this._bufferIndex = 0;
+      t1 = start === end;
+      if (t1 && !isLast)
+        return;
+      t2 = _this._carry;
+      if (t2 !== 0) {
+        if (!t1) {
+          if (!(start < str.length))
+            return A.ioore(str, start);
+          nextCodeUnit = str.charCodeAt(start);
+        } else
+          nextCodeUnit = 0;
+        if (_this._writeSurrogate$2(t2, nextCodeUnit))
+          ++start;
+        _this._carry = 0;
+      }
+      t1 = _this._sink;
+      t2 = _this._buffer;
+      t3 = type$.List_int;
+      t4 = end - 1;
+      t5 = str.length;
+      t6 = t2.length - 3;
+      do {
+        start = _this._fillBuffer$3(str, start, end);
+        isLastSlice = isLast && start === end;
+        if (start === t4) {
+          if (!(start < t5))
+            return A.ioore(str, start);
+          t7 = (str.charCodeAt(start) & 64512) === 55296;
+        } else
+          t7 = false;
+        if (t7) {
+          if (isLast && _this._bufferIndex < t6)
+            _this._writeReplacementCharacter$0();
+          else {
+            if (!(start < t5))
+              return A.ioore(str, start);
+            _this._carry = str.charCodeAt(start);
+          }
+          ++start;
+        }
+        t7 = _this._bufferIndex;
+        t1.add$1(0, B.NativeUint8List_methods.sublist$2(t3._as(t2), 0, t7));
+        if (isLastSlice)
+          t1.close$0(0);
+        _this._bufferIndex = 0;
+      } while (start < end);
+      if (isLast)
+        _this.close$0(0);
+    },
+    $isSink: 1
+  };
+  A.Utf8Decoder.prototype = {
+    convert$1(codeUnits) {
+      return new A._Utf8Decoder(this._allowMalformed)._convertGeneral$4(type$.List_int._as(codeUnits), 0, null, true);
+    },
+    startChunkedConversion$1(sink) {
+      var stringSink;
+      type$.Sink_String._as(sink);
+      stringSink = type$.StringConversionSink._is(sink) ? sink : new A._StringAdapterSink(sink);
+      return stringSink.asUtf8Sink$1(this._allowMalformed);
+    }
+  };
+  A._Utf8Decoder.prototype = {
+    _convertGeneral$4(codeUnits, start, maybeEnd, single) {
+      var end, casted, bytes, errorOffset, t1, result, message, _this = this;
+      type$.List_int._as(codeUnits);
+      end = A.RangeError_checkValidRange(start, maybeEnd, J.get$length$asx(codeUnits));
+      if (start === end)
+        return "";
+      if (codeUnits instanceof Uint8Array) {
+        casted = codeUnits;
+        bytes = casted;
+        errorOffset = 0;
+      } else {
+        bytes = A._Utf8Decoder__makeNativeUint8List(codeUnits, start, end);
+        end -= start;
+        errorOffset = start;
+        start = 0;
+      }
+      if (single && end - start >= 15) {
+        t1 = _this.allowMalformed;
+        result = A._Utf8Decoder__convertInterceptedUint8List(t1, bytes, start, end);
+        if (result != null) {
+          if (!t1)
+            return result;
+          if (result.indexOf("\ufffd") < 0)
+            return result;
+        }
+      }
+      result = _this._decodeRecursive$4(bytes, start, end, single);
+      t1 = _this._convert$_state;
+      if ((t1 & 1) !== 0) {
+        message = A._Utf8Decoder_errorDescription(t1);
+        _this._convert$_state = 0;
+        throw A.wrapException(A.FormatException$(message, codeUnits, errorOffset + _this._charOrIndex));
+      }
+      return result;
+    },
+    _decodeRecursive$4(bytes, start, end, single) {
+      var mid, s1, _this = this;
+      if (end - start > 1000) {
+        mid = B.JSInt_methods._tdivFast$1(start + end, 2);
+        s1 = _this._decodeRecursive$4(bytes, start, mid, false);
+        if ((_this._convert$_state & 1) !== 0)
+          return s1;
+        return s1 + _this._decodeRecursive$4(bytes, mid, end, single);
+      }
+      return _this.decodeGeneral$4(bytes, start, end, single);
+    },
+    flush$1(sink) {
+      var t1,
+        state = this._convert$_state;
+      this._convert$_state = 0;
+      if (state <= 32)
+        return;
+      if (this.allowMalformed) {
+        t1 = A.Primitives_stringFromCharCode(65533);
+        sink._contents += t1;
+      } else
+        throw A.wrapException(A.FormatException$(A._Utf8Decoder_errorDescription(77), null, null));
+    },
+    decodeGeneral$4(bytes, start, end, single) {
+      var byte, t2, type, t3, i0, markEnd, i1, m, _this = this,
+        _s256_ = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFFFFFFFFFFFFFFFFGGGGGGGGGGGGGGGGHHHHHHHHHHHHHHHHHHHHHHHHHHHIHHHJEEBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBKCCCCCCCCCCCCDCLONNNMEEEEEEEEEEE",
+        _s144_ = " \x000:XECCCCCN:lDb \x000:XECCCCCNvlDb \x000:XECCCCCN:lDb AAAAA\x00\x00\x00\x00\x00AAAAA00000AAAAA:::::AAAAAGG000AAAAA00KKKAAAAAG::::AAAAA:IIIIAAAAA000\x800AAAAA\x00\x00\x00\x00 AAAAA",
+        _65533 = 65533,
+        state = _this._convert$_state,
+        char = _this._charOrIndex,
+        buffer = new A.StringBuffer(""),
+        i = start + 1,
+        t1 = bytes.length;
+      if (!(start >= 0 && start < t1))
+        return A.ioore(bytes, start);
+      byte = bytes[start];
+      $label0$0:
+        for (t2 = _this.allowMalformed; true;) {
+          for (; true; i = i0) {
+            if (!(byte >= 0 && byte < 256))
+              return A.ioore(_s256_, byte);
+            type = _s256_.charCodeAt(byte) & 31;
+            char = state <= 32 ? byte & 61694 >>> type : (byte & 63 | char << 6) >>> 0;
+            t3 = state + type;
+            if (!(t3 >= 0 && t3 < 144))
+              return A.ioore(_s144_, t3);
+            state = _s144_.charCodeAt(t3);
+            if (state === 0) {
+              t3 = A.Primitives_stringFromCharCode(char);
+              buffer._contents += t3;
+              if (i === end)
+                break $label0$0;
+              break;
+            } else if ((state & 1) !== 0) {
+              if (t2)
+                switch (state) {
+                  case 69:
+                  case 67:
+                    t3 = A.Primitives_stringFromCharCode(_65533);
+                    buffer._contents += t3;
+                    break;
+                  case 65:
+                    t3 = A.Primitives_stringFromCharCode(_65533);
+                    buffer._contents += t3;
+                    --i;
+                    break;
+                  default:
+                    t3 = A.Primitives_stringFromCharCode(_65533);
+                    t3 = buffer._contents += t3;
+                    buffer._contents = t3 + A.Primitives_stringFromCharCode(_65533);
+                    break;
+                }
+              else {
+                _this._convert$_state = state;
+                _this._charOrIndex = i - 1;
+                return "";
+              }
+              state = 0;
+            }
+            if (i === end)
+              break $label0$0;
+            i0 = i + 1;
+            if (!(i >= 0 && i < t1))
+              return A.ioore(bytes, i);
+            byte = bytes[i];
+          }
+          i0 = i + 1;
+          if (!(i >= 0 && i < t1))
+            return A.ioore(bytes, i);
+          byte = bytes[i];
+          if (byte < 128) {
+            while (true) {
+              if (!(i0 < end)) {
+                markEnd = end;
+                break;
+              }
+              i1 = i0 + 1;
+              if (!(i0 >= 0 && i0 < t1))
+                return A.ioore(bytes, i0);
+              byte = bytes[i0];
+              if (byte >= 128) {
+                markEnd = i1 - 1;
+                i0 = i1;
+                break;
+              }
+              i0 = i1;
+            }
+            if (markEnd - i < 20)
+              for (m = i; m < markEnd; ++m) {
+                if (!(m < t1))
+                  return A.ioore(bytes, m);
+                t3 = A.Primitives_stringFromCharCode(bytes[m]);
+                buffer._contents += t3;
+              }
+            else {
+              t3 = A.String_String$fromCharCodes(bytes, i, markEnd);
+              buffer._contents += t3;
+            }
+            if (markEnd === end)
+              break $label0$0;
+            i = i0;
+          } else
+            i = i0;
+        }
+      if (single && state > 32)
+        if (t2) {
+          t1 = A.Primitives_stringFromCharCode(_65533);
+          buffer._contents += t1;
+        } else {
+          _this._convert$_state = 77;
+          _this._charOrIndex = end;
+          return "";
+        }
+      _this._convert$_state = state;
+      _this._charOrIndex = char;
+      t1 = buffer._contents;
+      return t1.charCodeAt(0) == 0 ? t1 : t1;
+    }
+  };
+  A.__Utf8EncoderSink__Utf8Encoder_StringConversionSink.prototype = {};
+  A._WeakReferenceWrapper.prototype = {};
   A.NoSuchMethodError_toString_closure.prototype = {
     call$2(key, value) {
       var t1, t2, t3;
@@ -6964,18 +14879,13 @@
       t1._contents += t3;
       t2.comma = ", ";
     },
-    $signature: 20
+    $signature: 86
   };
   A.DateTime.prototype = {
     $eq(_, other) {
-      var t1;
       if (other == null)
         return false;
-      if (other instanceof A.DateTime)
-        t1 = this._value === other._value;
-      else
-        t1 = false;
-      return t1;
+      return other instanceof A.DateTime && this._value === other._value && this.isUtc === other.isUtc;
     },
     get$hashCode(_) {
       var t1 = this._value;
@@ -6989,8 +14899,42 @@
         h = A.DateTime__twoDigits(A.Primitives_getHours(_this)),
         min = A.DateTime__twoDigits(A.Primitives_getMinutes(_this)),
         sec = A.DateTime__twoDigits(A.Primitives_getSeconds(_this)),
-        ms = A.DateTime__threeDigits(A.Primitives_getMilliseconds(_this));
-      return y + "-" + m + "-" + d + " " + h + ":" + min + ":" + sec + "." + ms;
+        ms = A.DateTime__threeDigits(A.Primitives_getMilliseconds(_this)),
+        t1 = y + "-" + m;
+      if (_this.isUtc)
+        return t1 + "-" + d + " " + h + ":" + min + ":" + sec + "." + ms + "Z";
+      else
+        return t1 + "-" + d + " " + h + ":" + min + ":" + sec + "." + ms;
+    }
+  };
+  A.Duration.prototype = {
+    $eq(_, other) {
+      if (other == null)
+        return false;
+      return other instanceof A.Duration && this._duration === other._duration;
+    },
+    get$hashCode(_) {
+      return B.JSInt_methods.get$hashCode(this._duration);
+    },
+    toString$0(_) {
+      var sign, minutes, minutesPadding, seconds, secondsPadding,
+        microseconds = this._duration,
+        hours = B.JSInt_methods._tdivFast$1(microseconds, 3600000000),
+        microseconds0 = microseconds % 3600000000;
+      if (microseconds < 0) {
+        hours = 0 - hours;
+        microseconds = 0 - microseconds0;
+        sign = "-";
+      } else {
+        microseconds = microseconds0;
+        sign = "";
+      }
+      minutes = B.JSInt_methods._tdivFast$1(microseconds, 60000000);
+      microseconds %= 60000000;
+      minutesPadding = minutes < 10 ? "0" : "";
+      seconds = B.JSInt_methods._tdivFast$1(microseconds, 1000000);
+      secondsPadding = seconds < 10 ? "0" : "";
+      return sign + hours + ":" + minutesPadding + minutes + ":" + secondsPadding + seconds + "." + B.JSString_methods.padLeft$2(B.JSInt_methods.toString$0(microseconds % 1000000), 6, "0");
     }
   };
   A._Enum.prototype = {
@@ -7117,6 +15061,15 @@
       return "Concurrent modification during iteration: " + A.Error_safeToString(t1) + ".";
     }
   };
+  A.OutOfMemoryError.prototype = {
+    toString$0(_) {
+      return "Out of Memory";
+    },
+    get$stackTrace() {
+      return null;
+    },
+    $isError: 1
+  };
   A.StackOverflowError.prototype = {
     toString$0(_) {
       return "Stack Overflow";
@@ -7129,6 +15082,90 @@
   A._Exception.prototype = {
     toString$0(_) {
       return "Exception: " + this.message;
+    },
+    $isException: 1
+  };
+  A.FormatException.prototype = {
+    toString$0(_) {
+      var t1, lineEnd, lineNum, lineStart, previousCharWasCR, i, char, end, start, prefix, postfix,
+        message = this.message,
+        report = "" !== message ? "FormatException: " + message : "FormatException",
+        offset = this.offset,
+        source = this.source;
+      if (typeof source == "string") {
+        if (offset != null)
+          t1 = offset < 0 || offset > source.length;
+        else
+          t1 = false;
+        if (t1)
+          offset = null;
+        if (offset == null) {
+          if (source.length > 78)
+            source = B.JSString_methods.substring$2(source, 0, 75) + "...";
+          return report + "\n" + source;
+        }
+        for (lineEnd = source.length, lineNum = 1, lineStart = 0, previousCharWasCR = false, i = 0; i < offset; ++i) {
+          if (!(i < lineEnd))
+            return A.ioore(source, i);
+          char = source.charCodeAt(i);
+          if (char === 10) {
+            if (lineStart !== i || !previousCharWasCR)
+              ++lineNum;
+            lineStart = i + 1;
+            previousCharWasCR = false;
+          } else if (char === 13) {
+            ++lineNum;
+            lineStart = i + 1;
+            previousCharWasCR = true;
+          }
+        }
+        report = lineNum > 1 ? report + (" (at line " + lineNum + ", character " + (offset - lineStart + 1) + ")\n") : report + (" (at character " + (offset + 1) + ")\n");
+        for (i = offset; i < lineEnd; ++i) {
+          if (!(i >= 0))
+            return A.ioore(source, i);
+          char = source.charCodeAt(i);
+          if (char === 10 || char === 13) {
+            lineEnd = i;
+            break;
+          }
+        }
+        if (lineEnd - lineStart > 78)
+          if (offset - lineStart < 75) {
+            end = lineStart + 75;
+            start = lineStart;
+            prefix = "";
+            postfix = "...";
+          } else {
+            if (lineEnd - offset < 75) {
+              start = lineEnd - 75;
+              end = lineEnd;
+              postfix = "";
+            } else {
+              start = offset - 36;
+              end = offset + 36;
+              postfix = "...";
+            }
+            prefix = "...";
+          }
+        else {
+          end = lineEnd;
+          start = lineStart;
+          prefix = "";
+          postfix = "";
+        }
+        return report + prefix + B.JSString_methods.substring$2(source, start, end) + postfix + "\n" + B.JSString_methods.$mul(" ", offset - start + prefix.length) + "^\n";
+      } else
+        return offset != null ? report + (" (at offset " + A.S(offset) + ")") : report;
+    },
+    $isException: 1,
+    get$message(receiver) {
+      return this.message;
+    },
+    get$source(receiver) {
+      return this.source;
+    },
+    get$offset(receiver) {
+      return this.offset;
     }
   };
   A.Iterable.prototype = {
@@ -7140,12 +15177,42 @@
       var t1 = A._instanceType(this);
       return new A.WhereIterable(this, t1._eval$1("bool(Iterable.E)")._as(test), t1._eval$1("WhereIterable<Iterable.E>"));
     },
+    join$1(_, separator) {
+      var first, t1,
+        iterator = this.get$iterator(this);
+      if (!iterator.moveNext$0())
+        return "";
+      first = J.toString$0$(iterator.get$current());
+      if (!iterator.moveNext$0())
+        return first;
+      if (separator.length === 0) {
+        t1 = first;
+        do
+          t1 += J.toString$0$(iterator.get$current());
+        while (iterator.moveNext$0());
+      } else {
+        t1 = first;
+        do
+          t1 = t1 + separator + J.toString$0$(iterator.get$current());
+        while (iterator.moveNext$0());
+      }
+      return t1.charCodeAt(0) == 0 ? t1 : t1;
+    },
+    toList$1$growable(_, growable) {
+      return A.List_List$of(this, growable, A._instanceType(this)._eval$1("Iterable.E"));
+    },
     get$length(_) {
       var count,
         it = this.get$iterator(this);
       for (count = 0; it.moveNext$0();)
         ++count;
       return count;
+    },
+    get$isEmpty(_) {
+      return !this.get$iterator(this).moveNext$0();
+    },
+    skip$1(_, count) {
+      return A.SkipIterable_SkipIterable(this, count, A._instanceType(this)._eval$1("Iterable.E"));
     },
     get$single(_) {
       var result,
@@ -7170,6 +15237,11 @@
     },
     toString$0(_) {
       return A.Iterable_iterableToShortString(this, "(", ")");
+    }
+  };
+  A.MapEntry.prototype = {
+    toString$0(_) {
+      return "MapEntry(" + A.S(this.key) + ": " + A.S(this.value) + ")";
     }
   };
   A.Null.prototype = {
@@ -7206,15 +15278,775 @@
     },
     $isStackTrace: 1
   };
+  A.Stopwatch.prototype = {
+    get$elapsedMicroseconds() {
+      var ticks,
+        t1 = this._stop;
+      if (t1 == null)
+        t1 = $.Primitives_timerTicks.call$0();
+      ticks = t1 - this._core$_start;
+      if ($.$get$Stopwatch__frequency() === 1000000)
+        return ticks;
+      return ticks * 1000;
+    },
+    start$0(_) {
+      var _this = this,
+        $stop = _this._stop;
+      if ($stop != null) {
+        _this._core$_start = _this._core$_start + ($.Primitives_timerTicks.call$0() - $stop);
+        _this._stop = null;
+      }
+    },
+    reset$0(_) {
+      var t1 = this._stop;
+      this._core$_start = t1 == null ? $.Primitives_timerTicks.call$0() : t1;
+    }
+  };
   A.StringBuffer.prototype = {
     get$length(_) {
       return this._contents.length;
     },
+    write$1(obj) {
+      var t1 = A.S(obj);
+      this._contents += t1;
+    },
+    writeCharCode$1(charCode) {
+      var t1 = A.Primitives_stringFromCharCode(charCode);
+      this._contents += t1;
+    },
+    writeln$1(obj) {
+      this._contents += obj + "\n";
+    },
     toString$0(_) {
       var t1 = this._contents;
       return t1.charCodeAt(0) == 0 ? t1 : t1;
+    },
+    $isStringSink: 1
+  };
+  A.Uri_splitQueryString_closure.prototype = {
+    call$2(map, element) {
+      var index, key, value, t1;
+      type$.Map_String_String._as(map);
+      A._asString(element);
+      index = B.JSString_methods.indexOf$1(element, "=");
+      if (index === -1) {
+        if (element !== "")
+          J.$indexSet$ax(map, A._Uri__uriDecode(element, 0, element.length, this.encoding, true), "");
+      } else if (index !== 0) {
+        key = B.JSString_methods.substring$2(element, 0, index);
+        value = B.JSString_methods.substring$1(element, index + 1);
+        t1 = this.encoding;
+        J.$indexSet$ax(map, A._Uri__uriDecode(key, 0, key.length, t1, true), A._Uri__uriDecode(value, 0, value.length, t1, true));
+      }
+      return map;
+    },
+    $signature: 83
+  };
+  A.Uri__parseIPv4Address_error.prototype = {
+    call$2(msg, position) {
+      throw A.wrapException(A.FormatException$("Illegal IPv4 address, " + msg, this.host, position));
+    },
+    $signature: 82
+  };
+  A.Uri_parseIPv6Address_error.prototype = {
+    call$2(msg, position) {
+      throw A.wrapException(A.FormatException$("Illegal IPv6 address, " + msg, this.host, position));
+    },
+    $signature: 72
+  };
+  A.Uri_parseIPv6Address_parseHex.prototype = {
+    call$2(start, end) {
+      var value;
+      if (end - start > 4)
+        this.error.call$2("an IPv6 part can only contain a maximum of 4 hex digits", start);
+      value = A.int_parse(B.JSString_methods.substring$2(this.host, start, end), 16);
+      if (value < 0 || value > 65535)
+        this.error.call$2("each part must be in the range of `0x0..0xFFFF`", start);
+      return value;
+    },
+    $signature: 68
+  };
+  A._Uri.prototype = {
+    get$_text() {
+      var t1, t2, t3, t4, _this = this,
+        value = _this.___Uri__text_FI;
+      if (value === $) {
+        t1 = _this.scheme;
+        t2 = t1.length !== 0 ? "" + t1 + ":" : "";
+        t3 = _this._host;
+        t4 = t3 == null;
+        if (!t4 || t1 === "file") {
+          t1 = t2 + "//";
+          t2 = _this._userInfo;
+          if (t2.length !== 0)
+            t1 = t1 + t2 + "@";
+          if (!t4)
+            t1 += t3;
+          t2 = _this._port;
+          if (t2 != null)
+            t1 = t1 + ":" + A.S(t2);
+        } else
+          t1 = t2;
+        t1 += _this.path;
+        t2 = _this._query;
+        if (t2 != null)
+          t1 = t1 + "?" + t2;
+        t2 = _this._fragment;
+        if (t2 != null)
+          t1 = t1 + "#" + t2;
+        value !== $ && A.throwLateFieldADI("_text");
+        value = _this.___Uri__text_FI = t1.charCodeAt(0) == 0 ? t1 : t1;
+      }
+      return value;
+    },
+    get$pathSegments() {
+      var pathToSplit, t1, result, _this = this,
+        value = _this.___Uri_pathSegments_FI;
+      if (value === $) {
+        pathToSplit = _this.path;
+        t1 = pathToSplit.length;
+        if (t1 !== 0) {
+          if (0 >= t1)
+            return A.ioore(pathToSplit, 0);
+          t1 = pathToSplit.charCodeAt(0) === 47;
+        } else
+          t1 = false;
+        if (t1)
+          pathToSplit = B.JSString_methods.substring$1(pathToSplit, 1);
+        result = pathToSplit.length === 0 ? B.List_empty0 : A.List_List$unmodifiable(new A.MappedListIterable(A._setArrayType(pathToSplit.split("/"), type$.JSArray_String), type$.dynamic_Function_String._as(A.core_Uri_decodeComponent$closure()), type$.MappedListIterable_String_dynamic), type$.String);
+        _this.___Uri_pathSegments_FI !== $ && A.throwLateFieldADI("pathSegments");
+        _this.set$___Uri_pathSegments_FI(result);
+        value = result;
+      }
+      return value;
+    },
+    get$hashCode(_) {
+      var result, _this = this,
+        value = _this.___Uri_hashCode_FI;
+      if (value === $) {
+        result = B.JSString_methods.get$hashCode(_this.get$_text());
+        _this.___Uri_hashCode_FI !== $ && A.throwLateFieldADI("hashCode");
+        _this.___Uri_hashCode_FI = result;
+        value = result;
+      }
+      return value;
+    },
+    get$queryParameters() {
+      var t1, result, _this = this,
+        value = _this.___Uri_queryParameters_FI;
+      if (value === $) {
+        t1 = _this._query;
+        result = new A.UnmodifiableMapView(A.Uri_splitQueryString(t1 == null ? "" : t1), type$.UnmodifiableMapView_String_String);
+        _this.___Uri_queryParameters_FI !== $ && A.throwLateFieldADI("queryParameters");
+        _this.set$___Uri_queryParameters_FI(result);
+        value = result;
+      }
+      return value;
+    },
+    get$userInfo() {
+      return this._userInfo;
+    },
+    get$host(_) {
+      var host = this._host;
+      if (host == null)
+        return "";
+      if (B.JSString_methods.startsWith$1(host, "["))
+        return B.JSString_methods.substring$2(host, 1, host.length - 1);
+      return host;
+    },
+    get$port(_) {
+      var t1 = this._port;
+      return t1 == null ? A._Uri__defaultPort(this.scheme) : t1;
+    },
+    get$query() {
+      var t1 = this._query;
+      return t1 == null ? "" : t1;
+    },
+    get$fragment() {
+      var t1 = this._fragment;
+      return t1 == null ? "" : t1;
+    },
+    isScheme$1(scheme) {
+      var thisScheme = this.scheme;
+      if (scheme.length !== thisScheme.length)
+        return false;
+      return A._caseInsensitiveCompareStart(scheme, thisScheme, 0) >= 0;
+    },
+    replace$2$path$scheme(_, path, scheme) {
+      var schemeChanged, isFile, userInfo, port, host, hasAuthority, t1, currentPath, _this = this,
+        scheme0 = _this.scheme;
+      if (scheme != null) {
+        scheme = A._Uri__makeScheme(scheme, 0, scheme.length);
+        schemeChanged = scheme !== scheme0;
+      } else {
+        scheme = scheme0;
+        schemeChanged = false;
+      }
+      isFile = scheme === "file";
+      userInfo = _this._userInfo;
+      port = _this._port;
+      if (schemeChanged)
+        port = A._Uri__makePort(port, scheme);
+      host = _this._host;
+      if (!(host != null))
+        host = userInfo.length !== 0 || port != null || isFile ? "" : null;
+      hasAuthority = host != null;
+      if (path != null) {
+        t1 = path.length;
+        path = A._Uri__makePath(path, 0, t1, null, scheme, hasAuthority);
+      } else {
+        currentPath = _this.path;
+        if (!isFile)
+          t1 = hasAuthority && currentPath.length !== 0;
+        else
+          t1 = true;
+        if (t1 && !B.JSString_methods.startsWith$1(currentPath, "/"))
+          currentPath = "/" + currentPath;
+        path = currentPath;
+      }
+      return A._Uri$_internal(scheme, userInfo, host, port, path, _this._query, _this._fragment);
+    },
+    replace$1$scheme(_, scheme) {
+      return this.replace$2$path$scheme(0, null, scheme);
+    },
+    replace$1$path(_, path) {
+      return this.replace$2$path$scheme(0, path, null);
+    },
+    normalizePath$0() {
+      var _this = this,
+        t1 = _this.path,
+        path = A._Uri__normalizePath(t1, _this.scheme, _this._host != null);
+      if (path === t1)
+        return _this;
+      return _this.replace$1$path(0, path);
+    },
+    _mergePaths$2(base, reference) {
+      var backCount, refStart, baseEnd, t1, newEnd, delta, t2, t3;
+      for (backCount = 0, refStart = 0; B.JSString_methods.startsWith$2(reference, "../", refStart);) {
+        refStart += 3;
+        ++backCount;
+      }
+      baseEnd = B.JSString_methods.lastIndexOf$1(base, "/");
+      t1 = base.length;
+      while (true) {
+        if (!(baseEnd > 0 && backCount > 0))
+          break;
+        newEnd = B.JSString_methods.lastIndexOf$2(base, "/", baseEnd - 1);
+        if (newEnd < 0)
+          break;
+        delta = baseEnd - newEnd;
+        t2 = delta !== 2;
+        if (!t2 || delta === 3) {
+          t3 = newEnd + 1;
+          if (!(t3 < t1))
+            return A.ioore(base, t3);
+          if (base.charCodeAt(t3) === 46)
+            if (t2) {
+              t2 = newEnd + 2;
+              if (!(t2 < t1))
+                return A.ioore(base, t2);
+              t2 = base.charCodeAt(t2) === 46;
+            } else
+              t2 = true;
+          else
+            t2 = false;
+        } else
+          t2 = false;
+        if (t2)
+          break;
+        --backCount;
+        baseEnd = newEnd;
+      }
+      return B.JSString_methods.replaceRange$3(base, baseEnd + 1, null, B.JSString_methods.substring$1(reference, refStart - 3 * backCount));
+    },
+    resolve$1(reference) {
+      return this.resolveUri$1(A.Uri_parse(reference));
+    },
+    resolveUri$1(reference) {
+      var targetScheme, t1, targetUserInfo, targetHost, targetPort, targetPath, targetQuery, packageNameEnd, packageName, mergedPath, fragment, _this = this;
+      if (reference.get$scheme().length !== 0)
+        return reference;
+      else {
+        targetScheme = _this.scheme;
+        if (reference.get$hasAuthority()) {
+          t1 = reference.replace$1$scheme(0, targetScheme);
+          return t1;
+        } else {
+          targetUserInfo = _this._userInfo;
+          targetHost = _this._host;
+          targetPort = _this._port;
+          targetPath = _this.path;
+          if (reference.get$hasEmptyPath())
+            targetQuery = reference.get$hasQuery() ? reference.get$query() : _this._query;
+          else {
+            packageNameEnd = A._Uri__packageNameEnd(_this, targetPath);
+            if (packageNameEnd > 0) {
+              packageName = B.JSString_methods.substring$2(targetPath, 0, packageNameEnd);
+              targetPath = reference.get$hasAbsolutePath() ? packageName + A._Uri__removeDotSegments(reference.get$path(reference)) : packageName + A._Uri__removeDotSegments(_this._mergePaths$2(B.JSString_methods.substring$1(targetPath, packageName.length), reference.get$path(reference)));
+            } else if (reference.get$hasAbsolutePath())
+              targetPath = A._Uri__removeDotSegments(reference.get$path(reference));
+            else if (targetPath.length === 0)
+              if (targetHost == null)
+                targetPath = targetScheme.length === 0 ? reference.get$path(reference) : A._Uri__removeDotSegments(reference.get$path(reference));
+              else
+                targetPath = A._Uri__removeDotSegments("/" + reference.get$path(reference));
+            else {
+              mergedPath = _this._mergePaths$2(targetPath, reference.get$path(reference));
+              t1 = targetScheme.length === 0;
+              if (!t1 || targetHost != null || B.JSString_methods.startsWith$1(targetPath, "/"))
+                targetPath = A._Uri__removeDotSegments(mergedPath);
+              else
+                targetPath = A._Uri__normalizeRelativePath(mergedPath, !t1 || targetHost != null);
+            }
+            targetQuery = reference.get$hasQuery() ? reference.get$query() : null;
+          }
+        }
+      }
+      fragment = reference.get$hasFragment() ? reference.get$fragment() : null;
+      return A._Uri$_internal(targetScheme, targetUserInfo, targetHost, targetPort, targetPath, targetQuery, fragment);
+    },
+    get$hasAuthority() {
+      return this._host != null;
+    },
+    get$hasQuery() {
+      return this._query != null;
+    },
+    get$hasFragment() {
+      return this._fragment != null;
+    },
+    get$hasEmptyPath() {
+      return this.path.length === 0;
+    },
+    get$hasAbsolutePath() {
+      return B.JSString_methods.startsWith$1(this.path, "/");
+    },
+    toFilePath$0() {
+      var pathSegments, _this = this,
+        t1 = _this.scheme;
+      if (t1 !== "" && t1 !== "file")
+        throw A.wrapException(A.UnsupportedError$("Cannot extract a file path from a " + t1 + " URI"));
+      t1 = _this._query;
+      if ((t1 == null ? "" : t1) !== "")
+        throw A.wrapException(A.UnsupportedError$(string$.Cannotfq));
+      t1 = _this._fragment;
+      if ((t1 == null ? "" : t1) !== "")
+        throw A.wrapException(A.UnsupportedError$(string$.Cannotff));
+      if (_this._host != null && _this.get$host(0) !== "")
+        A.throwExpression(A.UnsupportedError$(string$.Cannotn));
+      pathSegments = _this.get$pathSegments();
+      A._Uri__checkNonWindowsPathReservedCharacters(pathSegments, false);
+      t1 = A.StringBuffer__writeAll(B.JSString_methods.startsWith$1(_this.path, "/") ? "" + "/" : "", pathSegments, "/");
+      t1 = t1.charCodeAt(0) == 0 ? t1 : t1;
+      return t1;
+    },
+    toString$0(_) {
+      return this.get$_text();
+    },
+    $eq(_, other) {
+      var t1, t2, _this = this;
+      if (other == null)
+        return false;
+      if (_this === other)
+        return true;
+      if (type$.Uri._is(other))
+        if (_this.scheme === other.get$scheme())
+          if (_this._host != null === other.get$hasAuthority())
+            if (_this._userInfo === other.get$userInfo())
+              if (_this.get$host(0) === other.get$host(other))
+                if (_this.get$port(0) === other.get$port(other))
+                  if (_this.path === other.get$path(other)) {
+                    t1 = _this._query;
+                    t2 = t1 == null;
+                    if (!t2 === other.get$hasQuery()) {
+                      if (t2)
+                        t1 = "";
+                      if (t1 === other.get$query()) {
+                        t1 = _this._fragment;
+                        t2 = t1 == null;
+                        if (!t2 === other.get$hasFragment()) {
+                          if (t2)
+                            t1 = "";
+                          t1 = t1 === other.get$fragment();
+                        } else
+                          t1 = false;
+                      } else
+                        t1 = false;
+                    } else
+                      t1 = false;
+                  } else
+                    t1 = false;
+                else
+                  t1 = false;
+              else
+                t1 = false;
+            else
+              t1 = false;
+          else
+            t1 = false;
+        else
+          t1 = false;
+      else
+        t1 = false;
+      return t1;
+    },
+    set$___Uri_pathSegments_FI(___Uri_pathSegments_FI) {
+      this.___Uri_pathSegments_FI = type$.List_String._as(___Uri_pathSegments_FI);
+    },
+    set$___Uri_queryParameters_FI(___Uri_queryParameters_FI) {
+      this.___Uri_queryParameters_FI = type$.Map_String_String._as(___Uri_queryParameters_FI);
+    },
+    $isUri: 1,
+    get$scheme() {
+      return this.scheme;
+    },
+    get$path(receiver) {
+      return this.path;
     }
   };
+  A.UriData.prototype = {
+    get$uri() {
+      var t2, queryIndex, end, query, _this = this, _null = null,
+        t1 = _this._uriCache;
+      if (t1 == null) {
+        t1 = _this._separatorIndices;
+        if (0 >= t1.length)
+          return A.ioore(t1, 0);
+        t2 = _this._text;
+        t1 = t1[0] + 1;
+        queryIndex = B.JSString_methods.indexOf$2(t2, "?", t1);
+        end = t2.length;
+        if (queryIndex >= 0) {
+          query = A._Uri__normalizeOrSubstring(t2, queryIndex + 1, end, B.List_42A, false, false);
+          end = queryIndex;
+        } else
+          query = _null;
+        t1 = _this._uriCache = new A._DataUri("data", "", _null, _null, A._Uri__normalizeOrSubstring(t2, t1, end, B.List_M2I, false, false), query, _null);
+      }
+      return t1;
+    },
+    toString$0(_) {
+      var t2,
+        t1 = this._separatorIndices;
+      if (0 >= t1.length)
+        return A.ioore(t1, 0);
+      t2 = this._text;
+      return t1[0] === -1 ? "data:" + t2 : t2;
+    }
+  };
+  A._createTables_build.prototype = {
+    call$2(state, defaultTransition) {
+      var t1 = this.tables;
+      if (!(state < t1.length))
+        return A.ioore(t1, state);
+      t1 = t1[state];
+      B.NativeUint8List_methods.fillRange$3(t1, 0, 96, defaultTransition);
+      return t1;
+    },
+    $signature: 64
+  };
+  A._createTables_setChars.prototype = {
+    call$3(target, chars, transition) {
+      var t1, i, t2;
+      for (t1 = chars.length, i = 0; i < t1; ++i) {
+        t2 = chars.charCodeAt(i) ^ 96;
+        if (!(t2 < 96))
+          return A.ioore(target, t2);
+        target[t2] = transition;
+      }
+    },
+    $signature: 21
+  };
+  A._createTables_setRange.prototype = {
+    call$3(target, range, transition) {
+      var i, n,
+        t1 = range.length;
+      if (0 >= t1)
+        return A.ioore(range, 0);
+      i = range.charCodeAt(0);
+      if (1 >= t1)
+        return A.ioore(range, 1);
+      n = range.charCodeAt(1);
+      for (; i <= n; ++i) {
+        t1 = (i ^ 96) >>> 0;
+        if (!(t1 < 96))
+          return A.ioore(target, t1);
+        target[t1] = transition;
+      }
+    },
+    $signature: 21
+  };
+  A._SimpleUri.prototype = {
+    get$hasAuthority() {
+      return this._hostStart > 0;
+    },
+    get$hasPort() {
+      return this._hostStart > 0 && this._portStart + 1 < this._pathStart;
+    },
+    get$hasQuery() {
+      return this._queryStart < this._fragmentStart;
+    },
+    get$hasFragment() {
+      return this._fragmentStart < this._uri.length;
+    },
+    get$hasAbsolutePath() {
+      return B.JSString_methods.startsWith$2(this._uri, "/", this._pathStart);
+    },
+    get$hasEmptyPath() {
+      return this._pathStart === this._queryStart;
+    },
+    get$scheme() {
+      var t1 = this._schemeCache;
+      return t1 == null ? this._schemeCache = this._computeScheme$0() : t1;
+    },
+    _computeScheme$0() {
+      var t2, _this = this,
+        t1 = _this._schemeEnd;
+      if (t1 <= 0)
+        return "";
+      t2 = t1 === 4;
+      if (t2 && B.JSString_methods.startsWith$1(_this._uri, "http"))
+        return "http";
+      if (t1 === 5 && B.JSString_methods.startsWith$1(_this._uri, "https"))
+        return "https";
+      if (t2 && B.JSString_methods.startsWith$1(_this._uri, "file"))
+        return "file";
+      if (t1 === 7 && B.JSString_methods.startsWith$1(_this._uri, "package"))
+        return "package";
+      return B.JSString_methods.substring$2(_this._uri, 0, t1);
+    },
+    get$userInfo() {
+      var t1 = this._hostStart,
+        t2 = this._schemeEnd + 3;
+      return t1 > t2 ? B.JSString_methods.substring$2(this._uri, t2, t1 - 1) : "";
+    },
+    get$host(_) {
+      var t1 = this._hostStart;
+      return t1 > 0 ? B.JSString_methods.substring$2(this._uri, t1, this._portStart) : "";
+    },
+    get$port(_) {
+      var t1, _this = this;
+      if (_this.get$hasPort())
+        return A.int_parse(B.JSString_methods.substring$2(_this._uri, _this._portStart + 1, _this._pathStart), null);
+      t1 = _this._schemeEnd;
+      if (t1 === 4 && B.JSString_methods.startsWith$1(_this._uri, "http"))
+        return 80;
+      if (t1 === 5 && B.JSString_methods.startsWith$1(_this._uri, "https"))
+        return 443;
+      return 0;
+    },
+    get$path(_) {
+      return B.JSString_methods.substring$2(this._uri, this._pathStart, this._queryStart);
+    },
+    get$query() {
+      var t1 = this._queryStart,
+        t2 = this._fragmentStart;
+      return t1 < t2 ? B.JSString_methods.substring$2(this._uri, t1 + 1, t2) : "";
+    },
+    get$fragment() {
+      var t1 = this._fragmentStart,
+        t2 = this._uri;
+      return t1 < t2.length ? B.JSString_methods.substring$1(t2, t1 + 1) : "";
+    },
+    get$queryParameters() {
+      if (this._queryStart >= this._fragmentStart)
+        return B.Map_empty0;
+      return new A.UnmodifiableMapView(A.Uri_splitQueryString(this.get$query()), type$.UnmodifiableMapView_String_String);
+    },
+    _isPort$1(port) {
+      var portDigitStart = this._portStart + 1;
+      return portDigitStart + port.length === this._pathStart && B.JSString_methods.startsWith$2(this._uri, port, portDigitStart);
+    },
+    normalizePath$0() {
+      return this;
+    },
+    removeFragment$0() {
+      var _this = this,
+        t1 = _this._fragmentStart,
+        t2 = _this._uri;
+      if (t1 >= t2.length)
+        return _this;
+      return new A._SimpleUri(B.JSString_methods.substring$2(t2, 0, t1), _this._schemeEnd, _this._hostStart, _this._portStart, _this._pathStart, _this._queryStart, t1, _this._schemeCache);
+    },
+    replace$1$scheme(_, scheme) {
+      var schemeChanged, isFile, t1, userInfo, port, host, t2, path, t3, query, fragment, _this = this, _null = null;
+      scheme = A._Uri__makeScheme(scheme, 0, scheme.length);
+      schemeChanged = !(_this._schemeEnd === scheme.length && B.JSString_methods.startsWith$1(_this._uri, scheme));
+      isFile = scheme === "file";
+      t1 = _this._hostStart;
+      userInfo = t1 > 0 ? B.JSString_methods.substring$2(_this._uri, _this._schemeEnd + 3, t1) : "";
+      port = _this.get$hasPort() ? _this.get$port(0) : _null;
+      if (schemeChanged)
+        port = A._Uri__makePort(port, scheme);
+      t1 = _this._hostStart;
+      if (t1 > 0)
+        host = B.JSString_methods.substring$2(_this._uri, t1, _this._portStart);
+      else
+        host = userInfo.length !== 0 || port != null || isFile ? "" : _null;
+      t1 = _this._uri;
+      t2 = _this._queryStart;
+      path = B.JSString_methods.substring$2(t1, _this._pathStart, t2);
+      if (!isFile)
+        t3 = host != null && path.length !== 0;
+      else
+        t3 = true;
+      if (t3 && !B.JSString_methods.startsWith$1(path, "/"))
+        path = "/" + path;
+      t3 = _this._fragmentStart;
+      query = t2 < t3 ? B.JSString_methods.substring$2(t1, t2 + 1, t3) : _null;
+      t2 = _this._fragmentStart;
+      fragment = t2 < t1.length ? B.JSString_methods.substring$1(t1, t2 + 1) : _null;
+      return A._Uri$_internal(scheme, userInfo, host, port, path, query, fragment);
+    },
+    resolve$1(reference) {
+      return this.resolveUri$1(A.Uri_parse(reference));
+    },
+    resolveUri$1(reference) {
+      if (reference instanceof A._SimpleUri)
+        return this._simpleMerge$2(this, reference);
+      return this._toNonSimple$0().resolveUri$1(reference);
+    },
+    _simpleMerge$2(base, ref) {
+      var t2, t3, t4, isSimple, delta, refStart, basePathStart, packageNameEnd, basePathStart0, baseStart, baseEnd, baseUri, baseStart0, backCount, refStart0, insert,
+        t1 = ref._schemeEnd;
+      if (t1 > 0)
+        return ref;
+      t2 = ref._hostStart;
+      if (t2 > 0) {
+        t3 = base._schemeEnd;
+        if (t3 <= 0)
+          return ref;
+        t4 = t3 === 4;
+        if (t4 && B.JSString_methods.startsWith$1(base._uri, "file"))
+          isSimple = ref._pathStart !== ref._queryStart;
+        else if (t4 && B.JSString_methods.startsWith$1(base._uri, "http"))
+          isSimple = !ref._isPort$1("80");
+        else
+          isSimple = !(t3 === 5 && B.JSString_methods.startsWith$1(base._uri, "https")) || !ref._isPort$1("443");
+        if (isSimple) {
+          delta = t3 + 1;
+          return new A._SimpleUri(B.JSString_methods.substring$2(base._uri, 0, delta) + B.JSString_methods.substring$1(ref._uri, t1 + 1), t3, t2 + delta, ref._portStart + delta, ref._pathStart + delta, ref._queryStart + delta, ref._fragmentStart + delta, base._schemeCache);
+        } else
+          return this._toNonSimple$0().resolveUri$1(ref);
+      }
+      refStart = ref._pathStart;
+      t1 = ref._queryStart;
+      if (refStart === t1) {
+        t2 = ref._fragmentStart;
+        if (t1 < t2) {
+          t3 = base._queryStart;
+          delta = t3 - t1;
+          return new A._SimpleUri(B.JSString_methods.substring$2(base._uri, 0, t3) + B.JSString_methods.substring$1(ref._uri, t1), base._schemeEnd, base._hostStart, base._portStart, base._pathStart, t1 + delta, t2 + delta, base._schemeCache);
+        }
+        t1 = ref._uri;
+        if (t2 < t1.length) {
+          t3 = base._fragmentStart;
+          return new A._SimpleUri(B.JSString_methods.substring$2(base._uri, 0, t3) + B.JSString_methods.substring$1(t1, t2), base._schemeEnd, base._hostStart, base._portStart, base._pathStart, base._queryStart, t2 + (t3 - t2), base._schemeCache);
+        }
+        return base.removeFragment$0();
+      }
+      t2 = ref._uri;
+      if (B.JSString_methods.startsWith$2(t2, "/", refStart)) {
+        basePathStart = base._pathStart;
+        packageNameEnd = A._SimpleUri__packageNameEnd(this);
+        basePathStart0 = packageNameEnd > 0 ? packageNameEnd : basePathStart;
+        delta = basePathStart0 - refStart;
+        return new A._SimpleUri(B.JSString_methods.substring$2(base._uri, 0, basePathStart0) + B.JSString_methods.substring$1(t2, refStart), base._schemeEnd, base._hostStart, base._portStart, basePathStart, t1 + delta, ref._fragmentStart + delta, base._schemeCache);
+      }
+      baseStart = base._pathStart;
+      baseEnd = base._queryStart;
+      if (baseStart === baseEnd && base._hostStart > 0) {
+        for (; B.JSString_methods.startsWith$2(t2, "../", refStart);)
+          refStart += 3;
+        delta = baseStart - refStart + 1;
+        return new A._SimpleUri(B.JSString_methods.substring$2(base._uri, 0, baseStart) + "/" + B.JSString_methods.substring$1(t2, refStart), base._schemeEnd, base._hostStart, base._portStart, baseStart, t1 + delta, ref._fragmentStart + delta, base._schemeCache);
+      }
+      baseUri = base._uri;
+      packageNameEnd = A._SimpleUri__packageNameEnd(this);
+      if (packageNameEnd >= 0)
+        baseStart0 = packageNameEnd;
+      else
+        for (baseStart0 = baseStart; B.JSString_methods.startsWith$2(baseUri, "../", baseStart0);)
+          baseStart0 += 3;
+      backCount = 0;
+      while (true) {
+        refStart0 = refStart + 3;
+        if (!(refStart0 <= t1 && B.JSString_methods.startsWith$2(t2, "../", refStart)))
+          break;
+        ++backCount;
+        refStart = refStart0;
+      }
+      for (t3 = baseUri.length, insert = ""; baseEnd > baseStart0;) {
+        --baseEnd;
+        if (!(baseEnd >= 0 && baseEnd < t3))
+          return A.ioore(baseUri, baseEnd);
+        if (baseUri.charCodeAt(baseEnd) === 47) {
+          if (backCount === 0) {
+            insert = "/";
+            break;
+          }
+          --backCount;
+          insert = "/";
+        }
+      }
+      if (baseEnd === baseStart0 && base._schemeEnd <= 0 && !B.JSString_methods.startsWith$2(baseUri, "/", baseStart)) {
+        refStart -= backCount * 3;
+        insert = "";
+      }
+      delta = baseEnd - refStart + insert.length;
+      return new A._SimpleUri(B.JSString_methods.substring$2(baseUri, 0, baseEnd) + insert + B.JSString_methods.substring$1(t2, refStart), base._schemeEnd, base._hostStart, base._portStart, baseStart, t1 + delta, ref._fragmentStart + delta, base._schemeCache);
+    },
+    toFilePath$0() {
+      var t2, _this = this,
+        t1 = _this._schemeEnd;
+      if (t1 >= 0) {
+        t2 = !(t1 === 4 && B.JSString_methods.startsWith$1(_this._uri, "file"));
+        t1 = t2;
+      } else
+        t1 = false;
+      if (t1)
+        throw A.wrapException(A.UnsupportedError$("Cannot extract a file path from a " + _this.get$scheme() + " URI"));
+      t1 = _this._queryStart;
+      t2 = _this._uri;
+      if (t1 < t2.length) {
+        if (t1 < _this._fragmentStart)
+          throw A.wrapException(A.UnsupportedError$(string$.Cannotfq));
+        throw A.wrapException(A.UnsupportedError$(string$.Cannotff));
+      }
+      if (_this._hostStart < _this._portStart)
+        A.throwExpression(A.UnsupportedError$(string$.Cannotn));
+      t1 = B.JSString_methods.substring$2(t2, _this._pathStart, t1);
+      return t1;
+    },
+    get$hashCode(_) {
+      var t1 = this._hashCodeCache;
+      return t1 == null ? this._hashCodeCache = B.JSString_methods.get$hashCode(this._uri) : t1;
+    },
+    $eq(_, other) {
+      if (other == null)
+        return false;
+      if (this === other)
+        return true;
+      return type$.Uri._is(other) && this._uri === other.toString$0(0);
+    },
+    _toNonSimple$0() {
+      var _this = this, _null = null,
+        t1 = _this.get$scheme(),
+        t2 = _this.get$userInfo(),
+        t3 = _this._hostStart > 0 ? _this.get$host(0) : _null,
+        t4 = _this.get$hasPort() ? _this.get$port(0) : _null,
+        t5 = _this._uri,
+        t6 = _this._queryStart,
+        t7 = B.JSString_methods.substring$2(t5, _this._pathStart, t6),
+        t8 = _this._fragmentStart;
+      t6 = t6 < t8 ? _this.get$query() : _null;
+      return A._Uri$_internal(t1, t2, t3, t4, t7, t6, t8 < t5.length ? _this.get$fragment() : _null);
+    },
+    toString$0(_) {
+      return this._uri;
+    },
+    $isUri: 1
+  };
+  A._DataUri.prototype = {};
   A.HtmlElement.prototype = {};
   A.AnchorElement.prototype = {
     set$href(receiver, value) {
@@ -7258,10 +16090,6 @@
   A.CanvasRenderingContext2D.prototype = {
     set$strokeStyle(receiver, value) {
       receiver.strokeStyle = value;
-    },
-    putImageData$3(receiver, imagedata, dx, dy) {
-      receiver.putImageData(A.convertDartToNative_ImageData(imagedata), dx, dy);
-      return;
     },
     $isCanvasRenderingContext2D: 1
   };
@@ -7308,7 +16136,7 @@
   };
   A.CssStyleDeclarationBase.prototype = {};
   A.DivElement.prototype = {$isDivElement: 1};
-  A.Document.prototype = {};
+  A.Document.prototype = {$isDocument: 1};
   A.DomException.prototype = {
     toString$0(receiver) {
       var t1 = String(receiver);
@@ -7391,10 +16219,26 @@
       return this._nodeList.length;
     },
     $index(_, index) {
-      var t1 = this._nodeList;
+      var t1;
+      A._asInt(index);
+      t1 = this._nodeList;
       if (!(index >= 0 && index < t1.length))
         return A.ioore(t1, index);
       return this.$ti._precomputed1._as(t1[index]);
+    },
+    $indexSet(_, index, value) {
+      this.$ti._precomputed1._as(value);
+      throw A.wrapException(A.UnsupportedError$("Cannot modify list"));
+    },
+    set$length(_, newLength) {
+      throw A.wrapException(A.UnsupportedError$("Cannot modify list"));
+    },
+    sort$1(_, compare) {
+      this.$ti._eval$1("int(1,1)?")._as(compare);
+      throw A.wrapException(A.UnsupportedError$("Cannot sort list"));
+    },
+    get$first(_) {
+      return this.$ti._precomputed1._as(B.NodeList_methods.get$first(this._nodeList));
     }
   };
   A.Element.prototype = {
@@ -7511,12 +16355,20 @@
     call$1(e) {
       return type$.Element._is(type$.Node._as(e));
     },
-    $signature: 21
+    $signature: 45
   };
-  A.Event.prototype = {$isEvent: 1};
+  A.Event.prototype = {
+    _initEvent$3(receiver, type, bubbles, cancelable) {
+      return receiver.initEvent(type, true, true);
+    },
+    $isEvent: 1
+  };
   A.EventTarget.prototype = {
     _addEventListener$3(receiver, type, listener, options) {
       return receiver.addEventListener(type, A.convertDartClosureToJS(type$.nullable_dynamic_Function_Event._as(listener), 1), false);
+    },
+    _removeEventListener$3(receiver, type, listener, options) {
+      return receiver.removeEventListener(type, A.convertDartClosureToJS(type$.nullable_dynamic_Function_Event._as(listener), 1), false);
     },
     $isEventTarget: 1
   };
@@ -7531,8 +16383,40 @@
     }
   };
   A.HttpRequest.prototype = {
+    get$responseHeaders(receiver) {
+      var _i, header, t2, splitIdx, key, value,
+        t1 = type$.String,
+        headers = A.LinkedHashMap_LinkedHashMap$_empty(t1, t1),
+        headersString = receiver.getAllResponseHeaders(),
+        headersList = headersString.split("\r\n");
+      for (t1 = headersList.length, _i = 0; _i < t1; ++_i) {
+        header = headersList[_i];
+        t2 = J.getInterceptor$asx(header);
+        if (t2.get$length(header) === 0)
+          continue;
+        splitIdx = t2.indexOf$1(header, ": ");
+        if (splitIdx === -1)
+          continue;
+        key = t2.substring$2(header, 0, splitIdx).toLowerCase();
+        value = t2.substring$1(header, splitIdx + 2);
+        if (headers.containsKey$1(0, key))
+          headers.$indexSet(0, key, A.S(headers.$index(0, key)) + ", " + value);
+        else
+          headers.$indexSet(0, key, value);
+      }
+      return headers;
+    },
     open$3$async(receiver, method, url, async) {
-      return receiver.open(method, url, true);
+      return receiver.open(method, url, async);
+    },
+    open$2(receiver, method, url) {
+      return receiver.open(method, url);
+    },
+    set$timeout(receiver, value) {
+      receiver.timeout = value;
+    },
+    set$withCredentials(receiver, value) {
+      receiver.withCredentials = value;
     },
     $isHttpRequest: 1
   };
@@ -7542,7 +16426,7 @@
       t1.toString;
       return t1;
     },
-    $signature: 22
+    $signature: 36
   };
   A.HttpRequest_request_closure.prototype = {
     call$1(e) {
@@ -7560,7 +16444,7 @@
       else
         t3.completeError$1(e);
     },
-    $signature: 38
+    $signature: 16
   };
   A.HttpRequestEventTarget.prototype = {};
   A.ImageData.prototype = {
@@ -7615,6 +16499,12 @@
     $isMouseEvent: 1
   };
   A._ChildNodeListLazy.prototype = {
+    get$first(_) {
+      var result = this._this.firstChild;
+      if (result == null)
+        throw A.wrapException(A.StateError$("No elements"));
+      return result;
+    },
     get$single(_) {
       var t1 = this._this,
         l = t1.childNodes.length;
@@ -7625,6 +16515,9 @@
       t1 = t1.firstChild;
       t1.toString;
       return t1;
+    },
+    add$1(_, value) {
+      this._this.appendChild(type$.Node._as(value)).toString;
     },
     addAll$1(_, iterable) {
       var t1, t2, len, i, t3;
@@ -7639,15 +16532,33 @@
         }
       return;
     },
+    $indexSet(_, index, value) {
+      var t1, t2;
+      type$.Node._as(value);
+      t1 = this._this;
+      t2 = t1.childNodes;
+      if (!(index >= 0 && index < t2.length))
+        return A.ioore(t2, index);
+      t1.replaceChild(value, t2[index]).toString;
+    },
     get$iterator(_) {
       var t1 = this._this.childNodes;
       return new A.FixedSizeListIterator(t1, t1.length, A.instanceType(t1)._eval$1("FixedSizeListIterator<ImmutableListMixin.E>"));
     },
+    sort$1(_, compare) {
+      type$.nullable_int_Function_Node_Node._as(compare);
+      throw A.wrapException(A.UnsupportedError$("Cannot sort Node list"));
+    },
     get$length(_) {
       return this._this.childNodes.length;
     },
+    set$length(_, value) {
+      throw A.wrapException(A.UnsupportedError$("Cannot set length on immutable List."));
+    },
     $index(_, index) {
-      var t1 = this._this.childNodes;
+      var t1;
+      A._asInt(index);
+      t1 = this._this.childNodes;
       if (!(index >= 0 && index < t1.length))
         return A.ioore(t1, index);
       return t1[index];
@@ -7675,8 +16586,10 @@
       return t1;
     },
     $index(receiver, index) {
-      var t1 = receiver.length,
-        t2 = index >>> 0 !== index || index >= t1;
+      var t1, t2;
+      A._asInt(index);
+      t1 = receiver.length;
+      t2 = index >>> 0 !== index || index >= t1;
       t2.toString;
       if (t2)
         throw A.wrapException(A.IndexError$withLength(index, t1, receiver, null));
@@ -7684,11 +16597,28 @@
       t1.toString;
       return t1;
     },
+    $indexSet(receiver, index, value) {
+      type$.Node._as(value);
+      throw A.wrapException(A.UnsupportedError$("Cannot assign element of immutable List."));
+    },
+    set$length(receiver, value) {
+      throw A.wrapException(A.UnsupportedError$("Cannot resize immutable List."));
+    },
+    get$first(receiver) {
+      var t1;
+      if (receiver.length > 0) {
+        t1 = receiver[0];
+        t1.toString;
+        return t1;
+      }
+      throw A.wrapException(A.StateError$("No elements"));
+    },
     elementAt$1(receiver, index) {
       if (!(index >= 0 && index < receiver.length))
         return A.ioore(receiver, index);
       return receiver[index];
     },
+    $isJSIndexable: 1,
     $isEfficientLengthIterable: 1,
     $isJavaScriptIndexingBehavior: 1,
     $isIterable: 1,
@@ -7701,6 +16631,46 @@
     }
   };
   A.SpanElement.prototype = {};
+  A.Storage.prototype = {
+    $index(receiver, key) {
+      return receiver.getItem(A._asString(key));
+    },
+    $indexSet(receiver, key, value) {
+      receiver.setItem(key, value);
+    },
+    forEach$1(receiver, f) {
+      var i, key, t1;
+      type$.void_Function_String_String._as(f);
+      for (i = 0; true; ++i) {
+        key = receiver.key(i);
+        if (key == null)
+          return;
+        t1 = receiver.getItem(key);
+        t1.toString;
+        f.call$2(key, t1);
+      }
+    },
+    get$keys(receiver) {
+      var keys = A._setArrayType([], type$.JSArray_String);
+      this.forEach$1(receiver, new A.Storage_keys_closure(keys));
+      return keys;
+    },
+    get$length(receiver) {
+      var t1 = receiver.length;
+      t1.toString;
+      return t1;
+    },
+    get$isEmpty(receiver) {
+      return receiver.key(0) == null;
+    },
+    $isMap: 1
+  };
+  A.Storage_keys_closure.prototype = {
+    call$2(k, v) {
+      return B.JSArray_methods.add$1(this.keys, k);
+    },
+    $signature: 22
+  };
   A.StyleElement.prototype = {};
   A.TableElement.prototype = {
     createFragment$3$treeSanitizer$validator(receiver, html, treeSanitizer, validator) {
@@ -7750,7 +16720,38 @@
   };
   A.TemplateElement.prototype = {$isTemplateElement: 1};
   A.UIEvent.prototype = {};
-  A.Window.prototype = {$isWindow: 1, $isWindowBase: 1};
+  A.Window.prototype = {
+    get$scrollX(receiver) {
+      var t1 = "scrollX" in receiver;
+      t1.toString;
+      if (t1) {
+        t1 = receiver.scrollX;
+        t1.toString;
+        t1 = B.JSNumber_methods.round$0(t1);
+      } else {
+        t1 = receiver.document.documentElement.scrollLeft;
+        t1.toString;
+        t1 = B.JSNumber_methods.round$0(t1);
+      }
+      return t1;
+    },
+    get$scrollY(receiver) {
+      var t1 = "scrollY" in receiver;
+      t1.toString;
+      if (t1) {
+        t1 = receiver.scrollY;
+        t1.toString;
+        t1 = B.JSNumber_methods.round$0(t1);
+      } else {
+        t1 = receiver.document.documentElement.scrollTop;
+        t1.toString;
+        t1 = B.JSNumber_methods.round$0(t1);
+      }
+      return t1;
+    },
+    $isWindow: 1,
+    $isWindowBase: 1
+  };
   A.WorkerGlobalScope.prototype = {$isWorkerGlobalScope: 1};
   A._Attr.prototype = {$is_Attr: 1};
   A._DomRect.prototype = {
@@ -7822,8 +16823,10 @@
       return t1;
     },
     $index(receiver, index) {
-      var t1 = receiver.length,
-        t2 = index >>> 0 !== index || index >= t1;
+      var t1, t2;
+      A._asInt(index);
+      t1 = receiver.length;
+      t2 = index >>> 0 !== index || index >= t1;
       t2.toString;
       if (t2)
         throw A.wrapException(A.IndexError$withLength(index, t1, receiver, null));
@@ -7831,11 +16834,28 @@
       t1.toString;
       return t1;
     },
+    $indexSet(receiver, index, value) {
+      type$.Node._as(value);
+      throw A.wrapException(A.UnsupportedError$("Cannot assign element of immutable List."));
+    },
+    set$length(receiver, value) {
+      throw A.wrapException(A.UnsupportedError$("Cannot resize immutable List."));
+    },
+    get$first(receiver) {
+      var t1;
+      if (receiver.length > 0) {
+        t1 = receiver[0];
+        t1.toString;
+        return t1;
+      }
+      throw A.wrapException(A.StateError$("No elements"));
+    },
     elementAt$1(receiver, index) {
       if (!(index >= 0 && index < receiver.length))
         return A.ioore(receiver, index);
       return receiver[index];
     },
+    $isJSIndexable: 1,
     $isEfficientLengthIterable: 1,
     $isJavaScriptIndexingBehavior: 1,
     $isIterable: 1,
@@ -7845,13 +16865,13 @@
     forEach$1(_, f) {
       var t1, t2, t3, _i, key, value;
       type$.void_Function_String_String._as(f);
-      for (t1 = this.get$keys(), t2 = t1.length, t3 = this._html$_element, _i = 0; _i < t1.length; t1.length === t2 || (0, A.throwConcurrentModificationError)(t1), ++_i) {
+      for (t1 = this.get$keys(0), t2 = t1.length, t3 = this._html$_element, _i = 0; _i < t1.length; t1.length === t2 || (0, A.throwConcurrentModificationError)(t1), ++_i) {
         key = t1[_i];
         value = t3.getAttribute(key);
         f.call$2(key, value == null ? A._asString(value) : value);
       }
     },
-    get$keys() {
+    get$keys(_) {
       var keys, len, t2, i, attr, t3,
         t1 = this._html$_element.attributes;
       t1.toString;
@@ -7867,25 +16887,105 @@
         }
       }
       return keys;
+    },
+    get$isEmpty(_) {
+      return this.get$keys(0).length === 0;
     }
   };
   A._ElementAttributeMap.prototype = {
     $index(_, key) {
       return this._html$_element.getAttribute(A._asString(key));
     },
+    $indexSet(_, key, value) {
+      this._html$_element.setAttribute(key, value);
+    },
     get$length(_) {
-      return this.get$keys().length;
+      return this.get$keys(0).length;
     }
   };
   A.EventStreamProvider.prototype = {};
-  A._EventStream.prototype = {};
+  A._EventStream.prototype = {
+    listen$4$cancelOnError$onDone$onError(onData, cancelOnError, onDone, onError) {
+      var t1 = A._instanceType(this);
+      t1._eval$1("~(1)?")._as(onData);
+      type$.nullable_void_Function._as(onDone);
+      return A._EventStreamSubscription$(this._target, this._eventType, onData, false, t1._precomputed1);
+    },
+    listen$3$onDone$onError(onData, onDone, onError) {
+      return this.listen$4$cancelOnError$onDone$onError(onData, null, onDone, onError);
+    }
+  };
   A._ElementEventStreamImpl.prototype = {};
-  A._EventStreamSubscription.prototype = {$isStreamSubscription: 1};
+  A._EventStreamSubscription.prototype = {
+    cancel$0() {
+      var _this = this;
+      if (_this._target == null)
+        return $.$get$nullFuture();
+      _this._unlisten$0();
+      _this._target = null;
+      _this.set$_onData(null);
+      return $.$get$nullFuture();
+    },
+    onData$1(handleData) {
+      var t1, _this = this;
+      _this.$ti._eval$1("~(1)?")._as(handleData);
+      if (_this._target == null)
+        throw A.wrapException(A.StateError$("Subscription has been canceled."));
+      _this._unlisten$0();
+      t1 = A._wrapZone(new A._EventStreamSubscription_onData_closure(handleData), type$.Event);
+      _this.set$_onData(t1);
+      _this._tryResume$0();
+    },
+    pause$0(_) {
+      if (this._target == null)
+        return;
+      ++this._pauseCount;
+      this._unlisten$0();
+    },
+    resume$0() {
+      var _this = this;
+      if (_this._target == null || _this._pauseCount <= 0)
+        return;
+      --_this._pauseCount;
+      _this._tryResume$0();
+    },
+    _tryResume$0() {
+      var t3, _this = this,
+        t1 = _this._onData,
+        t2 = t1 != null;
+      if (t2 && _this._pauseCount <= 0) {
+        t3 = _this._target;
+        t3.toString;
+        type$.nullable_dynamic_Function_Event._as(t1);
+        if (t2)
+          J._addEventListener$3$x(t3, _this._eventType, t1, false);
+      }
+    },
+    _unlisten$0() {
+      var t2,
+        t1 = this._onData;
+      if (t1 != null) {
+        t2 = this._target;
+        t2.toString;
+        J._removeEventListener$3$x(t2, this._eventType, type$.nullable_dynamic_Function_Event._as(t1), false);
+      }
+    },
+    set$_onData(_onData) {
+      this._onData = type$.nullable_dynamic_Function_Event._as(_onData);
+    },
+    $isStreamSubscription: 1
+  };
   A._EventStreamSubscription_closure.prototype = {
     call$1(e) {
       return this.onData.call$1(type$.Event._as(e));
     },
-    $signature: 7
+    $signature: 8
+  };
+  A._EventStreamSubscription_onData_closure.prototype = {
+    call$1(e) {
+      return this.handleData.call$1(type$.Event._as(e));
+    },
+    $signature: 8
   };
   A._Html5NodeValidator.prototype = {
     _Html5NodeValidator$1$uriPolicy(uriPolicy) {
@@ -7913,6 +17013,14 @@
   A.ImmutableListMixin.prototype = {
     get$iterator(receiver) {
       return new A.FixedSizeListIterator(receiver, this.get$length(receiver), A.instanceType(receiver)._eval$1("FixedSizeListIterator<ImmutableListMixin.E>"));
+    },
+    add$1(receiver, value) {
+      A.instanceType(receiver)._eval$1("ImmutableListMixin.E")._as(value);
+      throw A.wrapException(A.UnsupportedError$("Cannot add to immutable List."));
+    },
+    sort$1(receiver, compare) {
+      A.instanceType(receiver)._eval$1("int(ImmutableListMixin.E,ImmutableListMixin.E)?")._as(compare);
+      throw A.wrapException(A.UnsupportedError$("Cannot sort immutable List."));
     }
   };
   A.NodeValidatorBuilder.prototype = {
@@ -7928,13 +17036,13 @@
     call$1(v) {
       return type$.NodeValidator._as(v).allowsElement$1(this.element);
     },
-    $signature: 8
+    $signature: 32
   };
   A.NodeValidatorBuilder_allowsAttribute_closure.prototype = {
     call$1(v) {
       return type$.NodeValidator._as(v).allowsAttribute$3(this.element, this.attributeName, this.value);
     },
-    $signature: 8
+    $signature: 32
   };
   A._SimpleNodeValidator.prototype = {
     _SimpleNodeValidator$4$allowedAttributes$allowedElements$allowedUriAttributes(uriPolicy, allowedAttributes, allowedElements, allowedUriAttributes) {
@@ -8004,7 +17112,7 @@
     call$1(attr) {
       return "TEMPLATE::" + A._asString(attr);
     },
-    $signature: 24
+    $signature: 10
   };
   A._SvgNodeValidator.prototype = {
     allowsElement$1(element) {
@@ -8168,9 +17276,9 @@
             window.console.warn("Removing disallowed type extension <" + tag + ' is="' + isAttr + '">');
           return;
         }
-      t1 = attrs.get$keys();
+      t1 = attrs.get$keys(0);
       keys = A._setArrayType(t1.slice(0), A._arrayInstanceType(t1));
-      for (i = attrs.get$keys().length - 1, t1 = attrs._html$_element, t2 = "Removing disallowed attribute <" + tag + " "; i >= 0; --i) {
+      for (i = attrs.get$keys(0).length - 1, t1 = attrs._html$_element, t2 = "Removing disallowed attribute <" + tag + " "; i >= 0; --i) {
         if (!(i < keys.length))
           return A.ioore(keys, i);
         $name = keys[i];
@@ -8249,31 +17357,137 @@
         child = nextChild;
       }
     },
-    $signature: 25
+    $signature: 38
   };
   A._CssStyleDeclaration_JavaScriptObject_CssStyleDeclarationBase.prototype = {};
   A._NodeList_JavaScriptObject_ListMixin.prototype = {};
   A._NodeList_JavaScriptObject_ListMixin_ImmutableListMixin.prototype = {};
+  A._Storage_JavaScriptObject_MapMixin.prototype = {};
   A.__NamedNodeMap_JavaScriptObject_ListMixin.prototype = {};
   A.__NamedNodeMap_JavaScriptObject_ListMixin_ImmutableListMixin.prototype = {};
+  A._AcceptStructuredClone.prototype = {
+    findSlot$1(value) {
+      var i,
+        t1 = this.values,
+        $length = t1.length;
+      for (i = 0; i < $length; ++i)
+        if (t1[i] === value)
+          return i;
+      B.JSArray_methods.add$1(t1, value);
+      B.JSArray_methods.add$1(this.copies, null);
+      return $length;
+    },
+    walk$1(e) {
+      var t1, proto, slot, copy, t2, map, t3, $length, t4, i, _this = this;
+      if (e == null)
+        return e;
+      if (A._isBool(e))
+        return e;
+      if (typeof e == "number")
+        return e;
+      if (typeof e == "string")
+        return e;
+      t1 = e instanceof Date;
+      t1.toString;
+      if (t1) {
+        t1 = e.getTime();
+        t1.toString;
+        return A.DateTime$fromMillisecondsSinceEpoch(t1, true);
+      }
+      t1 = e instanceof RegExp;
+      t1.toString;
+      if (t1)
+        throw A.wrapException(A.UnimplementedError$("structured clone of RegExp"));
+      t1 = typeof Promise != "undefined" && e instanceof Promise;
+      t1.toString;
+      if (t1)
+        return A.promiseToFuture(e, type$.dynamic);
+      proto = Object.getPrototypeOf(e);
+      t1 = proto === Object.prototype;
+      t1.toString;
+      if (!t1) {
+        t1 = proto === null;
+        t1.toString;
+      } else
+        t1 = true;
+      if (t1) {
+        slot = _this.findSlot$1(e);
+        t1 = _this.copies;
+        if (!(slot < t1.length))
+          return A.ioore(t1, slot);
+        copy = t1[slot];
+        if (copy != null)
+          return copy;
+        t2 = type$.dynamic;
+        map = A.LinkedHashMap_LinkedHashMap$_empty(t2, t2);
+        B.JSArray_methods.$indexSet(t1, slot, map);
+        _this.forEachJsField$2(e, new A._AcceptStructuredClone_walk_closure(_this, map));
+        return map;
+      }
+      t1 = e instanceof Array;
+      t1.toString;
+      if (t1) {
+        t1 = e;
+        t1.toString;
+        slot = _this.findSlot$1(t1);
+        t2 = _this.copies;
+        if (!(slot < t2.length))
+          return A.ioore(t2, slot);
+        copy = t2[slot];
+        if (copy != null)
+          return copy;
+        t3 = J.getInterceptor$asx(t1);
+        $length = t3.get$length(t1);
+        if (_this.mustCopy) {
+          t4 = new Array($length);
+          t4.toString;
+          copy = t4;
+        } else
+          copy = t1;
+        B.JSArray_methods.$indexSet(t2, slot, copy);
+        for (t2 = J.getInterceptor$ax(copy), i = 0; i < $length; ++i)
+          t2.$indexSet(copy, i, _this.walk$1(t3.$index(t1, i)));
+        return copy;
+      }
+      return e;
+    }
+  };
+  A._AcceptStructuredClone_walk_closure.prototype = {
+    call$2(key, value) {
+      var t1 = this.$this.walk$1(value);
+      this.map.$indexSet(0, key, t1);
+      return t1;
+    },
+    $signature: 39
+  };
   A._TypedImageData.prototype = {$isImageData: 1,
     get$data(receiver) {
       return this.data;
     }
   };
+  A._AcceptStructuredCloneDart2Js.prototype = {
+    forEachJsField$2(object, action) {
+      var t1, t2, _i, key;
+      type$.dynamic_Function_dynamic_dynamic._as(action);
+      for (t1 = Object.keys(object), t2 = t1.length, _i = 0; _i < t1.length; t1.length === t2 || (0, A.throwConcurrentModificationError)(t1), ++_i) {
+        key = t1[_i];
+        action.call$2(key, object[key]);
+      }
+    }
+  };
   A.KeyRange.prototype = {$isKeyRange: 1};
   A.JsObject__convertDataTree__convert.prototype = {
     call$1(o) {
-      var convertedMap, key, convertedList,
+      var convertedMap, t2, key, convertedList,
         t1 = this._convertedObjects;
-      if (t1.containsKey$1(o))
+      if (t1.containsKey$1(0, o))
         return t1.$index(0, o);
       if (type$.Map_dynamic_dynamic._is(o)) {
         convertedMap = {};
         t1.$indexSet(0, o, convertedMap);
-        for (t1 = J.get$iterator$ax(o.get$keys()); t1.moveNext$0();) {
-          key = t1.get$current();
-          convertedMap[key] = this.call$1(o.$index(0, key));
+        for (t1 = J.getInterceptor$x(o), t2 = J.get$iterator$ax(t1.get$keys(o)); t2.moveNext$0();) {
+          key = t2.get$current();
+          convertedMap[key] = this.call$1(t1.$index(o, key));
         }
         return convertedMap;
       } else if (type$.Iterable_dynamic._is(o)) {
@@ -8284,7 +17498,7 @@
       } else
         return A._convertToJS(o);
     },
-    $signature: 33
+    $signature: 40
   };
   A._convertToJS_closure.prototype = {
     call$1(o) {
@@ -8298,36 +17512,43 @@
       A._defineProperty(jsFunction, $.$get$DART_CLOSURE_PROPERTY_NAME(), o);
       return jsFunction;
     },
-    $signature: 3
+    $signature: 5
   };
   A._convertToJS_closure0.prototype = {
     call$1(o) {
       return new this.ctor(o);
     },
-    $signature: 3
+    $signature: 5
   };
   A._wrapToDart_closure.prototype = {
     call$1(o) {
       return new A.JsFunction(o == null ? type$.Object._as(o) : o);
     },
-    $signature: 27
+    $signature: 41
   };
   A._wrapToDart_closure0.prototype = {
     call$1(o) {
       var t1 = o == null ? type$.Object._as(o) : o;
       return new A.JsArray(t1, type$.JsArray_dynamic);
     },
-    $signature: 28
+    $signature: 42
   };
   A._wrapToDart_closure1.prototype = {
     call$1(o) {
       return new A.JsObject(o == null ? type$.Object._as(o) : o);
     },
-    $signature: 29
+    $signature: 55
   };
   A.JsObject.prototype = {
     $index(_, property) {
+      if (typeof property != "string" && typeof property != "number")
+        throw A.wrapException(A.ArgumentError$("property is not a String or num", null));
       return A._convertToDart(this._jsObject[property]);
+    },
+    $indexSet(_, property, value) {
+      if (typeof property != "string" && typeof property != "number")
+        throw A.wrapException(A.ArgumentError$("property is not a String or num", null));
+      this._jsObject[property] = A._convertToJS(value);
     },
     $eq(_, other) {
       if (other == null)
@@ -8351,7 +17572,7 @@
         t2 = null;
       else {
         t2 = A._arrayInstanceType(args);
-        t2 = A.List_List$from(new A.MappedListIterable(args, t2._eval$1("@(1)")._as(A.js___convertToJS$closure()), t2._eval$1("MappedListIterable<1,@>")), type$.dynamic);
+        t2 = A.List_List$from(new A.MappedListIterable(args, t2._eval$1("@(1)")._as(A.js___convertToJS$closure()), t2._eval$1("MappedListIterable<1,@>")), true, type$.dynamic);
       }
       return A._convertToDart(t1[method].apply(t1, t2));
     },
@@ -8367,8 +17588,13 @@
         throw A.wrapException(A.RangeError$range(index, 0, this.get$length(0), null, null));
     },
     $index(_, index) {
-      this._checkIndex$1(index);
+      if (A._isInt(index))
+        this._checkIndex$1(index);
       return this.$ti._precomputed1._as(this.super$JsObject$$index(0, index));
+    },
+    $indexSet(_, index, value) {
+      this._checkIndex$1(index);
+      this.super$_JsArray_JsObject_ListMixin$$indexSet(0, index, value);
     },
     get$length(_) {
       var len = this._jsObject.length;
@@ -8376,11 +17602,52 @@
         return len;
       throw A.wrapException(A.StateError$("Bad JsArray length"));
     },
+    set$length(_, $length) {
+      this.super$_JsArray_JsObject_ListMixin$$indexSet(0, "length", $length);
+    },
+    add$1(_, value) {
+      this.callMethod$2("push", [this.$ti._precomputed1._as(value)]);
+    },
+    sort$1(_, compare) {
+      this.$ti._eval$1("int(1,1)?")._as(compare);
+      this.callMethod$2("sort", [compare]);
+    },
     $isEfficientLengthIterable: 1,
     $isIterable: 1,
     $isList: 1
   };
-  A._JsArray_JsObject_ListMixin.prototype = {};
+  A._JsArray_JsObject_ListMixin.prototype = {
+    $indexSet(_, property, value) {
+      return this.super$JsObject$$indexSet(0, property, value);
+    }
+  };
+  A.promiseToFuture_closure.prototype = {
+    call$1(r) {
+      return this.completer.complete$1(0, this.T._eval$1("0/?")._as(r));
+    },
+    $signature: 6
+  };
+  A.promiseToFuture_closure0.prototype = {
+    call$1(e) {
+      if (e == null)
+        return this.completer.completeError$1(new A.NullRejectionException(e === undefined));
+      return this.completer.completeError$1(e);
+    },
+    $signature: 6
+  };
+  A.NullRejectionException.prototype = {
+    toString$0(_) {
+      return "Promise was rejected with a value of `" + (this.isUndefined ? "undefined" : "null") + "`.";
+    },
+    $isException: 1
+  };
+  A._JSRandom.prototype = {
+    nextInt$1(max) {
+      if (max <= 0 || max > 4294967296)
+        throw A.wrapException(A.RangeError$("max must be in range 0 < max \u2264 2^32, was " + max));
+      return Math.random() * max >>> 0;
+    }
+  };
   A.Point.prototype = {
     toString$0(_) {
       return "Point(" + A.S(this.x) + ", " + A.S(this.y) + ")";
@@ -8419,178 +17686,3593 @@
     },
     $isSvgElement: 1
   };
-  A.DioMixin.prototype = {};
+  A.CancelableOperation.prototype = {};
+  A.CancelableCompleter.prototype = {
+    complete$1(_, value) {
+      var _this = this,
+        t1 = _this.$ti;
+      t1._eval$1("1/?")._as(value);
+      if (!_this._mayComplete)
+        throw A.wrapException(A.StateError$("Operation already completed"));
+      _this._mayComplete = false;
+      if (!t1._eval$1("Future<1>")._is(value)) {
+        t1 = _this._completeNow$0();
+        if (t1 != null)
+          t1.complete$1(0, value);
+        return;
+      }
+      if (_this._inner == null) {
+        if (t1._eval$1("_Future<1>")._is(value))
+          value._ignore$0();
+        else
+          value.then$1$2$onError(A.async__FutureExtensions__ignore$closure(), A.async__FutureExtensions__ignore$closure(), type$.void);
+        return;
+      }
+      value.then$1$2$onError(new A.CancelableCompleter_complete_closure(_this), new A.CancelableCompleter_complete_closure0(_this), type$.Null);
+    },
+    _completeNow$0() {
+      var inner = this._inner;
+      if (inner == null)
+        return null;
+      this._cancelCompleter = null;
+      return inner;
+    },
+    _cancelable_operation$_cancel$0() {
+      var cancelCompleter = this._cancelCompleter;
+      if (cancelCompleter == null)
+        return A.Future_Future$value(null, type$.void);
+      if (this._inner != null) {
+        this.set$_inner(null);
+        cancelCompleter.complete$1(0, null);
+      }
+      return cancelCompleter.future;
+    },
+    set$_inner(_inner) {
+      this._inner = this.$ti._eval$1("Completer<1>?")._as(_inner);
+    },
+    set$__CancelableCompleter_operation_FI(__CancelableCompleter_operation_FI) {
+      this.__CancelableCompleter_operation_FI = this.$ti._eval$1("CancelableOperation<1>")._as(__CancelableCompleter_operation_FI);
+    }
+  };
+  A.CancelableCompleter_complete_closure.prototype = {
+    call$1(result) {
+      var t1 = this.$this;
+      t1.$ti._precomputed1._as(result);
+      t1 = t1._completeNow$0();
+      if (t1 != null)
+        t1.complete$1(0, result);
+    },
+    $signature() {
+      return this.$this.$ti._eval$1("Null(1)");
+    }
+  };
+  A.CancelableCompleter_complete_closure0.prototype = {
+    call$2(error, stackTrace) {
+      var t1;
+      type$.Object._as(error);
+      type$.StackTrace._as(stackTrace);
+      t1 = this.$this._completeNow$0();
+      if (t1 != null)
+        t1.completeError$2(error, stackTrace);
+    },
+    $signature: 25
+  };
+  A.CanonicalizedMap.prototype = {
+    $index(_, key) {
+      var pair, _this = this;
+      if (!_this._isValidKey$1(key))
+        return null;
+      pair = _this._base.$index(0, _this._canonicalize.call$1(_this.$ti._eval$1("CanonicalizedMap.K")._as(key)));
+      return pair == null ? null : pair.value;
+    },
+    $indexSet(_, key, value) {
+      var t2, _this = this,
+        t1 = _this.$ti;
+      t1._eval$1("CanonicalizedMap.K")._as(key);
+      t2 = t1._eval$1("CanonicalizedMap.V");
+      t2._as(value);
+      if (!_this._isValidKey$1(key))
+        return;
+      _this._base.$indexSet(0, _this._canonicalize.call$1(key), new A.MapEntry(key, value, t1._eval$1("@<CanonicalizedMap.K>")._bind$1(t2)._eval$1("MapEntry<1,2>")));
+    },
+    addAll$1(_, other) {
+      this.$ti._eval$1("Map<CanonicalizedMap.K,CanonicalizedMap.V>")._as(other).forEach$1(0, new A.CanonicalizedMap_addAll_closure(this));
+    },
+    forEach$1(_, f) {
+      this._base.forEach$1(0, new A.CanonicalizedMap_forEach_closure(this, this.$ti._eval$1("~(CanonicalizedMap.K,CanonicalizedMap.V)")._as(f)));
+    },
+    get$isEmpty(_) {
+      return this._base.__js_helper$_length === 0;
+    },
+    get$keys(_) {
+      var t1 = this._base.get$values(0),
+        t2 = this.$ti._eval$1("CanonicalizedMap.K"),
+        t3 = A._instanceType(t1);
+      return A.MappedIterable_MappedIterable(t1, t3._bind$1(t2)._eval$1("1(Iterable.E)")._as(new A.CanonicalizedMap_keys_closure(this)), t3._eval$1("Iterable.E"), t2);
+    },
+    get$length(_) {
+      return this._base.__js_helper$_length;
+    },
+    toString$0(_) {
+      return A.MapBase_mapToString(this);
+    },
+    _isValidKey$1(key) {
+      return this.$ti._eval$1("CanonicalizedMap.K")._is(key);
+    },
+    $isMap: 1
+  };
+  A.CanonicalizedMap_addAll_closure.prototype = {
+    call$2(key, value) {
+      var t1 = this.$this,
+        t2 = t1.$ti;
+      t2._eval$1("CanonicalizedMap.K")._as(key);
+      t2._eval$1("CanonicalizedMap.V")._as(value);
+      t1.$indexSet(0, key, value);
+      return value;
+    },
+    $signature() {
+      return this.$this.$ti._eval$1("~(CanonicalizedMap.K,CanonicalizedMap.V)");
+    }
+  };
+  A.CanonicalizedMap_forEach_closure.prototype = {
+    call$2(key, pair) {
+      var t1 = this.$this.$ti;
+      t1._eval$1("CanonicalizedMap.C")._as(key);
+      t1._eval$1("MapEntry<CanonicalizedMap.K,CanonicalizedMap.V>")._as(pair);
+      return this.f.call$2(pair.key, pair.value);
+    },
+    $signature() {
+      return this.$this.$ti._eval$1("~(CanonicalizedMap.C,MapEntry<CanonicalizedMap.K,CanonicalizedMap.V>)");
+    }
+  };
+  A.CanonicalizedMap_keys_closure.prototype = {
+    call$1(pair) {
+      return this.$this.$ti._eval$1("MapEntry<CanonicalizedMap.K,CanonicalizedMap.V>")._as(pair).key;
+    },
+    $signature() {
+      return this.$this.$ti._eval$1("CanonicalizedMap.K(MapEntry<CanonicalizedMap.K,CanonicalizedMap.V>)");
+    }
+  };
+  A.ResponseBody.prototype = {
+    close$0(_) {
+      return null;
+    },
+    set$stream(_, stream) {
+      this.stream = type$.Stream_Uint8List._as(stream);
+    },
+    set$headers(_, headers) {
+      this.headers = type$.Map_of_String_and_List_String._as(headers);
+    }
+  };
+  A.DioExceptionType.prototype = {
+    _enumToString$0() {
+      return "DioExceptionType." + this._name;
+    }
+  };
+  A.DioException.prototype = {
+    toString$0(_) {
+      var msg = "DioException [" + A._DioExceptionTypeExtension_toPrettyDescription(this.type) + "]: " + A.S(this.message),
+        t1 = this.error;
+      return t1 != null ? msg + ("\nError: " + A.S(t1)) : msg;
+    },
+    $isException: 1
+  };
+  A.DioMixin.prototype = {
+    request$1$7$cancelToken$data$onReceiveProgress$onSendProgress$options$queryParameters(_, path, cancelToken, data, onReceiveProgress, onSendProgress, options, queryParameters, $T) {
+      return this.request$body$DioMixin(0, path, cancelToken, data, onReceiveProgress, onSendProgress, options, queryParameters, $T, $T._eval$1("Response<0>"));
+    },
+    request$body$DioMixin(_, path, cancelToken, data, onReceiveProgress, onSendProgress, options, queryParameters, $T, $async$type) {
+      var $async$goto = 0,
+        $async$completer = A._makeAsyncAwaitCompleter($async$type),
+        $async$returnValue, $async$self = this, t2, t3, t4, query, t5, headers, contentType, t6, extra, method, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, requestOptions, t1;
+      var $async$request$1$7$cancelToken$data$onReceiveProgress$onSendProgress$options$queryParameters = A._wrapJsFunctionForAsync(function($async$errorCode, $async$result) {
+        if ($async$errorCode === 1)
+          return A._asyncRethrow($async$result, $async$completer);
+        while (true)
+          switch ($async$goto) {
+            case 0:
+              // Function start
+              t1 = $async$self.DioMixin___DioMixin_options_A;
+              t1 === $ && A.throwLateFieldNI("options");
+              t2 = A.StackTrace_current();
+              t3 = type$.String;
+              t4 = type$.dynamic;
+              query = A.LinkedHashMap_LinkedHashMap$_empty(t3, t4);
+              t5 = t1.OptionsMixin___OptionsMixin_queryParameters_A;
+              t5 === $ && A.throwLateFieldNI("queryParameters");
+              query.addAll$1(0, t5);
+              t5 = t1.___RequestConfig__headers_A;
+              t5 === $ && A.throwLateFieldNI("_headers");
+              headers = A.caseInsensitiveKeyMap(t5, t4);
+              t5 = options.contentType;
+              if (t5 != null)
+                headers.$indexSet(0, "content-type", t5);
+              contentType = A._asStringQ(headers.$index(0, "content-type"));
+              t6 = t1.___RequestConfig_extra_A;
+              t6 === $ && A.throwLateFieldNI("extra");
+              extra = A.LinkedHashMap_LinkedHashMap$from(t6, t3, t4);
+              t3 = options.method;
+              if (t3 == null) {
+                t3 = t1.___RequestConfig_method_A;
+                t3 === $ && A.throwLateFieldNI("method");
+              }
+              method = t3.toUpperCase();
+              t3 = t1.OptionsMixin___OptionsMixin__baseUrl_A;
+              t3 === $ && A.throwLateFieldNI("_baseUrl");
+              t4 = t1.___RequestConfig_preserveHeaderCase_A;
+              t4 === $ && A.throwLateFieldNI("preserveHeaderCase");
+              t6 = t1.OptionsMixin__connectTimeout;
+              t7 = t1._sendTimeout;
+              t8 = t1._receiveTimeout;
+              t9 = t1.___RequestConfig_responseType_A;
+              t9 === $ && A.throwLateFieldNI("responseType");
+              t10 = t1.___RequestConfig_validateStatus_A;
+              t10 === $ && A.throwLateFieldNI("validateStatus");
+              t11 = t1.___RequestConfig_receiveDataWhenStatusError_A;
+              t11 === $ && A.throwLateFieldNI("receiveDataWhenStatusError");
+              t12 = t1.___RequestConfig_followRedirects_A;
+              t12 === $ && A.throwLateFieldNI("followRedirects");
+              t13 = t1.___RequestConfig_maxRedirects_A;
+              t13 === $ && A.throwLateFieldNI("maxRedirects");
+              t14 = t1.___RequestConfig_persistentConnection_A;
+              t14 === $ && A.throwLateFieldNI("persistentConnection");
+              t15 = t1.requestEncoder;
+              t16 = t1.responseDecoder;
+              t17 = t1.___RequestConfig_listFormat_A;
+              t17 === $ && A.throwLateFieldNI("listFormat");
+              t5 = contentType == null ? t5 : contentType;
+              t1 = t5 == null ? A._asStringQ(t1.___RequestConfig__headers_A.$index(0, "content-type")) : t5;
+              t5 = t10;
+              requestOptions = new A.RequestOptions(data, path, cancelToken, onReceiveProgress, onSendProgress, $, $, null, method, t4, t7, t8, t9, t5, t11, extra, t12, t13, t14, t15, t16, t17);
+              requestOptions._RequestConfig$16$contentType$extra$followRedirects$headers$listFormat$maxRedirects$method$persistentConnection$preserveHeaderCase$receiveDataWhenStatusError$receiveTimeout$requestEncoder$responseDecoder$responseType$sendTimeout$validateStatus(t1, extra, t12, headers, t17, t13, method, t14, t4, t11, t8, t15, t16, t9, t7, t10);
+              requestOptions.sourceStackTrace = t2;
+              requestOptions.set$__OptionsMixin_queryParameters_A(type$.Map_String_dynamic._as(query));
+              requestOptions.set$baseUrl(t3);
+              requestOptions.set$connectTimeout(t6);
+              $async$returnValue = $async$self.fetch$1$1(0, requestOptions, $T);
+              // goto return
+              $async$goto = 1;
+              break;
+            case 1:
+              // return
+              return A._asyncReturn($async$returnValue, $async$completer);
+          }
+      });
+      return A._asyncStartSync($async$request$1$7$cancelToken$data$onReceiveProgress$onSendProgress$options$queryParameters, $async$completer);
+    },
+    fetch$1$1(_, requestOptions, $T) {
+      return this.fetch$body$DioMixin(0, requestOptions, $T, $T._eval$1("Response<0>"));
+    },
+    fetch$body$DioMixin(_, requestOptions, $T, $async$type) {
+      var $async$goto = 0,
+        $async$completer = A._makeAsyncAwaitCompleter($async$type),
+        $async$returnValue, $async$handler = 2, $async$currentError, $async$self = this, future, data, e, isState, t1, requestInterceptorWrapper, responseInterceptorWrapper, errorInterceptorWrapper, t2, t3, t4, t5, t6, fun, onError, result, exception, _box_0, $async$exception;
+      var $async$fetch$1$1 = A._wrapJsFunctionForAsync(function($async$errorCode, $async$result) {
+        if ($async$errorCode === 1) {
+          $async$currentError = $async$result;
+          $async$goto = $async$handler;
+        }
+        while (true)
+          switch ($async$goto) {
+            case 0:
+              // Function start
+              _box_0 = {};
+              _box_0.requestOptions = requestOptions;
+              if (A.createRuntimeType($T) !== B.Type_dynamic_PLF) {
+                t1 = requestOptions.___RequestConfig_responseType_A;
+                t1 === $ && A.throwLateFieldNI("responseType");
+                t1 = !(t1 === B.ResponseType_3 || t1 === B.ResponseType_1);
+              } else
+                t1 = false;
+              if (t1)
+                if (A.createRuntimeType($T) === B.Type_String_J2O)
+                  requestOptions.___RequestConfig_responseType_A = B.ResponseType_2;
+                else
+                  requestOptions.___RequestConfig_responseType_A = B.ResponseType_0;
+              requestInterceptorWrapper = new A.DioMixin_fetch_requestInterceptorWrapper(_box_0);
+              responseInterceptorWrapper = new A.DioMixin_fetch_responseInterceptorWrapper(_box_0);
+              errorInterceptorWrapper = new A.DioMixin_fetch_errorInterceptorWrapper(_box_0);
+              t1 = type$.dynamic;
+              future = A.Future_Future(new A.DioMixin_fetch_closure(_box_0), t1);
+              for (t2 = $async$self.DioMixin__interceptors, t3 = A._instanceType(t2), t4 = t3._eval$1("ListIterator<ListBase.E>"), t5 = new A.ListIterator(t2, t2.get$length(0), t4), t3 = t3._eval$1("ListBase.E"); t5.moveNext$0();) {
+                t6 = t5.__internal$_current;
+                fun = (t6 == null ? t3._as(t6) : t6).get$onRequest();
+                future = future.then$1$1(requestInterceptorWrapper.call$1(fun), t1);
+              }
+              future = future.then$1$1(requestInterceptorWrapper.call$1(new A.DioMixin_fetch_closure0(_box_0, $async$self, $T)), t1);
+              for (t5 = new A.ListIterator(t2, t2.get$length(0), t4); t5.moveNext$0();) {
+                t6 = t5.__internal$_current;
+                fun = (t6 == null ? t3._as(t6) : t6).get$onResponse();
+                future = future.then$1$1(responseInterceptorWrapper.call$1(fun), t1);
+              }
+              for (t1 = new A.ListIterator(t2, t2.get$length(0), t4), t2 = type$.Function; t1.moveNext$0();) {
+                t4 = t1.__internal$_current;
+                if (t4 == null)
+                  t4 = t3._as(t4);
+                fun = t4.get$onError(t4);
+                t4 = future;
+                onError = t2._as(errorInterceptorWrapper.call$1(fun));
+                t5 = t4.$ti;
+                t6 = $.Zone__current;
+                result = new A._Future(t6, t5);
+                if (t6 !== B.C__RootZone)
+                  onError = A._registerErrorHandler(onError, t6);
+                t4._addListener$1(new A._FutureListener(result, 2, null, onError, t5._eval$1("@<1>")._bind$1(t5._precomputed1)._eval$1("_FutureListener<1,2>")));
+                future = result;
+              }
+              $async$handler = 4;
+              $async$goto = 7;
+              return A._asyncAwait(future, $async$fetch$1$1);
+            case 7:
+              // returning from await.
+              data = $async$result;
+              t1 = data instanceof A.InterceptorState ? data.data : data;
+              if (t1 == null)
+                t1 = type$.Object._as(t1);
+              t1 = A.DioMixin_assureResponse(t1, _box_0.requestOptions, $T);
+              $async$returnValue = t1;
+              // goto return
+              $async$goto = 1;
+              break;
+              $async$handler = 2;
+              // goto after finally
+              $async$goto = 6;
+              break;
+            case 4:
+              // catch
+              $async$handler = 3;
+              $async$exception = $async$currentError;
+              e = A.unwrapException($async$exception);
+              isState = e instanceof A.InterceptorState;
+              if (A.boolConversionCheck(isState))
+                if (e.type === B.InterceptorResultType_1) {
+                  t1 = e.data;
+                  $async$returnValue = A.DioMixin_assureResponse(t1, _box_0.requestOptions, $T);
+                  // goto return
+                  $async$goto = 1;
+                  break;
+                }
+              t1 = A.boolConversionCheck(isState) ? e.data : e;
+              if (t1 == null)
+                t1 = type$.Object._as(t1);
+              throw A.wrapException(A.DioMixin_assureDioException(t1, _box_0.requestOptions));
+              // goto after finally
+              $async$goto = 6;
+              break;
+            case 3:
+              // uncaught
+              // goto rethrow
+              $async$goto = 2;
+              break;
+            case 6:
+              // after finally
+            case 1:
+              // return
+              return A._asyncReturn($async$returnValue, $async$completer);
+            case 2:
+              // rethrow
+              return A._asyncRethrow($async$currentError, $async$completer);
+          }
+      });
+      return A._asyncStartSync($async$fetch$1$1, $async$completer);
+    },
+    _dispatchRequest$1$1(reqOpt, $T) {
+      return this._dispatchRequest$body$DioMixin(reqOpt, $T);
+    },
+    _dispatchRequest$body$DioMixin(reqOpt, $T) {
+      var $async$goto = 0,
+        $async$completer = A._makeAsyncAwaitCompleter(type$.Response_dynamic),
+        $async$returnValue, $async$handler = 2, $async$currentError, $async$self = this, stream, operation, operationWeakReference, responseBody, headers, ret, statusOk, data, e, t1, t2, value, result, t3, t4, message, buffer, exception, cancelToken, $async$exception;
+      var $async$_dispatchRequest$1$1 = A._wrapJsFunctionForAsync(function($async$errorCode, $async$result) {
+        if ($async$errorCode === 1) {
+          $async$currentError = $async$result;
+          $async$goto = $async$handler;
+        }
+        while (true)
+          switch ($async$goto) {
+            case 0:
+              // Function start
+              cancelToken = reqOpt.cancelToken;
+              $async$handler = 4;
+              $async$goto = 7;
+              return A._asyncAwait($async$self._transformData$1(reqOpt), $async$_dispatchRequest$1$1);
+            case 7:
+              // returning from await.
+              stream = $async$result;
+              t1 = $async$self.DioMixin___DioMixin_httpClientAdapter_A;
+              t1 === $ && A.throwLateFieldNI("httpClientAdapter");
+              t2 = cancelToken;
+              t2 = t2 == null ? null : t2.get$whenCancel();
+              t2 = t1.fetch$3(0, reqOpt, stream, t2);
+              t1 = $.Zone__current;
+              t1 = new A.CancelableCompleter(new A._AsyncCompleter(new A._Future(t1, type$._Future_ResponseBody), type$._AsyncCompleter_ResponseBody), new A._AsyncCompleter(new A._Future(t1, type$._Future_void), type$._AsyncCompleter_void), null, type$.CancelableCompleter_ResponseBody);
+              t1.complete$1(0, t2);
+              value = t1.__CancelableCompleter_operation_FI;
+              if (value === $) {
+                result = new A.CancelableOperation(t1, type$.CancelableOperation_ResponseBody);
+                value !== $ && A.throwLateFieldADI("operation");
+                t1.set$__CancelableCompleter_operation_FI(result);
+                value = result;
+              }
+              operation = value;
+              operationWeakReference = new A._WeakReferenceWrapper(new ($.$get$_WeakReferenceWrapper__weakRefConstructor())(operation), type$._WeakReferenceWrapper_CancelableOperation_ResponseBody);
+              t1 = cancelToken;
+              if (t1 != null)
+                t1.get$whenCancel().whenComplete$1(new A.DioMixin__dispatchRequest_closure(operationWeakReference));
+              t1 = operation;
+              t2 = t1._cancelable_operation$_completer._inner;
+              t2 = t2 == null ? null : t2.future;
+              $async$goto = 8;
+              return A._asyncAwait(t2 == null ? new A._Future($.Zone__current, t1.$ti._eval$1("_Future<1>")) : t2, $async$_dispatchRequest$1$1);
+            case 8:
+              // returning from await.
+              responseBody = $async$result;
+              t1 = responseBody.headers;
+              t2 = reqOpt.___RequestConfig_preserveHeaderCase_A;
+              t2 === $ && A.throwLateFieldNI("preserveHeaderCase");
+              headers = A.Headers$fromMap(t1, t2);
+              J.set$headers$x(responseBody, headers._headers$_map);
+              responseBody.toString;
+              t1 = A._setArrayType([], type$.JSArray_RedirectRecord);
+              t2 = responseBody.isRedirect;
+              t3 = responseBody.statusCode;
+              t4 = responseBody.statusMessage;
+              ret = A.Response$(null, responseBody.extra, headers, t2, t1, reqOpt, t3, t4, type$.dynamic);
+              statusOk = reqOpt.validateStatus$1(responseBody.statusCode);
+              if (!A.boolConversionCheck(statusOk)) {
+                t1 = reqOpt.___RequestConfig_receiveDataWhenStatusError_A;
+                t1 === $ && A.throwLateFieldNI("receiveDataWhenStatusError");
+              } else
+                t1 = true;
+              $async$goto = t1 ? 9 : 11;
+              break;
+            case 9:
+              // then
+              J.set$stream$z(responseBody, A.handleResponseStream(reqOpt, responseBody));
+              $async$goto = 12;
+              return A._asyncAwait($async$self.DioMixin_transformer.transformResponse$2(reqOpt, responseBody), $async$_dispatchRequest$1$1);
+            case 12:
+              // returning from await.
+              data = $async$result;
+              if (typeof data == "string")
+                if (J.get$length$asx(data) === 0)
+                  if (A.createRuntimeType($T) !== B.Type_dynamic_PLF)
+                    if (A.createRuntimeType($T) !== B.Type_String_J2O) {
+                      t1 = reqOpt.___RequestConfig_responseType_A;
+                      t1 === $ && A.throwLateFieldNI("responseType");
+                      t1 = t1 === B.ResponseType_0;
+                    } else
+                      t1 = false;
+                  else
+                    t1 = false;
+                else
+                  t1 = false;
+              else
+                t1 = false;
+              if (t1)
+                data = null;
+              J.set$data$x(ret, data);
+              // goto join
+              $async$goto = 10;
+              break;
+            case 11:
+              // else
+              J.close$0$z(responseBody);
+            case 10:
+              // join
+              if (A.boolConversionCheck(statusOk)) {
+                $async$returnValue = ret;
+                // goto return
+                $async$goto = 1;
+                break;
+              } else {
+                t1 = responseBody.statusCode;
+                if (t1 >= 100 && t1 < 200)
+                  message = "This is an informational response - the request was received, continuing processing";
+                else if (t1 >= 200 && t1 < 300)
+                  message = "The request was successfully received, understood, and accepted";
+                else if (t1 >= 300 && t1 < 400)
+                  message = "Redirection: further action needs to be taken in order to complete the request";
+                else if (t1 >= 400 && t1 < 500)
+                  message = "Client error - the request contains bad syntax or cannot be fulfilled";
+                else
+                  message = t1 >= 500 && t1 < 600 ? "Server error - the server failed to fulfil an apparently valid request" : "A response with a status code that is not within the range of inclusive 100 to exclusive 600is a non-standard response, possibly due to the server's software";
+                buffer = A.StringBuffer$("");
+                t1 = "" + t1;
+                buffer.writeln$1("This exception was thrown because the response has a status code of " + t1 + " and RequestOptions.validateStatus was configured to throw for this status code.");
+                buffer.writeln$1("The status code of " + t1 + ' has the following meaning: "' + message + '"');
+                buffer.writeln$1("Read more about status codes at https://developer.mozilla.org/en-US/docs/Web/HTTP/Status");
+                buffer.writeln$1("In order to resolve this exception you typically have either to verify and fix your request code or you have to fix the server code.");
+                t1 = A.DioException$(null, buffer.toString$0(0), reqOpt, ret, null, B.DioExceptionType_4);
+                throw A.wrapException(t1);
+              }
+              $async$handler = 2;
+              // goto after finally
+              $async$goto = 6;
+              break;
+            case 4:
+              // catch
+              $async$handler = 3;
+              $async$exception = $async$currentError;
+              e = A.unwrapException($async$exception);
+              t1 = A.DioMixin_assureDioException(e, reqOpt);
+              throw A.wrapException(t1);
+              // goto after finally
+              $async$goto = 6;
+              break;
+            case 3:
+              // uncaught
+              // goto rethrow
+              $async$goto = 2;
+              break;
+            case 6:
+              // after finally
+            case 1:
+              // return
+              return A._asyncReturn($async$returnValue, $async$completer);
+            case 2:
+              // rethrow
+              return A._asyncRethrow($async$currentError, $async$completer);
+          }
+      });
+      return A._asyncStartSync($async$_dispatchRequest$1$1, $async$completer);
+    },
+    _isValidToken$1(token) {
+      var t1, t2, t3,
+        _s128_ = "                                 ! #$%&'  *+ -. 0123456789       ABCDEFGHIJKLMNOPQRSTUVWXYZ   ^_`abcdefghijklmnopqrstuvwxyz | ~ ";
+      for (t1 = new A.CodeUnits(token), t2 = type$.CodeUnits, t1 = new A.ListIterator(t1, t1.get$length(0), t2._eval$1("ListIterator<ListBase.E>")), t2 = t2._eval$1("ListBase.E"); t1.moveNext$0();) {
+        t3 = t1.__internal$_current;
+        if (t3 == null)
+          t3 = t2._as(t3);
+        if (!(t3 >= 128)) {
+          if (t3 >>> 0 !== t3 || t3 >= 128)
+            return A.ioore(_s128_, t3);
+          t3 = _s128_.charCodeAt(t3) === 32;
+        } else
+          t3 = true;
+        if (t3)
+          return false;
+      }
+      return true;
+    },
+    _transformData$1(options) {
+      return this._transformData$body$DioMixin(options);
+    },
+    _transformData$body$DioMixin(options) {
+      var $async$goto = 0,
+        $async$completer = A._makeAsyncAwaitCompleter(type$.nullable_Stream_Uint8List),
+        $async$returnValue, $async$self = this, data, t2, stream, $length, _box_0, t1;
+      var $async$_transformData$1 = A._wrapJsFunctionForAsync(function($async$errorCode, $async$result) {
+        if ($async$errorCode === 1)
+          return A._asyncRethrow($async$result, $async$completer);
+        while (true)
+          switch ($async$goto) {
+            case 0:
+              // Function start
+              _box_0 = {};
+              t1 = options.___RequestConfig_method_A;
+              t1 === $ && A.throwLateFieldNI("method");
+              if (!$async$self._isValidToken$1(t1))
+                throw A.wrapException(A.ArgumentError$value(options.get$method(0), "method", null));
+              data = options.data;
+              if (data != null) {
+                _box_0.length = null;
+                t1 = options.___RequestConfig__headers_A;
+                t1 === $ && A.throwLateFieldNI("_headers");
+                t2 = data.__FormData__boundary_F;
+                t2 === $ && A.throwLateFieldNI("_boundary");
+                t1.$indexSet(0, "content-type", "multipart/form-data; boundary=" + t2);
+                stream = data.finalize$0();
+                $length = data.get$length(0);
+                _box_0.length = $length;
+                options.___RequestConfig__headers_A.$indexSet(0, "content-length", B.JSInt_methods.toString$0($length));
+                $async$returnValue = A.addProgress(stream, _box_0.length, options);
+                // goto return
+                $async$goto = 1;
+                break;
+              }
+              $async$returnValue = null;
+              // goto return
+              $async$goto = 1;
+              break;
+            case 1:
+              // return
+              return A._asyncReturn($async$returnValue, $async$completer);
+          }
+      });
+      return A._asyncStartSync($async$_transformData$1, $async$completer);
+    }
+  };
+  A.DioMixin_fetch_requestInterceptorWrapper.prototype = {
+    call$1(cb) {
+      return new A.DioMixin_fetch_requestInterceptorWrapper_closure(this._box_0, type$.void_Function_RequestOptions_RequestInterceptorHandler._as(cb));
+    },
+    $signature: 44
+  };
+  A.DioMixin_fetch_requestInterceptorWrapper_closure.prototype = {
+    call$1(incomingState) {
+      var t1;
+      type$.InterceptorState_dynamic._as(incomingState);
+      if (incomingState.type === B.InterceptorResultType_0) {
+        t1 = type$.dynamic;
+        return A.DioMixin_listenCancelForAsyncTask(this._box_0.requestOptions.cancelToken, A.Future_Future(new A.DioMixin_fetch_requestInterceptorWrapper__closure(this.cb, incomingState), t1), t1);
+      }
+      return incomingState;
+    },
+    $signature: 30
+  };
+  A.DioMixin_fetch_requestInterceptorWrapper__closure.prototype = {
+    call$0() {
+      var $async$goto = 0,
+        $async$completer = A._makeAsyncAwaitCompleter(type$.InterceptorState_dynamic),
+        $async$returnValue, $async$self = this, t1;
+      var $async$call$0 = A._wrapJsFunctionForAsync(function($async$errorCode, $async$result) {
+        if ($async$errorCode === 1)
+          return A._asyncRethrow($async$result, $async$completer);
+        while (true)
+          switch ($async$goto) {
+            case 0:
+              // Function start
+              t1 = new A._Future($.Zone__current, type$._Future_InterceptorState_dynamic);
+              $async$self.cb.call$2(type$.RequestOptions._as($async$self.state.data), new A.RequestInterceptorHandler(new A._AsyncCompleter(t1, type$._AsyncCompleter_InterceptorState_dynamic)));
+              $async$returnValue = t1;
+              // goto return
+              $async$goto = 1;
+              break;
+            case 1:
+              // return
+              return A._asyncReturn($async$returnValue, $async$completer);
+          }
+      });
+      return A._asyncStartSync($async$call$0, $async$completer);
+    },
+    $signature: 13
+  };
+  A.DioMixin_fetch_responseInterceptorWrapper.prototype = {
+    call$1(cb) {
+      return new A.DioMixin_fetch_responseInterceptorWrapper_closure(this._box_0, type$.void_Function_2_Response_dynamic_and_ResponseInterceptorHandler._as(cb));
+    },
+    $signature: 47
+  };
+  A.DioMixin_fetch_responseInterceptorWrapper_closure.prototype = {
+    call$1(incomingState) {
+      var t1;
+      type$.InterceptorState_dynamic._as(incomingState);
+      t1 = incomingState.type;
+      if (t1 === B.InterceptorResultType_0 || t1 === B.InterceptorResultType_2) {
+        t1 = type$.dynamic;
+        return A.DioMixin_listenCancelForAsyncTask(this._box_0.requestOptions.cancelToken, A.Future_Future(new A.DioMixin_fetch_responseInterceptorWrapper__closure(this.cb, incomingState), t1), t1);
+      }
+      return incomingState;
+    },
+    $signature: 30
+  };
+  A.DioMixin_fetch_responseInterceptorWrapper__closure.prototype = {
+    call$0() {
+      var $async$goto = 0,
+        $async$completer = A._makeAsyncAwaitCompleter(type$.InterceptorState_dynamic),
+        $async$returnValue, $async$self = this, t1;
+      var $async$call$0 = A._wrapJsFunctionForAsync(function($async$errorCode, $async$result) {
+        if ($async$errorCode === 1)
+          return A._asyncRethrow($async$result, $async$completer);
+        while (true)
+          switch ($async$goto) {
+            case 0:
+              // Function start
+              t1 = new A._Future($.Zone__current, type$._Future_InterceptorState_dynamic);
+              $async$self.cb.call$2(type$.Response_dynamic._as($async$self.state.data), new A.ResponseInterceptorHandler(new A._AsyncCompleter(t1, type$._AsyncCompleter_InterceptorState_dynamic)));
+              $async$returnValue = t1;
+              // goto return
+              $async$goto = 1;
+              break;
+            case 1:
+              // return
+              return A._asyncReturn($async$returnValue, $async$completer);
+          }
+      });
+      return A._asyncStartSync($async$call$0, $async$completer);
+    },
+    $signature: 13
+  };
+  A.DioMixin_fetch_errorInterceptorWrapper.prototype = {
+    call$1(cb) {
+      return new A.DioMixin_fetch_errorInterceptorWrapper_closure(this._box_0, type$.void_Function_DioException_ErrorInterceptorHandler._as(cb));
+    },
+    $signature: 48
+  };
+  A.DioMixin_fetch_errorInterceptorWrapper_closure.prototype = {
+    call$1(error) {
+      var state, t1, t2;
+      if (error instanceof A.InterceptorState)
+        state = error;
+      else {
+        t1 = error == null ? type$.Object._as(error) : error;
+        state = new A.InterceptorState(A.DioMixin_assureDioException(t1, this._box_0.requestOptions), B.InterceptorResultType_0, type$.InterceptorState_DioException);
+      }
+      t1 = new A.DioMixin_fetch_errorInterceptorWrapper_closure_handleError(this.cb, state);
+      t2 = state.data;
+      if (t2 instanceof A.DioException && t2.type === B.DioExceptionType_5)
+        return t1.call$0();
+      t2 = state.type;
+      if (t2 === B.InterceptorResultType_0 || t2 === B.InterceptorResultType_4) {
+        t2 = type$.dynamic;
+        return A.DioMixin_listenCancelForAsyncTask(this._box_0.requestOptions.cancelToken, A.Future_Future(t1, t2), t2);
+      }
+      throw A.wrapException(error == null ? type$.Object._as(error) : error);
+    },
+    $signature: 49
+  };
+  A.DioMixin_fetch_errorInterceptorWrapper_closure_handleError.prototype = {
+    call$0() {
+      var $async$goto = 0,
+        $async$completer = A._makeAsyncAwaitCompleter(type$.InterceptorState_dynamic),
+        $async$returnValue, $async$self = this, t1;
+      var $async$call$0 = A._wrapJsFunctionForAsync(function($async$errorCode, $async$result) {
+        if ($async$errorCode === 1)
+          return A._asyncRethrow($async$result, $async$completer);
+        while (true)
+          switch ($async$goto) {
+            case 0:
+              // Function start
+              t1 = new A._Future($.Zone__current, type$._Future_InterceptorState_dynamic);
+              $async$self.cb.call$2(type$.DioException._as($async$self.state.data), new A.ErrorInterceptorHandler(new A._AsyncCompleter(t1, type$._AsyncCompleter_InterceptorState_dynamic)));
+              $async$returnValue = t1;
+              // goto return
+              $async$goto = 1;
+              break;
+            case 1:
+              // return
+              return A._asyncReturn($async$returnValue, $async$completer);
+          }
+      });
+      return A._asyncStartSync($async$call$0, $async$completer);
+    },
+    $signature: 13
+  };
+  A.DioMixin_fetch_closure.prototype = {
+    call$0() {
+      return new A.InterceptorState(this._box_0.requestOptions, B.InterceptorResultType_0, type$.InterceptorState_RequestOptions);
+    },
+    $signature: 50
+  };
+  A.DioMixin_fetch_closure0.prototype = {
+    call$2(reqOpt, handler) {
+      return this.$call$body$DioMixin_fetch_closure(reqOpt, handler);
+    },
+    $call$body$DioMixin_fetch_closure(reqOpt, handler) {
+      var $async$goto = 0,
+        $async$completer = A._makeAsyncAwaitCompleter(type$.void),
+        $async$handler = 1, $async$currentError, $async$self = this, value, e, t1, t2, exception, $async$exception;
+      var $async$call$2 = A._wrapJsFunctionForAsync(function($async$errorCode, $async$result) {
+        if ($async$errorCode === 1) {
+          $async$currentError = $async$result;
+          $async$goto = $async$handler;
+        }
+        while (true)
+          switch ($async$goto) {
+            case 0:
+              // Function start
+              $async$self._box_0.requestOptions = reqOpt;
+              $async$handler = 3;
+              $async$goto = 6;
+              return A._asyncAwait($async$self.$this._dispatchRequest$1$1(reqOpt, $async$self.T), $async$call$2);
+            case 6:
+              // returning from await.
+              value = $async$result;
+              t1 = type$.Response_dynamic._as(value);
+              t2 = handler._completer;
+              if ((t2.future._state & 30) !== 0)
+                A.throwExpression(A.StateError$(string$.The__h));
+              t2.complete$1(0, new A.InterceptorState(t1, B.InterceptorResultType_2, type$.InterceptorState_Response_dynamic));
+              $async$handler = 1;
+              // goto after finally
+              $async$goto = 5;
+              break;
+            case 3:
+              // catch
+              $async$handler = 2;
+              $async$exception = $async$currentError;
+              t1 = A.unwrapException($async$exception);
+              if (t1 instanceof A.DioException) {
+                e = t1;
+                t1 = type$.DioException._as(e);
+                t2 = handler._completer;
+                if ((t2.future._state & 30) !== 0)
+                  A.throwExpression(A.StateError$(string$.The__h));
+                t2.completeError$2(new A.InterceptorState(t1, B.InterceptorResultType_4, type$.InterceptorState_DioException), t1.stackTrace);
+              } else
+                throw $async$exception;
+              // goto after finally
+              $async$goto = 5;
+              break;
+            case 2:
+              // uncaught
+              // goto rethrow
+              $async$goto = 1;
+              break;
+            case 5:
+              // after finally
+              // implicit return
+              return A._asyncReturn(null, $async$completer);
+            case 1:
+              // rethrow
+              return A._asyncRethrow($async$currentError, $async$completer);
+          }
+      });
+      return A._asyncStartSync($async$call$2, $async$completer);
+    },
+    $signature: 51
+  };
+  A.DioMixin__dispatchRequest_closure.prototype = {
+    call$0() {
+      var t1 = this.operationWeakReference._weakRef.deref();
+      if (t1 != null)
+        t1._cancelable_operation$_completer._cancelable_operation$_cancel$0();
+    },
+    $signature: 2
+  };
+  A.InterceptorResultType.prototype = {
+    _enumToString$0() {
+      return "InterceptorResultType." + this._name;
+    }
+  };
+  A.InterceptorState.prototype = {
+    toString$0(_) {
+      return "InterceptorState<" + A.createRuntimeType(this.$ti._precomputed1).toString$0(0) + ">(type: " + this.type.toString$0(0) + ", data: " + this.data.toString$0(0) + ")";
+    }
+  };
+  A._BaseHandler.prototype = {};
+  A.RequestInterceptorHandler.prototype = {};
+  A.ResponseInterceptorHandler.prototype = {};
+  A.ErrorInterceptorHandler.prototype = {};
+  A.Interceptor0.prototype = {
+    onResponse$2(response, handler) {
+      var t1 = handler._completer;
+      if ((t1.future._state & 30) !== 0)
+        A.throwExpression(A.StateError$(string$.The__h));
+      t1.complete$1(0, new A.InterceptorState(response, B.InterceptorResultType_0, type$.InterceptorState_Response_dynamic));
+    },
+    onError$2(_, err, handler) {
+      var t1 = handler._completer;
+      if ((t1.future._state & 30) !== 0)
+        A.throwExpression(A.StateError$(string$.The__h));
+      t1.completeError$2(new A.InterceptorState(err, B.InterceptorResultType_0, type$.InterceptorState_DioException), err.stackTrace);
+    }
+  };
+  A.Interceptors.prototype = {
+    get$length(_) {
+      return this._list.length;
+    },
+    set$length(_, newLength) {
+      B.JSArray_methods.set$length(this._list, newLength);
+    },
+    $index(_, index) {
+      var t1;
+      A._asInt(index);
+      t1 = this._list;
+      if (!(index >= 0 && index < t1.length))
+        return A.ioore(t1, index);
+      t1 = t1[index];
+      t1.toString;
+      return t1;
+    },
+    $indexSet(_, index, value) {
+      var t1;
+      type$.Interceptor._as(value);
+      t1 = this._list;
+      if (t1.length === index)
+        B.JSArray_methods.add$1(t1, value);
+      else
+        B.JSArray_methods.$indexSet(t1, index, value);
+    }
+  };
+  A.FormData.prototype = {
+    _init$2$fromMap$listFormat(fromMap, listFormat) {
+      var t1;
+      type$.nullable_Map_String_dynamic._as(fromMap);
+      t1 = B.JSString_methods.padLeft$2(B.JSInt_methods.toString$0($.$get$_random().nextInt$1(4294967296)), 10, "0");
+      this.__FormData__boundary_F !== $ && A.throwLateFieldAI("_boundary");
+      this.__FormData__boundary_F = "--dio-boundary-" + t1;
+      A.encodeMap(fromMap, new A.FormData__init_closure(this), false, false, listFormat);
+    },
+    _headerForFile$1(entry) {
+      var file, header, t1 = {};
+      type$.MapEntry_String_MultipartFile._as(entry);
+      file = entry.value;
+      header = 'content-disposition: form-data; name="' + A.S(this._browserEncode$1(entry.key)) + '"';
+      t1.header = header;
+      file.get$filename(file);
+      header = header + '; filename="' + A.S(this._browserEncode$1(file.get$filename(file))) + '"';
+      t1.header = header;
+      t1.header = header + "\r\ncontent-type: " + A.S(file.get$contentType(file));
+      file.get$headers(file);
+      file.get$headers(file).forEach$1(0, new A.FormData__headerForFile_closure(t1));
+      return t1.header + "\r\n\r\n";
+    },
+    _browserEncode$1(value) {
+      var t1 = A.RegExp_RegExp("\\r\\n|\\r|\\n");
+      t1 = A.stringReplaceAllUnchecked(value, t1, "%0D%0A");
+      t1 = A.stringReplaceAllUnchecked(t1, '"', "%22");
+      return t1;
+    },
+    get$length(_) {
+      var t1, t2, $length, _i, entry, t3, t4, t5, t6, file, _this = this,
+        _s9_ = "_boundary";
+      for (t1 = _this.fields, t2 = t1.length, $length = 0, _i = 0; _i < t1.length; t1.length === t2 || (0, A.throwConcurrentModificationError)(t1), ++_i) {
+        entry = t1[_i];
+        t3 = _this.__FormData__boundary_F;
+        t3 === $ && A.throwLateFieldNI(_s9_);
+        t4 = A._asString(entry.key);
+        t5 = A._asString(entry.value);
+        t6 = A.RegExp_RegExp("\\r\\n|\\r|\\n");
+        t4 = A.stringReplaceAllUnchecked(t4, t6, "%0D%0A");
+        t4 = A.stringReplaceAllUnchecked(t4, '"', "%22");
+        $length += 2 + t3.length + 2 + B.C_Utf8Encoder.convert$1('content-disposition: form-data; name="' + A.S(t4) + '"\r\n\r\n').length + B.C_Utf8Encoder.convert$1(t5).length + 2;
+      }
+      for (t1 = _this.files, t2 = t1.length, _i = 0; _i < t1.length; t1.length === t2 || (0, A.throwConcurrentModificationError)(t1), ++_i) {
+        file = t1[_i];
+        t3 = _this.__FormData__boundary_F;
+        t3 === $ && A.throwLateFieldNI(_s9_);
+        $length += B.JSInt_methods.$add(2 + t3.length + 2 + B.C_Utf8Encoder.convert$1(_this._headerForFile$1(file)).length, J.get$length$asx(file.value)) + 2;
+      }
+      t1 = _this.__FormData__boundary_F;
+      t1 === $ && A.throwLateFieldNI(_s9_);
+      return $length + 2 + t1.length + 4;
+    },
+    finalize$0() {
+      var controller, writeLine, writeUtf8, t1, t2, _i, entry, t3, t4, t5, _this = this;
+      if (_this._isFinalized)
+        throw A.wrapException(A.StateError$("The FormData has already been finalized. This typically means you are using the same FormData in repeated requests."));
+      _this._isFinalized = true;
+      controller = A.StreamController_StreamController(false, type$.Uint8List);
+      writeLine = new A.FormData_finalize_writeLine(controller);
+      writeUtf8 = new A.FormData_finalize_writeUtf8(controller);
+      for (t1 = _this.fields, t2 = t1.length, _i = 0; _i < t1.length; t1.length === t2 || (0, A.throwConcurrentModificationError)(t1), ++_i) {
+        entry = t1[_i];
+        t3 = _this.__FormData__boundary_F;
+        t3 === $ && A.throwLateFieldNI("_boundary");
+        writeUtf8.call$1("--" + t3 + "\r\n");
+        t3 = A._asString(entry.key);
+        t4 = A._asString(entry.value);
+        t5 = A.RegExp_RegExp("\\r\\n|\\r|\\n");
+        t3 = A.stringReplaceAllUnchecked(t3, t5, "%0D%0A");
+        t3 = A.stringReplaceAllUnchecked(t3, '"', "%22");
+        writeUtf8.call$1('content-disposition: form-data; name="' + A.S(t3) + '"\r\n\r\n');
+        writeUtf8.call$1(t4);
+        writeLine.call$0();
+      }
+      A.Future_Future(new A.FormData_finalize_closure(_this, writeUtf8, controller, writeLine), type$.void).then$1$1(new A.FormData_finalize_closure0(_this, writeUtf8), type$.Null).whenComplete$1(new A.FormData_finalize_closure1(controller));
+      return new A._ControllerStream(controller, A._instanceType(controller)._eval$1("_ControllerStream<1>"));
+    }
+  };
+  A.FormData__init_closure.prototype = {
+    call$2(key, value) {
+      var t1 = value == null ? null : J.toString$0$(value);
+      if (t1 == null)
+        t1 = "";
+      B.JSArray_methods.add$1(this.$this.fields, new A.MapEntry(key, t1, type$.MapEntry_String_String));
+      return null;
+    },
+    $signature: 54
+  };
+  A.FormData__headerForFile_closure.prototype = {
+    call$2(key, values) {
+      var t1, t2, value;
+      type$.List_String._as(values);
+      for (t1 = values.get$iterator(values), t2 = this._box_0; t1.moveNext$0();) {
+        value = t1.get$current();
+        t2.header = t2.header + "\r\n" + A.S(key) + ": " + A.S(value);
+      }
+    },
+    $signature: 17
+  };
+  A.FormData_finalize_writeLine.prototype = {
+    call$0() {
+      return this.controller.add$1(0, $.$get$_rnU8());
+    },
+    $signature: 0
+  };
+  A.FormData_finalize_writeUtf8.prototype = {
+    call$1(s) {
+      var t1 = B.C_Utf8Encoder.convert$1(s);
+      return this.controller.add$1(0, t1);
+    },
+    $signature: 56
+  };
+  A.FormData_finalize_closure.prototype = {
+    call$0() {
+      var $async$goto = 0,
+        $async$completer = A._makeAsyncAwaitCompleter(type$.void),
+        $async$self = this, t1, t2, t3, t4, t5, t6, t7, _i, file, t8;
+      var $async$call$0 = A._wrapJsFunctionForAsync(function($async$errorCode, $async$result) {
+        if ($async$errorCode === 1)
+          return A._asyncRethrow($async$result, $async$completer);
+        while (true)
+          switch ($async$goto) {
+            case 0:
+              // Function start
+              t1 = $async$self.$this, t2 = t1.files, t3 = t2.length, t4 = $async$self.writeUtf8, t5 = $async$self.controller, t6 = type$.Uint8List, t7 = $async$self.writeLine, _i = 0;
+            case 2:
+              // for condition
+              if (!(_i < t2.length)) {
+                // goto after for
+                $async$goto = 4;
+                break;
+              }
+              file = t2[_i];
+              t8 = t1.__FormData__boundary_F;
+              t8 === $ && A.throwLateFieldNI("_boundary");
+              t4.call$1("--" + t8 + "\r\n");
+              t4.call$1(t1._headerForFile$1(file));
+              $async$goto = 5;
+              return A._asyncAwait(A.writeStreamToSink(file.value.finalize$0(), t5, t6), $async$call$0);
+            case 5:
+              // returning from await.
+              t7.call$0();
+            case 3:
+              // for update
+              t2.length === t3 || (0, A.throwConcurrentModificationError)(t2), ++_i;
+              // goto for condition
+              $async$goto = 2;
+              break;
+            case 4:
+              // after for
+              // implicit return
+              return A._asyncReturn(null, $async$completer);
+          }
+      });
+      return A._asyncStartSync($async$call$0, $async$completer);
+    },
+    $signature: 57
+  };
+  A.FormData_finalize_closure0.prototype = {
+    call$1(_) {
+      var t1 = this.$this.__FormData__boundary_F;
+      t1 === $ && A.throwLateFieldNI("_boundary");
+      this.writeUtf8.call$1("--" + t1 + "--\r\n");
+    },
+    $signature: 58
+  };
+  A.FormData_finalize_closure1.prototype = {
+    call$0() {
+      this.controller.close$0(0);
+    },
+    $signature: 2
+  };
+  A.Headers.prototype = {
+    $index(_, $name) {
+      return this._headers$_map.$index(0, B.JSString_methods.trim$0(A._asString($name)));
+    },
+    toString$0(_) {
+      var t1,
+        stringBuffer = new A.StringBuffer("");
+      this._headers$_map.forEach$1(0, new A.Headers_toString_closure(stringBuffer));
+      t1 = stringBuffer._contents;
+      return t1.charCodeAt(0) == 0 ? t1 : t1;
+    }
+  };
+  A.Headers$fromMap_closure.prototype = {
+    call$2(k, v) {
+      A._asString(k);
+      type$.List_String._as(v);
+      return new A.MapEntry(B.JSString_methods.trim$0(k), v, type$.MapEntry_of_String_and_List_String);
+    },
+    $signature: 59
+  };
+  A.Headers_toString_closure.prototype = {
+    call$2(key, value) {
+      var t1, t2, t3, t4;
+      A._asString(key);
+      for (t1 = J.get$iterator$ax(type$.List_String._as(value)), t2 = this.stringBuffer, t3 = key + ": "; t1.moveNext$0();) {
+        t4 = t3 + t1.get$current() + "\n";
+        t2._contents += t4;
+      }
+    },
+    $signature: 17
+  };
+  A.ImplyContentTypeInterceptor.prototype = {
+    onRequest$2(options, handler) {
+      var t1, contentType,
+        data = options.data;
+      if (data != null) {
+        t1 = options.___RequestConfig__headers_A;
+        t1 === $ && A.throwLateFieldNI("_headers");
+        t1 = A._asStringQ(t1.$index(0, "content-type")) == null;
+      } else
+        t1 = false;
+      if (t1) {
+        if (data instanceof A.FormData)
+          contentType = "multipart/form-data";
+        else {
+          A.getRuntimeTypeOfDartObject(data).toString$0(0);
+          A.StackTrace_current();
+          contentType = null;
+        }
+        options.set$contentType(0, contentType);
+      }
+      t1 = handler._completer;
+      if ((t1.future._state & 30) !== 0)
+        A.throwExpression(A.StateError$(string$.The__h));
+      t1.complete$1(0, new A.InterceptorState(options, B.InterceptorResultType_0, type$.InterceptorState_RequestOptions));
+    }
+  };
   A.ResponseType.prototype = {
     _enumToString$0() {
       return "ResponseType." + this._name;
     }
   };
+  A.ListFormat.prototype = {
+    _enumToString$0() {
+      return "ListFormat." + this._name;
+    }
+  };
   A.OptionsMixin.prototype = {
+    set$baseUrl(value) {
+      this.OptionsMixin___OptionsMixin__baseUrl_A = value;
+    },
+    set$connectTimeout(value) {
+      this.OptionsMixin__connectTimeout = value;
+    },
     set$__OptionsMixin_queryParameters_A(__OptionsMixin_queryParameters_A) {
       this.OptionsMixin___OptionsMixin_queryParameters_A = type$.Map_String_dynamic._as(__OptionsMixin_queryParameters_A);
     }
   };
   A.BaseOptions.prototype = {};
+  A.Options.prototype = {};
+  A.RequestOptions.prototype = {
+    get$uri() {
+      var t1, s, t2, query, _this = this,
+        url = _this.path;
+      if (!B.JSString_methods.startsWith$1(url, A.RegExp_RegExp("https?:"))) {
+        t1 = _this.OptionsMixin___OptionsMixin__baseUrl_A;
+        t1 === $ && A.throwLateFieldNI("_baseUrl");
+        url = t1 + url;
+        s = url.split(":/");
+        t1 = s.length;
+        if (t1 === 2) {
+          if (0 >= t1)
+            return A.ioore(s, 0);
+          t2 = A.S(s[0]);
+          if (1 >= t1)
+            return A.ioore(s, 1);
+          t1 = s[1];
+          url = t2 + ":/" + A.stringReplaceAllUnchecked(t1, "//", "/");
+        }
+      }
+      t1 = _this.OptionsMixin___OptionsMixin_queryParameters_A;
+      t1 === $ && A.throwLateFieldNI("queryParameters");
+      t2 = _this.___RequestConfig_listFormat_A;
+      t2 === $ && A.throwLateFieldNI("listFormat");
+      query = A.Transformer_urlEncodeQueryMap(t1, t2);
+      if (query.length !== 0)
+        url += (B.JSString_methods.contains$1(url, "?") ? "&" : "?") + query;
+      return A.Uri_parse(url).normalizePath$0();
+    }
+  };
   A._RequestConfig.prototype = {
     _RequestConfig$16$contentType$extra$followRedirects$headers$listFormat$maxRedirects$method$persistentConnection$preserveHeaderCase$receiveDataWhenStatusError$receiveTimeout$requestEncoder$responseDecoder$responseType$sendTimeout$validateStatus(contentType, extra, followRedirects, headers, listFormat, maxRedirects, method, persistentConnection, preserveHeaderCase, receiveDataWhenStatusError, receiveTimeout, requestEncoder, responseDecoder, responseType, sendTimeout, validateStatus) {
       var t1, hasContentTypeHeader, _this = this,
         _s12_ = "content-type";
-      _this.set$___RequestConfig__headers_A(type$.Map_String_dynamic._as(A.caseInsensitiveKeyMap(headers, type$.dynamic)));
+      _this.set$___RequestConfig__headers_A(type$.Map_String_dynamic._as(A.caseInsensitiveKeyMap(type$.nullable_Map_String_dynamic._as(headers), type$.dynamic)));
       t1 = _this.___RequestConfig__headers_A;
       t1 === $ && A.throwLateFieldNI("_headers");
-      t1.containsKey$1(_s12_);
-      hasContentTypeHeader = _this.___RequestConfig__headers_A.containsKey$1(_s12_);
-      if (!hasContentTypeHeader) {
-        _this._defaultContentType = null;
-        _this.___RequestConfig__headers_A.remove$1(0, _s12_);
+      if (!t1.containsKey$1(0, _s12_) && _this._defaultContentType != null)
+        _this.___RequestConfig__headers_A.$indexSet(0, _s12_, _this._defaultContentType);
+      hasContentTypeHeader = _this.___RequestConfig__headers_A.containsKey$1(0, _s12_);
+      if (contentType != null && hasContentTypeHeader && !J.$eq$(_this.___RequestConfig__headers_A.$index(0, _s12_), contentType))
+        throw A.wrapException(A.ArgumentError$value(contentType, "contentType", "Unable to set different values for `contentType` and the content-type header."));
+      if (!hasContentTypeHeader)
+        _this.set$contentType(0, contentType);
+    },
+    get$method(_) {
+      var t1 = this.___RequestConfig_method_A;
+      t1 === $ && A.throwLateFieldNI("method");
+      return t1;
+    },
+    set$contentType(_, contentType) {
+      var t1,
+        _s8_ = "_headers",
+        _s12_ = "content-type",
+        newContentType = contentType == null ? null : B.JSString_methods.trim$0(contentType);
+      this._defaultContentType = newContentType;
+      t1 = this.___RequestConfig__headers_A;
+      if (newContentType != null) {
+        t1 === $ && A.throwLateFieldNI(_s8_);
+        t1.$indexSet(0, _s12_, newContentType);
+      } else {
+        t1 === $ && A.throwLateFieldNI(_s8_);
+        t1.remove$1(0, _s12_);
       }
+    },
+    get$validateStatus() {
+      var t1 = this.___RequestConfig_validateStatus_A;
+      t1 === $ && A.throwLateFieldNI("validateStatus");
+      return t1;
     },
     set$___RequestConfig__headers_A(___RequestConfig__headers_A) {
       this.___RequestConfig__headers_A = type$.Map_String_dynamic._as(___RequestConfig__headers_A);
+    },
+    validateStatus$1(arg0) {
+      return this.get$validateStatus().call$1(arg0);
     }
   };
   A._BaseOptions__RequestConfig_OptionsMixin.prototype = {};
+  A._RequestOptions__RequestConfig_OptionsMixin.prototype = {};
+  A.Response.prototype = {
+    toString$0(_) {
+      var t1 = this.data;
+      if (type$.Map_dynamic_dynamic._is(t1))
+        return B.C_JsonCodec.encode$1(t1);
+      return J.toString$0$(t1);
+    },
+    set$data(_, data) {
+      this.data = this.$ti._eval$1("1?")._as(data);
+    }
+  };
+  A.handleResponseStream_stopWatchReceiveTimeout.prototype = {
+    call$0() {
+      var t1 = this._box_0,
+        t2 = t1.receiveTimer;
+      if (t2 != null)
+        t2.cancel$0();
+      t1.receiveTimer = null;
+      t1 = this.receiveStopwatch;
+      if (t1._stop == null)
+        t1._stop = $.Primitives_timerTicks.call$0();
+      t1.reset$0(0);
+    },
+    $signature: 0
+  };
+  A.handleResponseStream_watchReceiveTimeout.prototype = {
+    call$0() {
+      var t2, t3, _this = this,
+        t1 = _this.receiveTimeout;
+      if (t1._duration <= 0)
+        return;
+      t2 = _this._box_0;
+      t3 = t2.receiveTimer;
+      if (t3 != null)
+        t3.cancel$0();
+      t3 = _this.receiveStopwatch;
+      t3.reset$0(0);
+      t3.start$0(0);
+      t2.receiveTimer = A.Timer_Timer(t1, new A.handleResponseStream_watchReceiveTimeout_closure(_this.stopWatchReceiveTimeout, _this.response, _this.responseSubscription, _this.responseSink, t1, _this.options));
+    },
+    $signature: 0
+  };
+  A.handleResponseStream_watchReceiveTimeout_closure.prototype = {
+    call$0() {
+      var _this = this;
+      _this.stopWatchReceiveTimeout.call$0();
+      _this.response.close$0(0);
+      _this.responseSubscription._readLocal$0().cancel$0();
+      A._extension_0_addErrorAndClose(_this.responseSink, A.DioException_DioException$receiveTimeout(_this.options, _this.receiveTimeout), null);
+    },
+    $signature: 0
+  };
+  A.handleResponseStream_closure.prototype = {
+    call$1(data) {
+      var _this = this;
+      type$.Uint8List._as(data);
+      _this.watchReceiveTimeout.call$0();
+      if (A.Duration$(_this.receiveStopwatch.get$elapsedMicroseconds(), 0)._duration <= _this.receiveTimeout._duration)
+        _this.responseSink.add$1(0, data);
+    },
+    $signature: 61
+  };
+  A.handleResponseStream_closure1.prototype = {
+    call$2(error, stackTrace) {
+      var t1;
+      this.stopWatchReceiveTimeout.call$0();
+      t1 = error == null ? type$.Object._as(error) : error;
+      A._extension_0_addErrorAndClose(this.responseSink, t1, type$.nullable_StackTrace._as(stackTrace));
+    },
+    $signature: 94
+  };
+  A.handleResponseStream_closure0.prototype = {
+    call$0() {
+      this.stopWatchReceiveTimeout.call$0();
+      this.responseSubscription._readLocal$0().cancel$0();
+      this.responseSink.close$0(0);
+    },
+    $signature: 0
+  };
+  A.Transformer.prototype = {};
+  A.Transformer_urlEncodeQueryMap_closure.prototype = {
+    call$2(key, value) {
+      if (value == null)
+        return key;
+      return key + "=" + A.S(value);
+    },
+    $signature: 63
+  };
+  A.FusedTransformer.prototype = {
+    transformResponse$2(options, responseBody) {
+      var $async$goto = 0,
+        $async$completer = A._makeAsyncAwaitCompleter(type$.dynamic),
+        $async$returnValue, $async$self = this, t2, isJsonContent, responseBytes, t1;
+      var $async$transformResponse$2 = A._wrapJsFunctionForAsync(function($async$errorCode, $async$result) {
+        if ($async$errorCode === 1)
+          return A._asyncRethrow($async$result, $async$completer);
+        while (true)
+          switch ($async$goto) {
+            case 0:
+              // Function start
+              t1 = options.___RequestConfig_responseType_A;
+              t1 === $ && A.throwLateFieldNI("responseType");
+              if (t1 === B.ResponseType_1) {
+                $async$returnValue = responseBody;
+                // goto return
+                $async$goto = 1;
+                break;
+              }
+              if (t1 === B.ResponseType_3) {
+                $async$returnValue = A.consolidateBytes(responseBody.stream);
+                // goto return
+                $async$goto = 1;
+                break;
+              }
+              t2 = responseBody.headers.$index(0, "content-type");
+              isJsonContent = A.Transformer_isJsonMimeType(t2 == null ? null : J.get$first$ax(t2)) && t1 === B.ResponseType_0;
+              if (isJsonContent) {
+                $async$returnValue = $async$self._fastUtf8JsonDecode$2(options, responseBody);
+                // goto return
+                $async$goto = 1;
+                break;
+              }
+              $async$goto = 3;
+              return A._asyncAwait(A.consolidateBytes(responseBody.stream), $async$transformResponse$2);
+            case 3:
+              // returning from await.
+              responseBytes = $async$result;
+              t1 = B.C_Utf8Codec.decode$2$allowMalformed(0, responseBytes, true);
+              $async$returnValue = t1;
+              // goto return
+              $async$goto = 1;
+              break;
+            case 1:
+              // return
+              return A._asyncReturn($async$returnValue, $async$completer);
+          }
+      });
+      return A._asyncStartSync($async$transformResponse$2, $async$completer);
+    },
+    _fastUtf8JsonDecode$2(options, responseBody) {
+      var $async$goto = 0,
+        $async$completer = A._makeAsyncAwaitCompleter(type$.nullable_Object),
+        $async$returnValue, $async$self = this, mightNotHaveResponseBodyDespiteContentLength, responseBytes, contentLength, decoded, contentLengthHeader, hasContentLengthHeader, t1;
+      var $async$_fastUtf8JsonDecode$2 = A._wrapJsFunctionForAsync(function($async$errorCode, $async$result) {
+        if ($async$errorCode === 1)
+          return A._asyncRethrow($async$result, $async$completer);
+        while (true)
+          switch ($async$goto) {
+            case 0:
+              // Function start
+              contentLengthHeader = responseBody.headers.$index(0, "content-length");
+              hasContentLengthHeader = contentLengthHeader != null && J.get$isNotEmpty$asx(contentLengthHeader);
+              t1 = options.___RequestConfig_method_A;
+              t1 === $ && A.throwLateFieldNI("method");
+              mightNotHaveResponseBodyDespiteContentLength = t1 === "HEAD";
+              $async$goto = !hasContentLengthHeader || mightNotHaveResponseBodyDespiteContentLength ? 3 : 5;
+              break;
+            case 3:
+              // then
+              $async$goto = 6;
+              return A._asyncAwait(A.consolidateBytes(responseBody.stream), $async$_fastUtf8JsonDecode$2);
+            case 6:
+              // returning from await.
+              responseBytes = $async$result;
+              contentLength = responseBytes.length;
+              // goto join
+              $async$goto = 4;
+              break;
+            case 5:
+              // else
+              contentLength = A.int_parse(J.get$first$ax(contentLengthHeader), null);
+              responseBytes = null;
+            case 4:
+              // join
+              $async$goto = contentLength >= $async$self.contentLengthIsolateThreshold ? 7 : 9;
+              break;
+            case 7:
+              // then
+              $async$goto = responseBytes == null ? 10 : 12;
+              break;
+            case 10:
+              // then
+              $async$goto = 13;
+              return A._asyncAwait(A.consolidateBytes(responseBody.stream), $async$_fastUtf8JsonDecode$2);
+            case 13:
+              // returning from await.
+              // goto join
+              $async$goto = 11;
+              break;
+            case 12:
+              // else
+              $async$result = responseBytes;
+            case 11:
+              // join
+              t1 = $async$result;
+              $async$returnValue = A.compute__compute$closure().call$2$2(A.fused_transformer_FusedTransformer__decodeUtf8ToJson$closure(), t1, type$.Uint8List, type$.nullable_Object);
+              // goto return
+              $async$goto = 1;
+              break;
+              // goto join
+              $async$goto = 8;
+              break;
+            case 9:
+              // else
+              $async$goto = !hasContentLengthHeader || contentLength === 0 ? 14 : 16;
+              break;
+            case 14:
+              // then
+              $async$goto = responseBytes == null ? 17 : 18;
+              break;
+            case 17:
+              // then
+              $async$goto = 19;
+              return A._asyncAwait(A.consolidateBytes(responseBody.stream), $async$_fastUtf8JsonDecode$2);
+            case 19:
+              // returning from await.
+              responseBytes = $async$result;
+            case 18:
+              // join
+              if (responseBytes.length === 0) {
+                $async$returnValue = null;
+                // goto return
+                $async$goto = 1;
+                break;
+              }
+              t1 = $.$get$FusedTransformer__utf8JsonDecoder();
+              $async$returnValue = A._parseJson(A._asString(t1._convert$_first.convert$1(t1.$ti._precomputed1._as(responseBytes))), t1._second._reviver);
+              // goto return
+              $async$goto = 1;
+              break;
+              // goto join
+              $async$goto = 15;
+              break;
+            case 16:
+              // else
+              $async$goto = 20;
+              return A._asyncAwait($.$get$FusedTransformer__utf8JsonDecoder().bind$1(responseBody.stream).toList$0(0), $async$_fastUtf8JsonDecode$2);
+            case 20:
+              // returning from await.
+              decoded = $async$result;
+              t1 = J.getInterceptor$asx(decoded);
+              if (t1.get$isEmpty(decoded)) {
+                $async$returnValue = null;
+                // goto return
+                $async$goto = 1;
+                break;
+              }
+              $async$returnValue = t1.get$first(decoded);
+              // goto return
+              $async$goto = 1;
+              break;
+            case 15:
+              // join
+            case 8:
+              // join
+            case 1:
+              // return
+              return A._asyncReturn($async$returnValue, $async$completer);
+          }
+      });
+      return A._asyncStartSync($async$_fastUtf8JsonDecode$2, $async$completer);
+    }
+  };
+  A.writeStreamToSink_closure.prototype = {
+    call$0() {
+      return this.completer.complete$0(0);
+    },
+    $signature: 0
+  };
+  A.encodeMap_closure.prototype = {
+    call$1(e) {
+      return e;
+    },
+    $signature: 10
+  };
+  A.encodeMap_maybeEncode.prototype = {
+    call$1(value) {
+      if (!this.isQuery || value == null || typeof value != "string")
+        return value;
+      return this.encodeComponent.call$1(value);
+    },
+    $signature: 28
+  };
+  A.encodeMap_urlEncode.prototype = {
+    call$2(sub, path) {
+      var t2, t3, t4, t5, t6, t7, t8, i, isCollection, t9, str, isNotEmpty, _this = this,
+        format = _this.listFormat,
+        separatorChar = A._getSeparatorChar(format, _this.isQuery),
+        t1 = type$.List_dynamic;
+      if (t1._is(sub)) {
+        t2 = format === B.ListFormat_4;
+        if (t2 || format === B.ListFormat_5)
+          for (t3 = J.getInterceptor$asx(sub), t4 = _this.rightBracket, t5 = _this.maybeEncode, t6 = _this.leftBracket, t7 = path + t6, t8 = type$.Map_dynamic_dynamic, i = 0; i < t3.get$length(sub); ++i) {
+            if (!t8._is(t3.$index(sub, i))) {
+              isCollection = t1._is(t3.$index(sub, i));
+              if (!isCollection)
+                t3.$index(sub, i);
+            } else
+              isCollection = true;
+            if (t2) {
+              t9 = t5.call$1(t3.$index(sub, i));
+              _this.call$2(t9, path + (isCollection ? t6 + i + t4 : ""));
+            } else {
+              t9 = t5.call$1(t3.$index(sub, i));
+              _this.call$2(t9, t7 + A.S(isCollection ? i : "") + t4);
+            }
+          }
+        else
+          _this.call$2(J.map$1$1$ax(sub, _this.maybeEncode, type$.nullable_Object).join$1(0, separatorChar), path);
+      } else if (type$.Map_dynamic_dynamic._is(sub))
+        J.forEach$1$x(sub, new A.encodeMap_urlEncode_closure(path, _this, _this.maybeEncode, _this.encodeComponent, _this.leftBracket, _this.rightBracket));
+      else {
+        str = _this.handler.call$2(path, sub);
+        isNotEmpty = str != null && B.JSString_methods.trim$0(str).length !== 0;
+        t1 = _this._box_0;
+        if (!t1.first && isNotEmpty)
+          _this.urlData._contents += "&";
+        t1.first = false;
+        if (isNotEmpty)
+          _this.urlData._contents += A.S(str);
+      }
+    },
+    $signature: 65
+  };
+  A.encodeMap_urlEncode_closure.prototype = {
+    call$2(k, v) {
+      var _this = this,
+        t1 = _this.path,
+        t2 = _this.urlEncode,
+        t3 = _this.maybeEncode,
+        t4 = _this.encodeComponent;
+      if (t1 === "")
+        t2.call$2(t3.call$1(v), t4.call$1(A._asString(k)));
+      else
+        t2.call$2(t3.call$1(v), t1 + _this.leftBracket + A.S(t4.call$1(A._asString(k))) + _this.rightBracket);
+    },
+    $signature: 18
+  };
   A.caseInsensitiveKeyMap_closure.prototype = {
     call$2(key1, key2) {
       return A._asString(key1).toLowerCase() === A._asString(key2).toLowerCase();
     },
-    $signature: 30
+    $signature: 66
   };
   A.caseInsensitiveKeyMap_closure0.prototype = {
     call$1(key) {
       return B.JSString_methods.get$hashCode(A._asString(key).toLowerCase());
     },
+    $signature: 93
+  };
+  A.BrowserHttpClientAdapter.prototype = {
+    fetch$3(_, options, requestStream, cancelFuture) {
+      return this.fetch$body$BrowserHttpClientAdapter(0, options, type$.nullable_Stream_Uint8List._as(requestStream), cancelFuture);
+    },
+    fetch$body$BrowserHttpClientAdapter(_, options, requestStream, cancelFuture) {
+      var $async$goto = 0,
+        $async$completer = A._makeAsyncAwaitCompleter(type$.ResponseBody),
+        $async$returnValue, $async$self = this, t3, t4, withCredentialsOption, completer, t5, t6, receiveStopwatch, t7, t8, sink, t1, t2, $async$temp1;
+      var $async$fetch$3 = A._wrapJsFunctionForAsync(function($async$errorCode, $async$result) {
+        if ($async$errorCode === 1)
+          return A._asyncRethrow($async$result, $async$completer);
+        while (true)
+          switch ($async$goto) {
+            case 0:
+              // Function start
+              t1 = {};
+              t2 = new XMLHttpRequest();
+              t2.toString;
+              $async$self.xhrs.add$1(0, t2);
+              t3 = options.___RequestConfig_method_A;
+              t3 === $ && A.throwLateFieldNI("method");
+              B.HttpRequest_methods.open$2(t2, t3, options.get$uri().toString$0(0));
+              t2.responseType = "arraybuffer";
+              t4 = options.___RequestConfig_extra_A;
+              t4 === $ && A.throwLateFieldNI("extra");
+              withCredentialsOption = t4.$index(0, "withCredentials");
+              if (withCredentialsOption != null)
+                B.HttpRequest_methods.set$withCredentials(t2, J.$eq$(withCredentialsOption, true));
+              else
+                B.HttpRequest_methods.set$withCredentials(t2, false);
+              t4 = options.___RequestConfig__headers_A;
+              t4 === $ && A.throwLateFieldNI("_headers");
+              t4.remove$1(0, "content-length");
+              options.___RequestConfig__headers_A.forEach$1(0, new A.BrowserHttpClientAdapter_fetch_closure(t2));
+              B.HttpRequest_methods.set$timeout(t2, 0);
+              t4 = new A._Future($.Zone__current, type$._Future_ResponseBody);
+              completer = new A._AsyncCompleter(t4, type$._AsyncCompleter_ResponseBody);
+              t5 = type$._EventStream_ProgressEvent;
+              t6 = type$.Null;
+              new A._EventStream(t2, "load", false, t5).get$first(0).then$1$1(new A.BrowserHttpClientAdapter_fetch_closure0(t2, completer, options), t6);
+              t1.connectTimeoutTimer = null;
+              receiveStopwatch = new A.Stopwatch();
+              $.$get$Stopwatch__frequency();
+              t1.receiveTimer = null;
+              t7 = new A.BrowserHttpClientAdapter_fetch_stopWatchReceiveTimeout(t1, receiveStopwatch);
+              t8 = type$.nullable_void_Function_ProgressEvent._as(new A.BrowserHttpClientAdapter_fetch_closure1(t1, new A.BrowserHttpClientAdapter_fetch_watchReceiveTimeout(t1, B.Duration_0, receiveStopwatch, completer, t2, options, t7), options));
+              type$.nullable_void_Function._as(new A.BrowserHttpClientAdapter_fetch_closure2(t7));
+              A._EventStreamSubscription$(t2, "progress", t8, false, type$.ProgressEvent);
+              new A._EventStream(t2, "error", false, t5).get$first(0).then$1$1(new A.BrowserHttpClientAdapter_fetch_closure3(t1, completer, options), t6);
+              new A._EventStream(t2, "timeout", false, t5).get$first(0).then$1$1(new A.BrowserHttpClientAdapter_fetch_closure4(t1, completer, B.Duration_0, options, 0), t6);
+              $async$goto = requestStream != null ? 3 : 5;
+              break;
+            case 3:
+              // then
+              if (t3 === "GET")
+                A.StackTrace_current();
+              t1 = new A._Future($.Zone__current, type$._Future_Uint8List);
+              completer = new A._AsyncCompleter(t1, type$._AsyncCompleter_Uint8List);
+              sink = new A._ByteCallbackSink(new A.BrowserHttpClientAdapter_fetch_closure5(completer), new Uint8Array(1024));
+              requestStream.listen$4$cancelOnError$onDone$onError(type$.void_Function_List_int._as(sink.get$add(sink)), true, sink.get$close(sink), new A.BrowserHttpClientAdapter_fetch_closure6(completer));
+              $async$temp1 = t2;
+              $async$goto = 6;
+              return A._asyncAwait(t1, $async$fetch$3);
+            case 6:
+              // returning from await.
+              $async$temp1.send($async$result);
+              // goto join
+              $async$goto = 4;
+              break;
+            case 5:
+              // else
+              t2.send();
+            case 4:
+              // join
+              $async$returnValue = t4.whenComplete$1(new A.BrowserHttpClientAdapter_fetch_closure7($async$self, t2));
+              // goto return
+              $async$goto = 1;
+              break;
+            case 1:
+              // return
+              return A._asyncReturn($async$returnValue, $async$completer);
+          }
+      });
+      return A._asyncStartSync($async$fetch$3, $async$completer);
+    },
+    $isHttpClientAdapter: 1
+  };
+  A.BrowserHttpClientAdapter_fetch_closure.prototype = {
+    call$2(key, v) {
+      var t1;
+      A._asString(key);
+      t1 = this.xhr;
+      if (type$.Iterable_dynamic._is(v))
+        t1.setRequestHeader(key, J.join$1$ax(v, ", "));
+      else
+        t1.setRequestHeader(key, J.toString$0$(v));
+    },
     $signature: 31
+  };
+  A.BrowserHttpClientAdapter_fetch_closure0.prototype = {
+    call$1(_) {
+      var t1, body, t2, t3, t4, t5, t6, t7, _null = null;
+      type$.ProgressEvent._as(_);
+      t1 = this.xhr;
+      body = A.NativeUint8List_NativeUint8List$view(type$.ByteBuffer._as(A._convertNativeToDart_XHR_Response(t1.response)), 0, _null);
+      t2 = t1.status;
+      t2.toString;
+      t3 = B.HttpRequest_methods.get$responseHeaders(t1);
+      t4 = type$.String;
+      t3 = t3.map$2$1(t3, new A.BrowserHttpClientAdapter_fetch__closure(), t4, type$.List_String);
+      t5 = t1.statusText;
+      t6 = t1.status;
+      t1 = t6 === 302 || t6 === 301 || this.options.get$uri().toString$0(0) !== t1.responseURL;
+      t6 = type$._AsyncStreamController_Uint8List;
+      t7 = new A._AsyncStreamController(_null, _null, _null, _null, t6);
+      t7._async$_add$1(body);
+      t7._closeUnchecked$0();
+      this.completer.complete$1(0, new A.ResponseBody(t1, new A._ControllerStream(t7, t6._eval$1("_ControllerStream<1>")), t2, t5, t3, A.LinkedHashMap_LinkedHashMap$_empty(t4, type$.dynamic)));
+    },
+    $signature: 14
+  };
+  A.BrowserHttpClientAdapter_fetch__closure.prototype = {
+    call$2(k, v) {
+      return new A.MapEntry(A._asString(k), A._setArrayType(A._asString(v).split(","), type$.JSArray_String), type$.MapEntry_of_String_and_List_String);
+    },
+    $signature: 69
+  };
+  A.BrowserHttpClientAdapter_fetch_stopWatchReceiveTimeout.prototype = {
+    call$0() {
+      var t1 = this._box_0,
+        t2 = t1.receiveTimer;
+      if (t2 != null)
+        t2.cancel$0();
+      t1.receiveTimer = null;
+      t1 = this.receiveStopwatch;
+      if (t1._stop == null)
+        t1._stop = $.Primitives_timerTicks.call$0();
+    },
+    $signature: 0
+  };
+  A.BrowserHttpClientAdapter_fetch_watchReceiveTimeout.prototype = {
+    call$0() {
+      var t2, t3, _this = this,
+        t1 = _this.receiveTimeout;
+      if (t1._duration <= 0)
+        return;
+      t2 = _this.receiveStopwatch;
+      t2.reset$0(0);
+      if (t2._stop != null)
+        t2.start$0(0);
+      t2 = _this._box_0;
+      t3 = t2.receiveTimer;
+      if (t3 != null)
+        t3.cancel$0();
+      t2.receiveTimer = A.Timer_Timer(t1, new A.BrowserHttpClientAdapter_fetch_watchReceiveTimeout_closure(_this.completer, _this.xhr, t1, _this.options, _this.stopWatchReceiveTimeout));
+    },
+    $signature: 0
+  };
+  A.BrowserHttpClientAdapter_fetch_watchReceiveTimeout_closure.prototype = {
+    call$0() {
+      var _this = this,
+        t1 = _this.completer;
+      if ((t1.future._state & 30) === 0) {
+        _this.xhr.abort();
+        t1.completeError$2(A.DioException_DioException$receiveTimeout(_this.options, _this.receiveTimeout), A.StackTrace_current());
+      }
+      _this.stopWatchReceiveTimeout.call$0();
+    },
+    $signature: 0
+  };
+  A.BrowserHttpClientAdapter_fetch_closure1.prototype = {
+    call$1($event) {
+      var t1, t2;
+      type$.ProgressEvent._as($event);
+      t1 = this._box_0;
+      t2 = t1.connectTimeoutTimer;
+      if (t2 != null) {
+        t2.cancel$0();
+        t1.connectTimeoutTimer = null;
+      }
+      this.watchReceiveTimeout.call$0();
+    },
+    $signature: 16
+  };
+  A.BrowserHttpClientAdapter_fetch_closure2.prototype = {
+    call$0() {
+      return this.stopWatchReceiveTimeout.call$0();
+    },
+    $signature: 0
+  };
+  A.BrowserHttpClientAdapter_fetch_closure3.prototype = {
+    call$1(_) {
+      var t1;
+      type$.ProgressEvent._as(_);
+      t1 = this._box_0.connectTimeoutTimer;
+      if (t1 != null)
+        t1.cancel$0();
+      this.completer.completeError$2(A.DioException_DioException$connectionError("The XMLHttpRequest onError callback was called. This typically indicates an error on the network layer.", this.options), A.StackTrace_current());
+    },
+    $signature: 14
+  };
+  A.BrowserHttpClientAdapter_fetch_closure4.prototype = {
+    call$1(_) {
+      var t1, isConnectTimeout, t2, _this = this;
+      type$.ProgressEvent._as(_);
+      t1 = _this._box_0.connectTimeoutTimer;
+      isConnectTimeout = t1 != null;
+      if (isConnectTimeout)
+        t1.cancel$0();
+      t1 = _this.completer;
+      if ((t1.future._state & 30) === 0) {
+        t2 = _this.options;
+        if (isConnectTimeout)
+          t1.completeError$1(A.DioException_DioException$connectionTimeout(t2, _this.connectTimeout));
+        else
+          t1.completeError$2(A.DioException_DioException$receiveTimeout(t2, A.Duration$(0, _this.xhrTimeout)), A.StackTrace_current());
+      }
+    },
+    $signature: 14
+  };
+  A.BrowserHttpClientAdapter_fetch_closure5.prototype = {
+    call$1(bytes) {
+      type$.List_int._as(bytes);
+      return this.completer.complete$1(0, bytes);
+    },
+    $signature: 70
+  };
+  A.BrowserHttpClientAdapter_fetch_closure6.prototype = {
+    call$2(e, s) {
+      return this.completer.completeError$2(type$.Object._as(e), type$.StackTrace._as(s));
+    },
+    $signature: 3
+  };
+  A.BrowserHttpClientAdapter_fetch_closure7.prototype = {
+    call$0() {
+      this.$this.xhrs.remove$1(0, this.xhr);
+    },
+    $signature: 2
   };
   A.DioForBrowser.prototype = {$isDio: 1};
   A._DioForBrowser_Object_DioMixin.prototype = {};
-  A.AuthController.prototype = {};
-  A.main_closure.prototype = {
-    call$1($event) {
+  A._transform_closure.prototype = {
+    call$2(data, sink) {
+      var t1, t2, t3,
+        _s24_ = "Stream is already closed";
+      this.S._as(data);
+      type$.EventSink_Uint8List._as(sink);
+      t1 = sink._async$_sink;
+      t2 = sink.$ti._precomputed1;
+      t3 = t1.$ti;
+      if (type$.Uint8List._is(data)) {
+        data = t3._rest[1]._as(t2._as(data));
+        if ((t1._state & 2) !== 0)
+          A.throwExpression(A.StateError$(_s24_));
+        t1.super$_BufferingStreamSubscription$_add(data);
+      } else {
+        t2 = t3._rest[1]._as(t2._as(new Uint8Array(A._ensureNativeList(data))));
+        if ((t1._state & 2) !== 0)
+          A.throwExpression(A.StateError$(_s24_));
+        t1.super$_BufferingStreamSubscription$_add(t2);
+      }
+    },
+    $signature() {
+      return this.S._eval$1("~(0,EventSink<Uint8List>)");
+    }
+  };
+  A.CaseInsensitiveMap.prototype = {};
+  A.MediaType.prototype = {
+    toString$0(_) {
+      var buffer = new A.StringBuffer(""),
+        t1 = "" + this.type;
+      buffer._contents = t1;
+      t1 += "/";
+      buffer._contents = t1;
+      buffer._contents = t1 + this.subtype;
+      t1 = this.parameters;
+      J.forEach$1$x(t1._collection$_map, t1.$ti._eval$1("~(1,2)")._as(new A.MediaType_toString_closure(buffer)));
+      t1 = buffer._contents;
+      return t1.charCodeAt(0) == 0 ? t1 : t1;
+    }
+  };
+  A.MediaType_MediaType$parse_closure.prototype = {
+    call$0() {
+      var t3, t4, t5, t6, parameters, t7, t8, success, t9, value,
+        t1 = this.mediaType,
+        scanner = new A.StringScanner(null, t1),
+        t2 = $.$get$whitespace();
+      scanner.scan$1(t2);
+      t3 = $.$get$token();
+      scanner.expect$1(t3);
+      t4 = scanner.get$lastMatch().$index(0, 0);
+      t4.toString;
+      scanner.expect$1("/");
+      scanner.expect$1(t3);
+      t5 = scanner.get$lastMatch().$index(0, 0);
+      t5.toString;
+      scanner.scan$1(t2);
+      t6 = type$.String;
+      parameters = A.LinkedHashMap_LinkedHashMap$_empty(t6, t6);
+      while (true) {
+        t7 = scanner._lastMatch = B.JSString_methods.matchAsPrefix$2(";", t1, scanner._string_scanner$_position);
+        t8 = scanner._lastMatchPosition = scanner._string_scanner$_position;
+        success = t7 != null;
+        t7 = success ? scanner._lastMatchPosition = scanner._string_scanner$_position = t7.get$end() : t8;
+        if (!success)
+          break;
+        t7 = scanner._lastMatch = t2.matchAsPrefix$2(0, t1, t7);
+        scanner._lastMatchPosition = scanner._string_scanner$_position;
+        if (t7 != null)
+          scanner._lastMatchPosition = scanner._string_scanner$_position = t7.get$end();
+        scanner.expect$1(t3);
+        if (scanner._string_scanner$_position !== scanner._lastMatchPosition)
+          scanner._lastMatch = null;
+        t7 = scanner._lastMatch.$index(0, 0);
+        t7.toString;
+        scanner.expect$1("=");
+        t8 = scanner._lastMatch = t3.matchAsPrefix$2(0, t1, scanner._string_scanner$_position);
+        t9 = scanner._lastMatchPosition = scanner._string_scanner$_position;
+        success = t8 != null;
+        if (success) {
+          t8 = scanner._lastMatchPosition = scanner._string_scanner$_position = t8.get$end();
+          t9 = t8;
+        } else
+          t8 = t9;
+        if (success) {
+          if (t8 !== t9)
+            scanner._lastMatch = null;
+          t8 = scanner._lastMatch.$index(0, 0);
+          t8.toString;
+          value = t8;
+        } else
+          value = A.expectQuotedString(scanner);
+        t8 = scanner._lastMatch = t2.matchAsPrefix$2(0, t1, scanner._string_scanner$_position);
+        scanner._lastMatchPosition = scanner._string_scanner$_position;
+        if (t8 != null)
+          scanner._lastMatchPosition = scanner._string_scanner$_position = t8.get$end();
+        parameters.$indexSet(0, t7, value);
+      }
+      scanner.expectDone$0();
+      t1 = new A.CaseInsensitiveMap(A.case_insensitive_map_CaseInsensitiveMap__canonicalizer$closure(), A.LinkedHashMap_LinkedHashMap$_empty(t6, type$.MapEntry_String_String), type$.CaseInsensitiveMap_String);
+      t1.addAll$1(0, parameters);
+      return new A.MediaType(t4.toLowerCase(), t5.toLowerCase(), new A.UnmodifiableMapView(t1, type$.UnmodifiableMapView_String_String));
+    },
+    $signature: 71
+  };
+  A.MediaType_toString_closure.prototype = {
+    call$2(attribute, value) {
+      var t1, t2, t3;
+      A._asString(attribute);
+      A._asString(value);
+      t1 = this.buffer;
+      t1._contents += "; " + attribute + "=";
+      t2 = $.$get$nonToken();
+      t2 = t2._nativeRegExp.test(value);
+      t3 = t1._contents;
+      if (t2) {
+        t1._contents = t3 + '"';
+        t2 = A.stringReplaceAllFuncUnchecked(value, $.$get$_escapedChar(), type$.nullable_String_Function_Match._as(type$.String_Function_Match._as(new A.MediaType_toString__closure())), null);
+        t2 = t1._contents += t2;
+        t1._contents = t2 + '"';
+      } else
+        t1._contents = t3 + value;
+    },
+    $signature: 22
+  };
+  A.MediaType_toString__closure.prototype = {
+    call$1(match) {
+      return "\\" + A.S(match.$index(0, 0));
+    },
+    $signature: 26
+  };
+  A.expectQuotedString_closure.prototype = {
+    call$1(match) {
+      var t1 = match.$index(0, 1);
+      t1.toString;
+      return t1;
+    },
+    $signature: 26
+  };
+  A.Context.prototype = {
+    absolute$1(_, part1) {
+      var t2, parts,
+        t1 = type$.JSArray_nullable_String;
+      A._validateArgList("absolute", A._setArrayType([part1, null, null, null, null, null, null, null, null, null, null, null, null, null, null], t1));
+      t2 = this.style;
+      t2 = t2.rootLength$1(part1) > 0 && !t2.isRootRelative$1(part1);
+      if (t2)
+        return part1;
+      t2 = A.current();
+      parts = A._setArrayType([t2, part1, null, null, null, null, null, null, null, null, null, null, null, null, null, null], t1);
+      A._validateArgList("join", parts);
+      return this.joinAll$1(new A.WhereTypeIterable(parts, type$.WhereTypeIterable_String));
+    },
+    joinAll$1(parts) {
+      var t1, t2, t3, needsSeparator, isAbsoluteAndNotRootRelative, t4, t5, parsed, path, t6;
+      type$.Iterable_String._as(parts);
+      for (t1 = parts.$ti, t2 = t1._eval$1("bool(Iterable.E)")._as(new A.Context_joinAll_closure()), t3 = parts.get$iterator(0), t1 = new A.WhereIterator(t3, t2, t1._eval$1("WhereIterator<Iterable.E>")), t2 = this.style, needsSeparator = false, isAbsoluteAndNotRootRelative = false, t4 = ""; t1.moveNext$0();) {
+        t5 = t3.get$current();
+        if (t2.isRootRelative$1(t5) && isAbsoluteAndNotRootRelative) {
+          parsed = A.ParsedPath_ParsedPath$parse(t5, t2);
+          path = t4.charCodeAt(0) == 0 ? t4 : t4;
+          t4 = B.JSString_methods.substring$2(path, 0, t2.rootLength$2$withDrive(path, true));
+          parsed.root = t4;
+          if (t2.needsSeparator$1(t4))
+            B.JSArray_methods.$indexSet(parsed.separators, 0, t2.get$separator());
+          t4 = "" + parsed.toString$0(0);
+        } else if (t2.rootLength$1(t5) > 0) {
+          isAbsoluteAndNotRootRelative = !t2.isRootRelative$1(t5);
+          t4 = "" + t5;
+        } else {
+          t6 = t5.length;
+          if (t6 !== 0) {
+            if (0 >= t6)
+              return A.ioore(t5, 0);
+            t6 = t2.containsSeparator$1(t5[0]);
+          } else
+            t6 = false;
+          if (!t6)
+            if (needsSeparator)
+              t4 += t2.get$separator();
+          t4 += t5;
+        }
+        needsSeparator = t2.needsSeparator$1(t5);
+      }
+      return t4.charCodeAt(0) == 0 ? t4 : t4;
+    },
+    split$1(_, path) {
+      var parsed = A.ParsedPath_ParsedPath$parse(path, this.style),
+        t1 = parsed.parts,
+        t2 = A._arrayInstanceType(t1),
+        t3 = t2._eval$1("WhereIterable<1>");
+      parsed.set$parts(A.List_List$of(new A.WhereIterable(t1, t2._eval$1("bool(1)")._as(new A.Context_split_closure()), t3), true, t3._eval$1("Iterable.E")));
+      t1 = parsed.root;
+      if (t1 != null) {
+        t2 = parsed.parts;
+        A._arrayInstanceType(t2)._precomputed1._as(t1);
+        if (!!t2.fixed$length)
+          A.throwExpression(A.UnsupportedError$("insert"));
+        t2.splice(0, 0, t1);
+      }
+      return parsed.parts;
+    },
+    normalize$1(path) {
+      var parsed;
+      if (!this._needsNormalization$1(path))
+        return path;
+      parsed = A.ParsedPath_ParsedPath$parse(path, this.style);
+      parsed.normalize$0();
+      return parsed.toString$0(0);
+    },
+    _needsNormalization$1(path) {
+      var t2, i, start, previous, t3, previousPrevious, codeUnit, t4,
+        t1 = this.style,
+        root = t1.rootLength$1(path);
+      if (root !== 0) {
+        if (t1 === $.$get$Style_windows())
+          for (t2 = path.length, i = 0; i < root; ++i) {
+            if (!(i < t2))
+              return A.ioore(path, i);
+            if (path.charCodeAt(i) === 47)
+              return true;
+          }
+        start = root;
+        previous = 47;
+      } else {
+        start = 0;
+        previous = null;
+      }
+      for (t2 = new A.CodeUnits(path).__internal$_string, t3 = t2.length, i = start, previousPrevious = null; i < t3; ++i, previousPrevious = previous, previous = codeUnit) {
+        if (!(i >= 0))
+          return A.ioore(t2, i);
+        codeUnit = t2.charCodeAt(i);
+        if (t1.isSeparator$1(codeUnit)) {
+          if (t1 === $.$get$Style_windows() && codeUnit === 47)
+            return true;
+          if (previous != null && t1.isSeparator$1(previous))
+            return true;
+          if (previous === 46)
+            t4 = previousPrevious == null || previousPrevious === 46 || t1.isSeparator$1(previousPrevious);
+          else
+            t4 = false;
+          if (t4)
+            return true;
+        }
+      }
+      if (previous == null)
+        return true;
+      if (t1.isSeparator$1(previous))
+        return true;
+      if (previous === 46)
+        t1 = previousPrevious == null || t1.isSeparator$1(previousPrevious) || previousPrevious === 46;
+      else
+        t1 = false;
+      if (t1)
+        return true;
+      return false;
+    },
+    relative$1(path) {
+      var from, fromParsed, pathParsed, t3, t4, t5, _this = this,
+        _s26_ = 'Unable to find a path to "',
+        t1 = _this.style,
+        t2 = t1.rootLength$1(path);
+      if (t2 <= 0)
+        return _this.normalize$1(path);
+      from = A.current();
+      if (t1.rootLength$1(from) <= 0 && t1.rootLength$1(path) > 0)
+        return _this.normalize$1(path);
+      if (t1.rootLength$1(path) <= 0 || t1.isRootRelative$1(path))
+        path = _this.absolute$1(0, path);
+      if (t1.rootLength$1(path) <= 0 && t1.rootLength$1(from) > 0)
+        throw A.wrapException(A.PathException$(_s26_ + path + '" from "' + from + '".'));
+      fromParsed = A.ParsedPath_ParsedPath$parse(from, t1);
+      fromParsed.normalize$0();
+      pathParsed = A.ParsedPath_ParsedPath$parse(path, t1);
+      pathParsed.normalize$0();
+      t2 = fromParsed.parts;
+      t3 = t2.length;
+      if (t3 !== 0) {
+        if (0 >= t3)
+          return A.ioore(t2, 0);
+        t2 = J.$eq$(t2[0], ".");
+      } else
+        t2 = false;
+      if (t2)
+        return pathParsed.toString$0(0);
+      t2 = fromParsed.root;
+      t3 = pathParsed.root;
+      if (t2 != t3)
+        t2 = t2 == null || t3 == null || !t1.pathsEqual$2(t2, t3);
+      else
+        t2 = false;
+      if (t2)
+        return pathParsed.toString$0(0);
+      while (true) {
+        t2 = fromParsed.parts;
+        t3 = t2.length;
+        if (t3 !== 0) {
+          t4 = pathParsed.parts;
+          t5 = t4.length;
+          if (t5 !== 0) {
+            if (0 >= t3)
+              return A.ioore(t2, 0);
+            t2 = t2[0];
+            if (0 >= t5)
+              return A.ioore(t4, 0);
+            t4 = t1.pathsEqual$2(t2, t4[0]);
+            t2 = t4;
+          } else
+            t2 = false;
+        } else
+          t2 = false;
+        if (!t2)
+          break;
+        B.JSArray_methods.removeAt$1(fromParsed.parts, 0);
+        B.JSArray_methods.removeAt$1(fromParsed.separators, 1);
+        B.JSArray_methods.removeAt$1(pathParsed.parts, 0);
+        B.JSArray_methods.removeAt$1(pathParsed.separators, 1);
+      }
+      t2 = fromParsed.parts;
+      t3 = t2.length;
+      if (t3 !== 0) {
+        if (0 >= t3)
+          return A.ioore(t2, 0);
+        t2 = J.$eq$(t2[0], "..");
+      } else
+        t2 = false;
+      if (t2)
+        throw A.wrapException(A.PathException$(_s26_ + path + '" from "' + from + '".'));
+      t2 = type$.String;
+      B.JSArray_methods.insertAll$2(pathParsed.parts, 0, A.List_List$filled(fromParsed.parts.length, "..", false, t2));
+      B.JSArray_methods.$indexSet(pathParsed.separators, 0, "");
+      B.JSArray_methods.insertAll$2(pathParsed.separators, 1, A.List_List$filled(fromParsed.parts.length, t1.get$separator(), false, t2));
+      t1 = pathParsed.parts;
+      t2 = t1.length;
+      if (t2 === 0)
+        return ".";
+      if (t2 > 1 && J.$eq$(B.JSArray_methods.get$last(t1), ".")) {
+        B.JSArray_methods.removeLast$0(pathParsed.parts);
+        t1 = pathParsed.separators;
+        if (0 >= t1.length)
+          return A.ioore(t1, -1);
+        t1.pop();
+        if (0 >= t1.length)
+          return A.ioore(t1, -1);
+        t1.pop();
+        B.JSArray_methods.add$1(t1, "");
+      }
+      pathParsed.root = "";
+      pathParsed.removeTrailingSeparators$0();
+      return pathParsed.toString$0(0);
+    },
+    prettyUri$1(uri) {
+      var path, rel, _this = this,
+        typedUri = A._parseUri(uri);
+      if (typedUri.get$scheme() === "file" && _this.style === $.$get$Style_url())
+        return typedUri.toString$0(0);
+      else if (typedUri.get$scheme() !== "file" && typedUri.get$scheme() !== "" && _this.style !== $.$get$Style_url())
+        return typedUri.toString$0(0);
+      path = _this.normalize$1(_this.style.pathFromUri$1(A._parseUri(typedUri)));
+      rel = _this.relative$1(path);
+      return _this.split$1(0, rel).length > _this.split$1(0, path).length ? path : rel;
+    }
+  };
+  A.Context_joinAll_closure.prototype = {
+    call$1(part) {
+      return A._asString(part) !== "";
+    },
+    $signature: 9
+  };
+  A.Context_split_closure.prototype = {
+    call$1(part) {
+      return A._asString(part).length !== 0;
+    },
+    $signature: 9
+  };
+  A._validateArgList_closure.prototype = {
+    call$1(arg) {
+      A._asStringQ(arg);
+      return arg == null ? "null" : '"' + arg + '"';
+    },
+    $signature: 73
+  };
+  A.InternalStyle.prototype = {
+    getRoot$1(path) {
+      var t1,
+        $length = this.rootLength$1(path);
+      if ($length > 0)
+        return B.JSString_methods.substring$2(path, 0, $length);
+      if (this.isRootRelative$1(path)) {
+        if (0 >= path.length)
+          return A.ioore(path, 0);
+        t1 = path[0];
+      } else
+        t1 = null;
+      return t1;
+    },
+    pathsEqual$2(path1, path2) {
+      return path1 === path2;
+    }
+  };
+  A.ParsedPath.prototype = {
+    removeTrailingSeparators$0() {
+      var t1, t2, _this = this;
+      while (true) {
+        t1 = _this.parts;
+        if (!(t1.length !== 0 && J.$eq$(B.JSArray_methods.get$last(t1), "")))
+          break;
+        B.JSArray_methods.removeLast$0(_this.parts);
+        t1 = _this.separators;
+        if (0 >= t1.length)
+          return A.ioore(t1, -1);
+        t1.pop();
+      }
+      t1 = _this.separators;
+      t2 = t1.length;
+      if (t2 !== 0)
+        B.JSArray_methods.$indexSet(t1, t2 - 1, "");
+    },
+    normalize$0() {
+      var t1, t2, leadingDoubles, _i, part, t3, _this = this,
+        newParts = A._setArrayType([], type$.JSArray_String);
+      for (t1 = _this.parts, t2 = t1.length, leadingDoubles = 0, _i = 0; _i < t1.length; t1.length === t2 || (0, A.throwConcurrentModificationError)(t1), ++_i) {
+        part = t1[_i];
+        t3 = J.getInterceptor$(part);
+        if (!(t3.$eq(part, ".") || t3.$eq(part, "")))
+          if (t3.$eq(part, "..")) {
+            t3 = newParts.length;
+            if (t3 !== 0) {
+              if (0 >= t3)
+                return A.ioore(newParts, -1);
+              newParts.pop();
+            } else
+              ++leadingDoubles;
+          } else
+            B.JSArray_methods.add$1(newParts, part);
+      }
+      if (_this.root == null)
+        B.JSArray_methods.insertAll$2(newParts, 0, A.List_List$filled(leadingDoubles, "..", false, type$.String));
+      if (newParts.length === 0 && _this.root == null)
+        B.JSArray_methods.add$1(newParts, ".");
+      _this.set$parts(newParts);
+      t1 = _this.style;
+      _this.set$separators(A.List_List$filled(newParts.length + 1, t1.get$separator(), true, type$.String));
+      t2 = _this.root;
+      if (t2 == null || newParts.length === 0 || !t1.needsSeparator$1(t2))
+        B.JSArray_methods.$indexSet(_this.separators, 0, "");
+      t2 = _this.root;
+      if (t2 != null && t1 === $.$get$Style_windows()) {
+        t2.toString;
+        _this.root = A.stringReplaceAllUnchecked(t2, "/", "\\");
+      }
+      _this.removeTrailingSeparators$0();
+    },
+    toString$0(_) {
+      var i, t2, t3, _this = this,
+        t1 = _this.root;
+      t1 = t1 != null ? "" + t1 : "";
+      for (i = 0; i < _this.parts.length; ++i, t1 = t3) {
+        t2 = _this.separators;
+        if (!(i < t2.length))
+          return A.ioore(t2, i);
+        t2 = A.S(t2[i]);
+        t3 = _this.parts;
+        if (!(i < t3.length))
+          return A.ioore(t3, i);
+        t3 = t1 + t2 + A.S(t3[i]);
+      }
+      t1 += A.S(B.JSArray_methods.get$last(_this.separators));
+      return t1.charCodeAt(0) == 0 ? t1 : t1;
+    },
+    set$parts(parts) {
+      this.parts = type$.List_String._as(parts);
+    },
+    set$separators(separators) {
+      this.separators = type$.List_String._as(separators);
+    }
+  };
+  A.PathException.prototype = {
+    toString$0(_) {
+      return "PathException: " + this.message;
+    },
+    $isException: 1
+  };
+  A.Style.prototype = {
+    toString$0(_) {
+      return this.get$name(this);
+    }
+  };
+  A.PosixStyle.prototype = {
+    containsSeparator$1(path) {
+      return B.JSString_methods.contains$1(path, "/");
+    },
+    isSeparator$1(codeUnit) {
+      return codeUnit === 47;
+    },
+    needsSeparator$1(path) {
+      var t2,
+        t1 = path.length;
+      if (t1 !== 0) {
+        t2 = t1 - 1;
+        if (!(t2 >= 0))
+          return A.ioore(path, t2);
+        t2 = path.charCodeAt(t2) !== 47;
+        t1 = t2;
+      } else
+        t1 = false;
+      return t1;
+    },
+    rootLength$2$withDrive(path, withDrive) {
+      var t1 = path.length;
+      if (t1 !== 0) {
+        if (0 >= t1)
+          return A.ioore(path, 0);
+        t1 = path.charCodeAt(0) === 47;
+      } else
+        t1 = false;
+      if (t1)
+        return 1;
+      return 0;
+    },
+    rootLength$1(path) {
+      return this.rootLength$2$withDrive(path, false);
+    },
+    isRootRelative$1(path) {
+      return false;
+    },
+    pathFromUri$1(uri) {
       var t1;
-      type$.MouseEvent._as($event);
-      t1 = document.querySelector("#feedbackPopup").style;
-      t1.display = "block";
+      if (uri.get$scheme() === "" || uri.get$scheme() === "file") {
+        t1 = uri.get$path(uri);
+        return A._Uri__uriDecode(t1, 0, t1.length, B.C_Utf8Codec, false);
+      }
+      throw A.wrapException(A.ArgumentError$("Uri " + uri.toString$0(0) + " must have scheme 'file:'.", null));
+    },
+    get$name() {
+      return "posix";
+    },
+    get$separator() {
+      return "/";
+    }
+  };
+  A.UrlStyle.prototype = {
+    containsSeparator$1(path) {
+      return B.JSString_methods.contains$1(path, "/");
+    },
+    isSeparator$1(codeUnit) {
+      return codeUnit === 47;
+    },
+    needsSeparator$1(path) {
+      var t2,
+        t1 = path.length;
+      if (t1 === 0)
+        return false;
+      t2 = t1 - 1;
+      if (!(t2 >= 0))
+        return A.ioore(path, t2);
+      if (path.charCodeAt(t2) !== 47)
+        return true;
+      return B.JSString_methods.endsWith$1(path, "://") && this.rootLength$1(path) === t1;
+    },
+    rootLength$2$withDrive(path, withDrive) {
+      var i, codeUnit, index,
+        t1 = path.length;
+      if (t1 === 0)
+        return 0;
+      if (0 >= t1)
+        return A.ioore(path, 0);
+      if (path.charCodeAt(0) === 47)
+        return 1;
+      for (i = 0; i < t1; ++i) {
+        codeUnit = path.charCodeAt(i);
+        if (codeUnit === 47)
+          return 0;
+        if (codeUnit === 58) {
+          if (i === 0)
+            return 0;
+          index = B.JSString_methods.indexOf$2(path, "/", B.JSString_methods.startsWith$2(path, "//", i + 1) ? i + 3 : i);
+          if (index <= 0)
+            return t1;
+          if (!withDrive || t1 < index + 3)
+            return index;
+          if (!B.JSString_methods.startsWith$1(path, "file://"))
+            return index;
+          t1 = A.driveLetterEnd(path, index + 1);
+          return t1 == null ? index : t1;
+        }
+      }
+      return 0;
+    },
+    rootLength$1(path) {
+      return this.rootLength$2$withDrive(path, false);
+    },
+    isRootRelative$1(path) {
+      var t1 = path.length;
+      if (t1 !== 0) {
+        if (0 >= t1)
+          return A.ioore(path, 0);
+        t1 = path.charCodeAt(0) === 47;
+      } else
+        t1 = false;
+      return t1;
+    },
+    pathFromUri$1(uri) {
+      return uri.toString$0(0);
+    },
+    get$name() {
+      return "url";
+    },
+    get$separator() {
+      return "/";
+    }
+  };
+  A.WindowsStyle.prototype = {
+    containsSeparator$1(path) {
+      return B.JSString_methods.contains$1(path, "/");
+    },
+    isSeparator$1(codeUnit) {
+      return codeUnit === 47 || codeUnit === 92;
+    },
+    needsSeparator$1(path) {
+      var t2,
+        t1 = path.length;
+      if (t1 === 0)
+        return false;
+      t2 = t1 - 1;
+      if (!(t2 >= 0))
+        return A.ioore(path, t2);
+      t2 = path.charCodeAt(t2);
+      return !(t2 === 47 || t2 === 92);
+    },
+    rootLength$2$withDrive(path, withDrive) {
+      var t2, index,
+        t1 = path.length;
+      if (t1 === 0)
+        return 0;
+      if (0 >= t1)
+        return A.ioore(path, 0);
+      if (path.charCodeAt(0) === 47)
+        return 1;
+      if (path.charCodeAt(0) === 92) {
+        if (t1 >= 2) {
+          if (1 >= t1)
+            return A.ioore(path, 1);
+          t2 = path.charCodeAt(1) !== 92;
+        } else
+          t2 = true;
+        if (t2)
+          return 1;
+        index = B.JSString_methods.indexOf$2(path, "\\", 2);
+        if (index > 0) {
+          index = B.JSString_methods.indexOf$2(path, "\\", index + 1);
+          if (index > 0)
+            return index;
+        }
+        return t1;
+      }
+      if (t1 < 3)
+        return 0;
+      if (!A.isAlphabetic(path.charCodeAt(0)))
+        return 0;
+      if (path.charCodeAt(1) !== 58)
+        return 0;
+      t1 = path.charCodeAt(2);
+      if (!(t1 === 47 || t1 === 92))
+        return 0;
+      return 3;
+    },
+    rootLength$1(path) {
+      return this.rootLength$2$withDrive(path, false);
+    },
+    isRootRelative$1(path) {
+      return this.rootLength$1(path) === 1;
+    },
+    pathFromUri$1(uri) {
+      var path, t1;
+      if (uri.get$scheme() !== "" && uri.get$scheme() !== "file")
+        throw A.wrapException(A.ArgumentError$("Uri " + uri.toString$0(0) + " must have scheme 'file:'.", null));
+      path = uri.get$path(uri);
+      if (uri.get$host(uri) === "") {
+        t1 = path.length;
+        if (t1 >= 3 && B.JSString_methods.startsWith$1(path, "/") && A.driveLetterEnd(path, 1) != null) {
+          A.RangeError_checkValueInInterval(0, 0, t1, "startIndex");
+          path = A.stringReplaceFirstUnchecked(path, "/", "", 0);
+        }
+      } else
+        path = "\\\\" + uri.get$host(uri) + path;
+      t1 = A.stringReplaceAllUnchecked(path, "/", "\\");
+      return A._Uri__uriDecode(t1, 0, t1.length, B.C_Utf8Codec, false);
+    },
+    codeUnitsEqual$2(codeUnit1, codeUnit2) {
+      var upperCase1;
+      if (codeUnit1 === codeUnit2)
+        return true;
+      if (codeUnit1 === 47)
+        return codeUnit2 === 92;
+      if (codeUnit1 === 92)
+        return codeUnit2 === 47;
+      if ((codeUnit1 ^ codeUnit2) !== 32)
+        return false;
+      upperCase1 = codeUnit1 | 32;
+      return upperCase1 >= 97 && upperCase1 <= 122;
+    },
+    pathsEqual$2(path1, path2) {
+      var t1, t2, i;
+      if (path1 === path2)
+        return true;
+      t1 = path1.length;
+      t2 = path2.length;
+      if (t1 !== t2)
+        return false;
+      for (i = 0; i < t1; ++i) {
+        if (!(i < t2))
+          return A.ioore(path2, i);
+        if (!this.codeUnitsEqual$2(path1.charCodeAt(i), path2.charCodeAt(i)))
+          return false;
+      }
+      return true;
+    },
+    get$name() {
+      return "windows";
+    },
+    get$separator() {
+      return "\\";
+    }
+  };
+  A.SourceFile.prototype = {
+    get$length(_) {
+      return this._decodedChars.length;
+    },
+    get$lines() {
+      return this._lineStarts.length;
+    },
+    SourceFile$decoded$2$url(decodedChars, url) {
+      var t1, t2, t3, i, c, j, t4;
+      for (t1 = this._decodedChars, t2 = t1.length, t3 = this._lineStarts, i = 0; i < t2; ++i) {
+        c = t1[i];
+        if (c === 13) {
+          j = i + 1;
+          if (j < t2) {
+            if (!(j < t2))
+              return A.ioore(t1, j);
+            t4 = t1[j] !== 10;
+          } else
+            t4 = true;
+          if (t4)
+            c = 10;
+        }
+        if (c === 10)
+          B.JSArray_methods.add$1(t3, i + 1);
+      }
+    },
+    getLine$1(offset) {
+      var t1, _this = this;
+      if (offset < 0)
+        throw A.wrapException(A.RangeError$("Offset may not be negative, was " + offset + "."));
+      else if (offset > _this._decodedChars.length)
+        throw A.wrapException(A.RangeError$("Offset " + offset + string$._must_ + _this.get$length(0) + "."));
+      t1 = _this._lineStarts;
+      if (offset < B.JSArray_methods.get$first(t1))
+        return -1;
+      if (offset >= B.JSArray_methods.get$last(t1))
+        return t1.length - 1;
+      if (_this._isNearCachedLine$1(offset)) {
+        t1 = _this._cachedLine;
+        t1.toString;
+        return t1;
+      }
+      return _this._cachedLine = _this._binarySearch$1(offset) - 1;
+    },
+    _isNearCachedLine$1(offset) {
+      var t2, t3, t4,
+        t1 = this._cachedLine;
+      if (t1 == null)
+        return false;
+      t2 = this._lineStarts;
+      t3 = t2.length;
+      if (t1 >>> 0 !== t1 || t1 >= t3)
+        return A.ioore(t2, t1);
+      if (offset < t2[t1])
+        return false;
+      if (!(t1 >= t3 - 1)) {
+        t4 = t1 + 1;
+        if (!(t4 < t3))
+          return A.ioore(t2, t4);
+        t4 = offset < t2[t4];
+      } else
+        t4 = true;
+      if (t4)
+        return true;
+      if (!(t1 >= t3 - 2)) {
+        t4 = t1 + 2;
+        if (!(t4 < t3))
+          return A.ioore(t2, t4);
+        t4 = offset < t2[t4];
+        t2 = t4;
+      } else
+        t2 = true;
+      if (t2) {
+        this._cachedLine = t1 + 1;
+        return true;
+      }
+      return false;
+    },
+    _binarySearch$1(offset) {
+      var min, half,
+        t1 = this._lineStarts,
+        t2 = t1.length,
+        max = t2 - 1;
+      for (min = 0; min < max;) {
+        half = min + B.JSInt_methods._tdivFast$1(max - min, 2);
+        if (!(half >= 0 && half < t2))
+          return A.ioore(t1, half);
+        if (t1[half] > offset)
+          max = half;
+        else
+          min = half + 1;
+      }
+      return max;
+    },
+    getColumn$1(offset) {
+      var line, t1, lineStart, _this = this;
+      if (offset < 0)
+        throw A.wrapException(A.RangeError$("Offset may not be negative, was " + offset + "."));
+      else if (offset > _this._decodedChars.length)
+        throw A.wrapException(A.RangeError$("Offset " + offset + " must be not be greater than the number of characters in the file, " + _this.get$length(0) + "."));
+      line = _this.getLine$1(offset);
+      t1 = _this._lineStarts;
+      if (!(line >= 0 && line < t1.length))
+        return A.ioore(t1, line);
+      lineStart = t1[line];
+      if (lineStart > offset)
+        throw A.wrapException(A.RangeError$("Line " + line + " comes after offset " + offset + "."));
+      return offset - lineStart;
+    },
+    getOffset$1(line) {
+      var t1, t2, result, t3;
+      if (line < 0)
+        throw A.wrapException(A.RangeError$("Line may not be negative, was " + line + "."));
+      else {
+        t1 = this._lineStarts;
+        t2 = t1.length;
+        if (line >= t2)
+          throw A.wrapException(A.RangeError$("Line " + line + " must be less than the number of lines in the file, " + this.get$lines() + "."));
+      }
+      result = t1[line];
+      if (result <= this._decodedChars.length) {
+        t3 = line + 1;
+        t1 = t3 < t2 && result >= t1[t3];
+      } else
+        t1 = true;
+      if (t1)
+        throw A.wrapException(A.RangeError$("Line " + line + " doesn't have 0 columns."));
+      return result;
+    }
+  };
+  A.FileLocation.prototype = {
+    get$sourceUrl() {
+      return this.file.url;
+    },
+    get$line() {
+      return this.file.getLine$1(this.offset);
+    },
+    get$column() {
+      return this.file.getColumn$1(this.offset);
+    },
+    get$offset(receiver) {
+      return this.offset;
+    }
+  };
+  A._FileSpan.prototype = {
+    get$sourceUrl() {
+      return this.file.url;
+    },
+    get$length(_) {
+      return this._end - this._file$_start;
+    },
+    get$start(_) {
+      return A.FileLocation$_(this.file, this._file$_start);
+    },
+    get$end() {
+      return A.FileLocation$_(this.file, this._end);
+    },
+    get$text(_) {
+      return A.String_String$fromCharCodes(B.NativeUint32List_methods.sublist$2(this.file._decodedChars, this._file$_start, this._end), 0, null);
+    },
+    get$context() {
+      var _this = this,
+        t1 = _this.file,
+        endOffset = _this._end,
+        endLine = t1.getLine$1(endOffset);
+      if (t1.getColumn$1(endOffset) === 0 && endLine !== 0) {
+        if (endOffset - _this._file$_start === 0)
+          return endLine === t1._lineStarts.length - 1 ? "" : A.String_String$fromCharCodes(B.NativeUint32List_methods.sublist$2(t1._decodedChars, t1.getOffset$1(endLine), t1.getOffset$1(endLine + 1)), 0, null);
+      } else
+        endOffset = endLine === t1._lineStarts.length - 1 ? t1._decodedChars.length : t1.getOffset$1(endLine + 1);
+      return A.String_String$fromCharCodes(B.NativeUint32List_methods.sublist$2(t1._decodedChars, t1.getOffset$1(t1.getLine$1(_this._file$_start)), endOffset), 0, null);
+    },
+    compareTo$1(_, other) {
+      var result;
+      type$.SourceSpan._as(other);
+      if (!(other instanceof A._FileSpan))
+        return this.super$SourceSpanMixin$compareTo(0, other);
+      result = B.JSInt_methods.compareTo$1(this._file$_start, other._file$_start);
+      return result === 0 ? B.JSInt_methods.compareTo$1(this._end, other._end) : result;
+    },
+    $eq(_, other) {
+      var _this = this;
+      if (other == null)
+        return false;
+      if (!(other instanceof A._FileSpan))
+        return _this.super$SourceSpanMixin$$eq(0, other);
+      return _this._file$_start === other._file$_start && _this._end === other._end && J.$eq$(_this.file.url, other.file.url);
+    },
+    get$hashCode(_) {
+      return A.Object_hash(this._file$_start, this._end, this.file.url, B.C_SentinelValue);
+    },
+    $isSourceSpanWithContext: 1
+  };
+  A.Highlighter.prototype = {
+    highlight$0(_) {
+      var t2, highlightsByColumn, t3, t4, i, line, lastLine, t5, t6, t7, t8, t9, t10, t11, index, primaryIdx, primary, _i, _this = this, _null = null,
+        t1 = _this._lines;
+      _this._writeFileStart$1(B.JSArray_methods.get$first(t1).url);
+      t2 = _this._maxMultilineSpans;
+      highlightsByColumn = A.List_List$filled(t2, _null, false, type$.nullable__Highlight);
+      for (t3 = _this._highlighter$_buffer, t2 = t2 !== 0, t4 = _this._primaryColor, i = 0; i < t1.length; ++i) {
+        line = t1[i];
+        if (i > 0) {
+          lastLine = t1[i - 1];
+          t5 = lastLine.url;
+          t6 = line.url;
+          if (!J.$eq$(t5, t6)) {
+            _this._writeSidebar$1$end("\u2575");
+            t3._contents += "\n";
+            _this._writeFileStart$1(t6);
+          } else if (lastLine.number + 1 !== line.number) {
+            _this._writeSidebar$1$text("...");
+            t3._contents += "\n";
+          }
+        }
+        for (t5 = line.highlights, t6 = A._arrayInstanceType(t5)._eval$1("ReversedListIterable<1>"), t7 = new A.ReversedListIterable(t5, t6), t7 = new A.ListIterator(t7, t7.get$length(0), t6._eval$1("ListIterator<ListIterable.E>")), t6 = t6._eval$1("ListIterable.E"), t8 = line.number, t9 = line.text; t7.moveNext$0();) {
+          t10 = t7.__internal$_current;
+          if (t10 == null)
+            t10 = t6._as(t10);
+          t11 = t10.span;
+          if (t11.get$start(t11).get$line() !== t11.get$end().get$line() && t11.get$start(t11).get$line() === t8 && _this._isOnlyWhitespace$1(B.JSString_methods.substring$2(t9, 0, t11.get$start(t11).get$column()))) {
+            index = B.JSArray_methods.indexOf$1(highlightsByColumn, _null);
+            if (index < 0)
+              A.throwExpression(A.ArgumentError$(A.S(highlightsByColumn) + " contains no null elements.", _null));
+            B.JSArray_methods.$indexSet(highlightsByColumn, index, t10);
+          }
+        }
+        _this._writeSidebar$1$line(t8);
+        t3._contents += " ";
+        _this._writeMultilineHighlights$2(line, highlightsByColumn);
+        if (t2)
+          t3._contents += " ";
+        primaryIdx = B.JSArray_methods.indexWhere$1(t5, new A.Highlighter_highlight_closure());
+        if (primaryIdx === -1)
+          primary = _null;
+        else {
+          if (!(primaryIdx >= 0 && primaryIdx < t5.length))
+            return A.ioore(t5, primaryIdx);
+          primary = t5[primaryIdx];
+        }
+        t6 = primary != null;
+        if (t6) {
+          t7 = primary.span;
+          t10 = t7.get$start(t7).get$line() === t8 ? t7.get$start(t7).get$column() : 0;
+          _this._writeHighlightedText$4$color(t9, t10, t7.get$end().get$line() === t8 ? t7.get$end().get$column() : t9.length, t4);
+        } else
+          _this._writeText$1(t9);
+        t3._contents += "\n";
+        if (t6)
+          _this._writeIndicator$3(line, primary, highlightsByColumn);
+        for (t6 = t5.length, _i = 0; _i < t6; ++_i) {
+          t5[_i].toString;
+          continue;
+        }
+      }
+      _this._writeSidebar$1$end("\u2575");
+      t1 = t3._contents;
+      return t1.charCodeAt(0) == 0 ? t1 : t1;
+    },
+    _writeFileStart$1(url) {
+      var t1, t2, _this = this;
+      if (!_this._multipleFiles || !type$.Uri._is(url))
+        _this._writeSidebar$1$end("\u2577");
+      else {
+        _this._writeSidebar$1$end("\u250c");
+        _this._colorize$1$2$color(new A.Highlighter__writeFileStart_closure(_this), "\x1b[34m", type$.void);
+        t1 = _this._highlighter$_buffer;
+        t2 = " " + $.$get$context().prettyUri$1(url);
+        t1._contents += t2;
+      }
+      _this._highlighter$_buffer._contents += "\n";
+    },
+    _writeMultilineHighlights$3$current(line, highlightsByColumn, current) {
+      var t1, currentColor, t2, t3, t4, t5, t6, foundCurrent, _i, highlight, t7, startLine, t8, endLine, _this = this, _box_0 = {};
+      type$.List_nullable__Highlight._as(highlightsByColumn);
+      _box_0.openedOnThisLine = false;
+      _box_0.openedOnThisLineColor = null;
+      t1 = current == null;
+      if (t1)
+        currentColor = null;
+      else
+        currentColor = _this._primaryColor;
+      for (t2 = highlightsByColumn.length, t3 = type$.Null, t4 = _this._primaryColor, t1 = !t1, t5 = _this._highlighter$_buffer, t6 = type$.void, foundCurrent = false, _i = 0; _i < t2; ++_i) {
+        highlight = highlightsByColumn[_i];
+        t7 = highlight == null;
+        if (t7)
+          startLine = null;
+        else {
+          t8 = highlight.span;
+          startLine = t8.get$start(t8).get$line();
+        }
+        endLine = t7 ? null : highlight.span.get$end().get$line();
+        if (t1 && highlight === current) {
+          _this._colorize$1$2$color(new A.Highlighter__writeMultilineHighlights_closure(_this, startLine, line), currentColor, t3);
+          foundCurrent = true;
+        } else if (foundCurrent)
+          _this._colorize$1$2$color(new A.Highlighter__writeMultilineHighlights_closure0(_this, highlight), currentColor, t3);
+        else if (t7)
+          if (_box_0.openedOnThisLine)
+            _this._colorize$1$2$color(new A.Highlighter__writeMultilineHighlights_closure1(_this), _box_0.openedOnThisLineColor, t6);
+          else
+            t5._contents += " ";
+        else
+          _this._colorize$1$2$color(new A.Highlighter__writeMultilineHighlights_closure2(_box_0, _this, current, startLine, line, highlight, endLine), t4, t3);
+      }
+    },
+    _writeMultilineHighlights$2(line, highlightsByColumn) {
+      return this._writeMultilineHighlights$3$current(line, highlightsByColumn, null);
+    },
+    _writeHighlightedText$4$color(text, startColumn, endColumn, color) {
+      var _this = this;
+      _this._writeText$1(B.JSString_methods.substring$2(text, 0, startColumn));
+      _this._colorize$1$2$color(new A.Highlighter__writeHighlightedText_closure(_this, text, startColumn, endColumn), color, type$.void);
+      _this._writeText$1(B.JSString_methods.substring$2(text, endColumn, text.length));
+    },
+    _writeIndicator$3(line, highlight, highlightsByColumn) {
+      var color, t1, t2, _this = this;
+      type$.List_nullable__Highlight._as(highlightsByColumn);
+      color = _this._primaryColor;
+      t1 = highlight.span;
+      if (t1.get$start(t1).get$line() === t1.get$end().get$line()) {
+        _this._writeSidebar$0();
+        t1 = _this._highlighter$_buffer;
+        t1._contents += " ";
+        _this._writeMultilineHighlights$3$current(line, highlightsByColumn, highlight);
+        if (highlightsByColumn.length !== 0)
+          t1._contents += " ";
+        _this._writeLabel$3(highlight, highlightsByColumn, _this._colorize$1$2$color(new A.Highlighter__writeIndicator_closure(_this, line, highlight), color, type$.int));
+      } else {
+        t2 = line.number;
+        if (t1.get$start(t1).get$line() === t2) {
+          if (B.JSArray_methods.contains$1(highlightsByColumn, highlight))
+            return;
+          A.replaceFirstNull(highlightsByColumn, highlight, type$._Highlight);
+          _this._writeSidebar$0();
+          t1 = _this._highlighter$_buffer;
+          t1._contents += " ";
+          _this._writeMultilineHighlights$3$current(line, highlightsByColumn, highlight);
+          _this._colorize$1$2$color(new A.Highlighter__writeIndicator_closure0(_this, line, highlight), color, type$.void);
+          t1._contents += "\n";
+        } else if (t1.get$end().get$line() === t2) {
+          t1 = t1.get$end().get$column();
+          if (t1 === line.text.length) {
+            A.replaceWithNull(highlightsByColumn, highlight, type$._Highlight);
+            return;
+          }
+          _this._writeSidebar$0();
+          _this._highlighter$_buffer._contents += " ";
+          _this._writeMultilineHighlights$3$current(line, highlightsByColumn, highlight);
+          _this._writeLabel$3(highlight, highlightsByColumn, _this._colorize$1$2$color(new A.Highlighter__writeIndicator_closure1(_this, false, line, highlight), color, type$.int));
+          A.replaceWithNull(highlightsByColumn, highlight, type$._Highlight);
+        }
+      }
+    },
+    _writeArrow$3$beginning(line, column, beginning) {
+      var t1 = beginning ? 0 : 1,
+        t2 = this._highlighter$_buffer;
+      t1 = B.JSString_methods.$mul("\u2500", 1 + column + this._countTabs$1(B.JSString_methods.substring$2(line.text, 0, column + t1)) * 3);
+      t1 = t2._contents += t1;
+      t2._contents = t1 + "^";
+    },
+    _writeArrow$2(line, column) {
+      return this._writeArrow$3$beginning(line, column, true);
+    },
+    _writeLabel$3(highlight, highlightsByColumn, underlineLength) {
+      type$.List_nullable__Highlight._as(highlightsByColumn);
+      this._highlighter$_buffer._contents += "\n";
+      return;
+    },
+    _writeText$1(text) {
+      var t1, t2, t3, t4;
+      for (t1 = new A.CodeUnits(text), t2 = type$.CodeUnits, t1 = new A.ListIterator(t1, t1.get$length(0), t2._eval$1("ListIterator<ListBase.E>")), t3 = this._highlighter$_buffer, t2 = t2._eval$1("ListBase.E"); t1.moveNext$0();) {
+        t4 = t1.__internal$_current;
+        if (t4 == null)
+          t4 = t2._as(t4);
+        if (t4 === 9) {
+          t4 = B.JSString_methods.$mul(" ", 4);
+          t3._contents += t4;
+        } else {
+          t4 = A.Primitives_stringFromCharCode(t4);
+          t3._contents += t4;
+        }
+      }
+    },
+    _writeSidebar$3$end$line$text(end, line, text) {
+      var t1 = {};
+      t1.text = text;
+      if (line != null)
+        t1.text = B.JSInt_methods.toString$0(line + 1);
+      this._colorize$1$2$color(new A.Highlighter__writeSidebar_closure(t1, this, end), "\x1b[34m", type$.Null);
+    },
+    _writeSidebar$1$end(end) {
+      return this._writeSidebar$3$end$line$text(end, null, null);
+    },
+    _writeSidebar$1$text(text) {
+      return this._writeSidebar$3$end$line$text(null, null, text);
+    },
+    _writeSidebar$1$line(line) {
+      return this._writeSidebar$3$end$line$text(null, line, null);
+    },
+    _writeSidebar$0() {
+      return this._writeSidebar$3$end$line$text(null, null, null);
+    },
+    _countTabs$1(text) {
+      var t1, t2, count, t3;
+      for (t1 = new A.CodeUnits(text), t2 = type$.CodeUnits, t1 = new A.ListIterator(t1, t1.get$length(0), t2._eval$1("ListIterator<ListBase.E>")), t2 = t2._eval$1("ListBase.E"), count = 0; t1.moveNext$0();) {
+        t3 = t1.__internal$_current;
+        if ((t3 == null ? t2._as(t3) : t3) === 9)
+          ++count;
+      }
+      return count;
+    },
+    _isOnlyWhitespace$1(text) {
+      var t1, t2, t3;
+      for (t1 = new A.CodeUnits(text), t2 = type$.CodeUnits, t1 = new A.ListIterator(t1, t1.get$length(0), t2._eval$1("ListIterator<ListBase.E>")), t2 = t2._eval$1("ListBase.E"); t1.moveNext$0();) {
+        t3 = t1.__internal$_current;
+        if (t3 == null)
+          t3 = t2._as(t3);
+        if (t3 !== 32 && t3 !== 9)
+          return false;
+      }
+      return true;
+    },
+    _colorize$1$2$color(callback, color, $T) {
+      var t1, result;
+      $T._eval$1("0()")._as(callback);
+      t1 = this._primaryColor != null;
+      if (t1 && color != null)
+        this._highlighter$_buffer._contents += color;
+      result = callback.call$0();
+      if (t1 && color != null)
+        this._highlighter$_buffer._contents += "\x1b[0m";
+      return result;
+    }
+  };
+  A.Highlighter_closure.prototype = {
+    call$0() {
+      return this.color;
+    },
+    $signature: 74
+  };
+  A.Highlighter$__closure.prototype = {
+    call$1(line) {
+      var t1 = type$._Line._as(line).highlights,
+        t2 = A._arrayInstanceType(t1);
+      return new A.WhereIterable(t1, t2._eval$1("bool(1)")._as(new A.Highlighter$___closure()), t2._eval$1("WhereIterable<1>")).get$length(0);
+    },
+    $signature: 75
+  };
+  A.Highlighter$___closure.prototype = {
+    call$1(highlight) {
+      var t1 = type$._Highlight._as(highlight).span;
+      return t1.get$start(t1).get$line() !== t1.get$end().get$line();
+    },
+    $signature: 15
+  };
+  A.Highlighter$__closure0.prototype = {
+    call$1(line) {
+      return type$._Line._as(line).url;
+    },
+    $signature: 77
+  };
+  A.Highlighter__collateLines_closure.prototype = {
+    call$1(highlight) {
+      var t1 = type$._Highlight._as(highlight).span.get$sourceUrl();
+      return t1 == null ? new A.Object() : t1;
+    },
+    $signature: 78
+  };
+  A.Highlighter__collateLines_closure0.prototype = {
+    call$2(highlight1, highlight2) {
+      var t1 = type$._Highlight;
+      return t1._as(highlight1).span.compareTo$1(0, t1._as(highlight2).span);
+    },
+    $signature: 79
+  };
+  A.Highlighter__collateLines_closure1.prototype = {
+    call$1(entry) {
+      var url, highlightsForFile, lines, t1, t2, t3, t4, context, t5, linesBeforeSpan, lineNumber, _i, line, activeHighlights, highlightIndex, oldHighlightLength, t6, t7;
+      type$.MapEntry_of_Object_and_List__Highlight._as(entry);
+      url = entry.key;
+      highlightsForFile = entry.value;
+      lines = A._setArrayType([], type$.JSArray__Line);
+      for (t1 = J.getInterceptor$ax(highlightsForFile), t2 = t1.get$iterator(highlightsForFile), t3 = type$.JSArray__Highlight; t2.moveNext$0();) {
+        t4 = t2.get$current().span;
+        context = t4.get$context();
+        t5 = A.findLineStart(context, t4.get$text(t4), t4.get$start(t4).get$column());
+        t5.toString;
+        linesBeforeSpan = B.JSString_methods.allMatches$1("\n", B.JSString_methods.substring$2(context, 0, t5)).get$length(0);
+        lineNumber = t4.get$start(t4).get$line() - linesBeforeSpan;
+        for (t4 = context.split("\n"), t5 = t4.length, _i = 0; _i < t5; ++_i) {
+          line = t4[_i];
+          if (lines.length === 0 || lineNumber > B.JSArray_methods.get$last(lines).number)
+            B.JSArray_methods.add$1(lines, new A._Line(line, lineNumber, url, A._setArrayType([], t3)));
+          ++lineNumber;
+        }
+      }
+      activeHighlights = A._setArrayType([], t3);
+      for (t2 = lines.length, t3 = type$.bool_Function__Highlight, highlightIndex = 0, _i = 0; _i < lines.length; lines.length === t2 || (0, A.throwConcurrentModificationError)(lines), ++_i) {
+        line = lines[_i];
+        t4 = t3._as(new A.Highlighter__collateLines__closure(line));
+        if (!!activeHighlights.fixed$length)
+          A.throwExpression(A.UnsupportedError$("removeWhere"));
+        B.JSArray_methods._removeWhere$2(activeHighlights, t4, true);
+        oldHighlightLength = activeHighlights.length;
+        for (t4 = t1.skip$1(highlightsForFile, highlightIndex), t5 = t4.$ti, t4 = new A.ListIterator(t4, t4.get$length(0), t5._eval$1("ListIterator<ListIterable.E>")), t5 = t5._eval$1("ListIterable.E"); t4.moveNext$0();) {
+          t6 = t4.__internal$_current;
+          if (t6 == null)
+            t6 = t5._as(t6);
+          t7 = t6.span;
+          if (t7.get$start(t7).get$line() > line.number)
+            break;
+          B.JSArray_methods.add$1(activeHighlights, t6);
+        }
+        highlightIndex += activeHighlights.length - oldHighlightLength;
+        B.JSArray_methods.addAll$1(line.highlights, activeHighlights);
+      }
+      return lines;
+    },
+    $signature: 80
+  };
+  A.Highlighter__collateLines__closure.prototype = {
+    call$1(highlight) {
+      return type$._Highlight._as(highlight).span.get$end().get$line() < this.line.number;
+    },
+    $signature: 15
+  };
+  A.Highlighter_highlight_closure.prototype = {
+    call$1(highlight) {
+      type$._Highlight._as(highlight);
+      return true;
+    },
+    $signature: 15
+  };
+  A.Highlighter__writeFileStart_closure.prototype = {
+    call$0() {
+      var t1 = this.$this._highlighter$_buffer,
+        t2 = B.JSString_methods.$mul("\u2500", 2) + ">";
+      t1._contents += t2;
+      return null;
     },
     $signature: 0
   };
-  A.main_closure0.prototype = {
-    call$1($event) {
-      var t1;
-      type$.MouseEvent._as($event);
-      t1 = document.querySelector("#feedbackPopup").style;
-      t1.display = "none";
+  A.Highlighter__writeMultilineHighlights_closure.prototype = {
+    call$0() {
+      var t1 = this.$this._highlighter$_buffer,
+        t2 = this.startLine === this.line.number ? "\u250c" : "\u2514";
+      t1._contents += t2;
+    },
+    $signature: 2
+  };
+  A.Highlighter__writeMultilineHighlights_closure0.prototype = {
+    call$0() {
+      var t1 = this.$this._highlighter$_buffer,
+        t2 = this.highlight == null ? "\u2500" : "\u253c";
+      t1._contents += t2;
+    },
+    $signature: 2
+  };
+  A.Highlighter__writeMultilineHighlights_closure1.prototype = {
+    call$0() {
+      this.$this._highlighter$_buffer._contents += "\u2500";
+      return null;
     },
     $signature: 0
   };
-  A.main_closure1.prototype = {
-    call$1($event) {
-      var t1;
-      type$.MouseEvent._as($event);
-      t1 = type$.JSArray_Map_String_dynamic;
-      new A.CanvasController(A._setArrayType([], type$.JSArray_Shape), A._setArrayType([], type$.JSArray_DivElement), A._setArrayType([], t1), new A.Reporter(A._setArrayType([], t1), A._setArrayType([], type$.JSArray_ImageElement))).showCanvas$0();
-      t1 = document.querySelector("#feedbackPopup").style;
-      t1.display = "none";
+  A.Highlighter__writeMultilineHighlights_closure2.prototype = {
+    call$0() {
+      var t2, t3, _this = this,
+        t1 = _this._box_0,
+        vertical = t1.openedOnThisLine ? "\u253c" : "\u2502";
+      if (_this.current != null)
+        _this.$this._highlighter$_buffer._contents += vertical;
+      else {
+        t2 = _this.line;
+        t3 = t2.number;
+        if (_this.startLine === t3) {
+          t2 = _this.$this;
+          t2._colorize$1$2$color(new A.Highlighter__writeMultilineHighlights__closure(t1, t2), t1.openedOnThisLineColor, type$.Null);
+          t1.openedOnThisLine = true;
+          if (t1.openedOnThisLineColor == null)
+            t1.openedOnThisLineColor = t2._primaryColor;
+        } else {
+          t2 = _this.endLine === t3 && _this.highlight.span.get$end().get$column() === t2.text.length;
+          t3 = _this.$this;
+          if (t2)
+            t3._highlighter$_buffer._contents += "\u2514";
+          else
+            t3._colorize$1$2$color(new A.Highlighter__writeMultilineHighlights__closure0(t3, vertical), t1.openedOnThisLineColor, type$.Null);
+        }
+      }
+    },
+    $signature: 2
+  };
+  A.Highlighter__writeMultilineHighlights__closure.prototype = {
+    call$0() {
+      var t1 = this.$this._highlighter$_buffer,
+        t2 = this._box_0.openedOnThisLine ? "\u252c" : "\u250c";
+      t1._contents += t2;
+    },
+    $signature: 2
+  };
+  A.Highlighter__writeMultilineHighlights__closure0.prototype = {
+    call$0() {
+      this.$this._highlighter$_buffer._contents += this.vertical;
+    },
+    $signature: 2
+  };
+  A.Highlighter__writeHighlightedText_closure.prototype = {
+    call$0() {
+      var _this = this;
+      return _this.$this._writeText$1(B.JSString_methods.substring$2(_this.text, _this.startColumn, _this.endColumn));
     },
     $signature: 0
   };
-  A.Shape.prototype = {};
+  A.Highlighter__writeIndicator_closure.prototype = {
+    call$0() {
+      var tabsBefore, tabsInside,
+        t1 = this.$this,
+        t2 = t1._highlighter$_buffer,
+        t3 = t2._contents,
+        t4 = this.highlight.span,
+        startColumn = t4.get$start(t4).get$column(),
+        endColumn = t4.get$end().get$column();
+      t4 = this.line.text;
+      tabsBefore = t1._countTabs$1(B.JSString_methods.substring$2(t4, 0, startColumn));
+      tabsInside = t1._countTabs$1(B.JSString_methods.substring$2(t4, startColumn, endColumn));
+      startColumn += tabsBefore * 3;
+      t4 = B.JSString_methods.$mul(" ", startColumn);
+      t2._contents += t4;
+      t4 = B.JSString_methods.$mul("^", Math.max(endColumn + (tabsBefore + tabsInside) * 3 - startColumn, 1));
+      t4 = t2._contents += t4;
+      return t4.length - t3.length;
+    },
+    $signature: 4
+  };
+  A.Highlighter__writeIndicator_closure0.prototype = {
+    call$0() {
+      var t1 = this.highlight.span;
+      return this.$this._writeArrow$2(this.line, t1.get$start(t1).get$column());
+    },
+    $signature: 0
+  };
+  A.Highlighter__writeIndicator_closure1.prototype = {
+    call$0() {
+      var _this = this,
+        t1 = _this.$this,
+        t2 = t1._highlighter$_buffer,
+        t3 = t2._contents;
+      if (_this.coversWholeLine) {
+        t1 = B.JSString_methods.$mul("\u2500", 3);
+        t2._contents += t1;
+      } else
+        t1._writeArrow$3$beginning(_this.line, Math.max(_this.highlight.span.get$end().get$column() - 1, 0), false);
+      return t2._contents.length - t3.length;
+    },
+    $signature: 4
+  };
+  A.Highlighter__writeSidebar_closure.prototype = {
+    call$0() {
+      var t1 = this.$this,
+        t2 = t1._highlighter$_buffer,
+        t3 = this._box_0.text;
+      if (t3 == null)
+        t3 = "";
+      t1 = B.JSString_methods.padRight$1(t3, t1._paddingBeforeSidebar);
+      t1 = t2._contents += t1;
+      t3 = this.end;
+      t2._contents = t1 + (t3 == null ? "\u2502" : t3);
+    },
+    $signature: 2
+  };
+  A._Highlight.prototype = {
+    toString$0(_) {
+      var t1 = this.span;
+      t1 = "" + "primary " + ("" + t1.get$start(t1).get$line() + ":" + t1.get$start(t1).get$column() + "-" + t1.get$end().get$line() + ":" + t1.get$end().get$column());
+      return t1.charCodeAt(0) == 0 ? t1 : t1;
+    }
+  };
+  A._Highlight_closure.prototype = {
+    call$0() {
+      var t2, t3, t4, t5,
+        t1 = this.span;
+      if (!(type$.SourceSpanWithContext._is(t1) && A.findLineStart(t1.get$context(), t1.get$text(t1), t1.get$start(t1).get$column()) != null)) {
+        t2 = t1.get$start(t1);
+        t2 = A.SourceLocation$(t2.get$offset(t2), 0, 0, t1.get$sourceUrl());
+        t3 = t1.get$end();
+        t3 = t3.get$offset(t3);
+        t4 = t1.get$sourceUrl();
+        t5 = A.countCodeUnits(t1.get$text(t1), 10);
+        t1 = A.SourceSpanWithContext$(t2, A.SourceLocation$(t3, A._Highlight__lastLineLength(t1.get$text(t1)), t5, t4), t1.get$text(t1), t1.get$text(t1));
+      }
+      return A._Highlight__normalizeEndOfLine(A._Highlight__normalizeTrailingNewline(A._Highlight__normalizeNewlines(t1)));
+    },
+    $signature: 81
+  };
+  A._Line.prototype = {
+    toString$0(_) {
+      return "" + this.number + ': "' + this.text + '" (' + B.JSArray_methods.join$1(this.highlights, ", ") + ")";
+    }
+  };
+  A.SourceLocation.prototype = {
+    distance$1(other) {
+      var t1 = this.sourceUrl;
+      if (!J.$eq$(t1, other.get$sourceUrl()))
+        throw A.wrapException(A.ArgumentError$('Source URLs "' + A.S(t1) + '" and "' + A.S(other.get$sourceUrl()) + "\" don't match.", null));
+      return Math.abs(this.offset - other.get$offset(other));
+    },
+    compareTo$1(_, other) {
+      var t1;
+      type$.SourceLocation._as(other);
+      t1 = this.sourceUrl;
+      if (!J.$eq$(t1, other.get$sourceUrl()))
+        throw A.wrapException(A.ArgumentError$('Source URLs "' + A.S(t1) + '" and "' + A.S(other.get$sourceUrl()) + "\" don't match.", null));
+      return this.offset - other.get$offset(other);
+    },
+    $eq(_, other) {
+      if (other == null)
+        return false;
+      return type$.SourceLocation._is(other) && J.$eq$(this.sourceUrl, other.get$sourceUrl()) && this.offset === other.get$offset(other);
+    },
+    get$hashCode(_) {
+      var t1 = this.sourceUrl;
+      t1 = t1 == null ? null : t1.get$hashCode(t1);
+      if (t1 == null)
+        t1 = 0;
+      return t1 + this.offset;
+    },
+    toString$0(_) {
+      var _this = this,
+        t1 = A.getRuntimeTypeOfDartObject(_this).toString$0(0),
+        source = _this.sourceUrl;
+      return "<" + t1 + ": " + _this.offset + " " + (A.S(source == null ? "unknown source" : source) + ":" + (_this.line + 1) + ":" + (_this.column + 1)) + ">";
+    },
+    get$sourceUrl() {
+      return this.sourceUrl;
+    },
+    get$offset(receiver) {
+      return this.offset;
+    },
+    get$line() {
+      return this.line;
+    },
+    get$column() {
+      return this.column;
+    }
+  };
+  A.SourceLocationMixin.prototype = {
+    distance$1(other) {
+      if (!J.$eq$(this.file.url, other.get$sourceUrl()))
+        throw A.wrapException(A.ArgumentError$('Source URLs "' + A.S(this.get$sourceUrl()) + '" and "' + A.S(other.get$sourceUrl()) + "\" don't match.", null));
+      return Math.abs(this.offset - other.get$offset(other));
+    },
+    compareTo$1(_, other) {
+      type$.SourceLocation._as(other);
+      if (!J.$eq$(this.file.url, other.get$sourceUrl()))
+        throw A.wrapException(A.ArgumentError$('Source URLs "' + A.S(this.get$sourceUrl()) + '" and "' + A.S(other.get$sourceUrl()) + "\" don't match.", null));
+      return this.offset - other.get$offset(other);
+    },
+    $eq(_, other) {
+      if (other == null)
+        return false;
+      return type$.SourceLocation._is(other) && J.$eq$(this.file.url, other.get$sourceUrl()) && this.offset === other.get$offset(other);
+    },
+    get$hashCode(_) {
+      var t1 = this.file.url;
+      t1 = t1 == null ? null : t1.get$hashCode(t1);
+      if (t1 == null)
+        t1 = 0;
+      return t1 + this.offset;
+    },
+    toString$0(_) {
+      var t1 = A.getRuntimeTypeOfDartObject(this).toString$0(0),
+        t2 = this.offset,
+        t3 = this.file,
+        source = t3.url;
+      return "<" + t1 + ": " + t2 + " " + (A.S(source == null ? "unknown source" : source) + ":" + (t3.getLine$1(t2) + 1) + ":" + (t3.getColumn$1(t2) + 1)) + ">";
+    },
+    $isSourceLocation: 1
+  };
+  A.SourceSpanBase.prototype = {
+    SourceSpanBase$3(start, end, text) {
+      var t3,
+        t1 = this.end,
+        t2 = this.start;
+      if (!J.$eq$(t1.get$sourceUrl(), t2.get$sourceUrl()))
+        throw A.wrapException(A.ArgumentError$('Source URLs "' + A.S(t2.get$sourceUrl()) + '" and  "' + A.S(t1.get$sourceUrl()) + "\" don't match.", null));
+      else if (t1.get$offset(t1) < t2.get$offset(t2))
+        throw A.wrapException(A.ArgumentError$("End " + t1.toString$0(0) + " must come after start " + t2.toString$0(0) + ".", null));
+      else {
+        t3 = this.text;
+        if (t3.length !== t2.distance$1(t1))
+          throw A.wrapException(A.ArgumentError$('Text "' + t3 + '" must be ' + t2.distance$1(t1) + " characters long.", null));
+      }
+    },
+    get$start(receiver) {
+      return this.start;
+    },
+    get$end() {
+      return this.end;
+    },
+    get$text(receiver) {
+      return this.text;
+    }
+  };
+  A.SourceSpanException.prototype = {
+    get$message(_) {
+      return this._span_exception$_message;
+    },
+    toString$0(_) {
+      var t3, t4, highlight,
+        t1 = this._span,
+        t2 = "" + ("line " + (t1.get$start(0).get$line() + 1) + ", column " + (t1.get$start(0).get$column() + 1));
+      if (t1.get$sourceUrl() != null) {
+        t3 = t1.get$sourceUrl();
+        t4 = $.$get$context();
+        t3.toString;
+        t3 = t2 + (" of " + t4.prettyUri$1(t3));
+        t2 = t3;
+      }
+      t2 += ": " + this._span_exception$_message;
+      highlight = t1.highlight$1$color(0, null);
+      t1 = highlight.length !== 0 ? t2 + "\n" + highlight : t2;
+      return "Error on " + (t1.charCodeAt(0) == 0 ? t1 : t1);
+    },
+    $isException: 1
+  };
+  A.SourceSpanFormatException.prototype = {
+    get$offset(_) {
+      var t1 = this._span;
+      t1 = A.FileLocation$_(t1.file, t1._file$_start);
+      return t1.offset;
+    },
+    $isFormatException: 1,
+    get$source(receiver) {
+      return this.source;
+    }
+  };
+  A.SourceSpanMixin.prototype = {
+    get$sourceUrl() {
+      return this.get$start(this).get$sourceUrl();
+    },
+    get$length(_) {
+      var t2,
+        t1 = this.get$end();
+      t1 = t1.get$offset(t1);
+      t2 = this.get$start(this);
+      return t1 - t2.get$offset(t2);
+    },
+    compareTo$1(_, other) {
+      var result;
+      type$.SourceSpan._as(other);
+      result = this.get$start(this).compareTo$1(0, other.get$start(other));
+      return result === 0 ? this.get$end().compareTo$1(0, other.get$end()) : result;
+    },
+    highlight$1$color(_, color) {
+      var _this = this;
+      if (!type$.SourceSpanWithContext._is(_this) && _this.get$length(_this) === 0)
+        return "";
+      return A.Highlighter$(_this, color).highlight$0(0);
+    },
+    $eq(_, other) {
+      if (other == null)
+        return false;
+      return other instanceof A.SourceSpanMixin && this.get$start(this).$eq(0, other.get$start(other)) && this.get$end().$eq(0, other.get$end());
+    },
+    get$hashCode(_) {
+      return A.Object_hash(this.get$start(this), this.get$end(), B.C_SentinelValue, B.C_SentinelValue);
+    },
+    toString$0(_) {
+      var _this = this;
+      return "<" + A.getRuntimeTypeOfDartObject(_this).toString$0(0) + ": from " + _this.get$start(_this).toString$0(0) + " to " + _this.get$end().toString$0(0) + ' "' + _this.get$text(_this) + '">';
+    },
+    $isSourceSpan: 1
+  };
+  A.SourceSpanWithContext.prototype = {
+    get$context() {
+      return this._context;
+    }
+  };
+  A.StringScannerException.prototype = {
+    get$source(_) {
+      return A._asString(this.source);
+    }
+  };
+  A.StringScanner.prototype = {
+    get$lastMatch() {
+      var _this = this;
+      if (_this._string_scanner$_position !== _this._lastMatchPosition)
+        _this._lastMatch = null;
+      return _this._lastMatch;
+    },
+    scan$1(pattern) {
+      var success, _this = this,
+        t1 = _this._lastMatch = J.matchAsPrefix$2$s(pattern, _this.string, _this._string_scanner$_position);
+      _this._lastMatchPosition = _this._string_scanner$_position;
+      success = t1 != null;
+      if (success)
+        _this._lastMatchPosition = _this._string_scanner$_position = t1.get$end();
+      return success;
+    },
+    expect$2$name(pattern, $name) {
+      var t1;
+      if (this.scan$1(pattern))
+        return;
+      if ($name == null)
+        if (pattern instanceof A.JSSyntaxRegExp)
+          $name = "/" + pattern.pattern + "/";
+        else {
+          t1 = J.toString$0$(pattern);
+          t1 = A.stringReplaceAllUnchecked(t1, "\\", "\\\\");
+          $name = '"' + A.stringReplaceAllUnchecked(t1, '"', '\\"') + '"';
+        }
+      this._fail$1($name);
+    },
+    expect$1(pattern) {
+      return this.expect$2$name(pattern, null);
+    },
+    expectDone$0() {
+      if (this._string_scanner$_position === this.string.length)
+        return;
+      this._fail$1("no more input");
+    },
+    error$3$length$position(_, message, $length, position) {
+      var t2, t3, t4, t5, sourceFile, end,
+        t1 = this.string;
+      if (position < 0)
+        A.throwExpression(A.RangeError$("position must be greater than or equal to 0."));
+      else if (position > t1.length)
+        A.throwExpression(A.RangeError$("position must be less than or equal to the string length."));
+      t2 = position + $length > t1.length;
+      if (t2)
+        A.throwExpression(A.RangeError$("position plus length must not go beyond the end of the string."));
+      t2 = this.sourceUrl;
+      t3 = new A.CodeUnits(t1);
+      t4 = A._setArrayType([0], type$.JSArray_int);
+      t5 = new Uint32Array(A._ensureNativeList(t3.toList$0(t3)));
+      sourceFile = new A.SourceFile(t2, t4, t5);
+      sourceFile.SourceFile$decoded$2$url(t3, t2);
+      end = position + $length;
+      if (end > t5.length)
+        A.throwExpression(A.RangeError$("End " + end + string$._must_ + sourceFile.get$length(0) + "."));
+      else if (position < 0)
+        A.throwExpression(A.RangeError$("Start may not be negative, was " + position + "."));
+      throw A.wrapException(new A.StringScannerException(t1, message, new A._FileSpan(sourceFile, position, end)));
+    },
+    _fail$1($name) {
+      this.error$3$length$position(0, "expected " + $name + ".", 0, this._string_scanner$_position);
+    }
+  };
+  A.AuthController.prototype = {
+    fetchToken$1(code) {
+      var $async$goto = 0,
+        $async$completer = A._makeAsyncAwaitCompleter(type$.void),
+        $async$handler = 1, $async$currentError, $async$self = this, response, result, e, options, exception, t1, params, $async$exception;
+      var $async$fetchToken$1 = A._wrapJsFunctionForAsync(function($async$errorCode, $async$result) {
+        if ($async$errorCode === 1) {
+          $async$currentError = $async$result;
+          $async$goto = $async$handler;
+        }
+        while (true)
+          switch ($async$goto) {
+            case 0:
+              // Function start
+              t1 = type$.String;
+              params = A.LinkedHashMap_LinkedHashMap$_literal(["grant_type", "authorization_code", "client_id", $async$self.clientId, "client_secret", $async$self.clientSecret, "code", A._Uri__uriDecode(code, 0, code.length, B.C_Utf8Codec, false), "redirect_uri", $async$self.redirectUri], t1, t1);
+              $async$handler = 3;
+              t1 = new A.FormData(A._setArrayType([], type$.JSArray_MapEntry_String_String), A._setArrayType([], type$.JSArray_MapEntry_String_MultipartFile));
+              t1._init$2$fromMap$listFormat(params, B.ListFormat_4);
+              options = A.Options$("application/x-www-form-urlencoded");
+              options.method = "POST";
+              $async$goto = 6;
+              return A._asyncAwait($async$self._dio.request$1$7$cancelToken$data$onReceiveProgress$onSendProgress$options$queryParameters(0, "https://cors-anywhere.herokuapp.com/https://app.asana.com/-/oauth_token", null, t1, null, null, options, null, type$.dynamic), $async$fetchToken$1);
+            case 6:
+              // returning from await.
+              response = $async$result;
+              result = response.data;
+              $async$self.accessToken = A._asStringQ(J.$index$asx(result, "access_token"));
+              A._asStringQ(J.$index$asx(result, "refresh_token"));
+              A._asIntQ(J.$index$asx(result, "expires_in"));
+              $async$handler = 1;
+              // goto after finally
+              $async$goto = 5;
+              break;
+            case 3:
+              // catch
+              $async$handler = 2;
+              $async$exception = $async$currentError;
+              e = A.unwrapException($async$exception);
+              t1 = A.Exception_Exception("Error fetching token: " + A.S(e));
+              throw A.wrapException(t1);
+              // goto after finally
+              $async$goto = 5;
+              break;
+            case 2:
+              // uncaught
+              // goto rethrow
+              $async$goto = 1;
+              break;
+            case 5:
+              // after finally
+              // implicit return
+              return A._asyncReturn(null, $async$completer);
+            case 1:
+              // rethrow
+              return A._asyncRethrow($async$currentError, $async$completer);
+          }
+      });
+      return A._asyncStartSync($async$fetchToken$1, $async$completer);
+    }
+  };
   A.CanvasController.prototype = {
     showCanvas$0() {
       var _this = this,
         t1 = window.innerWidth,
         t2 = document,
-        t3 = t2.createElement("canvas");
+        t3 = t2.documentElement.scrollHeight;
       t3.toString;
-      if (t1 != null)
-        B.CanvasElement_methods.set$width(t3, t1);
-      B.CanvasElement_methods.set$height(t3, 10000);
-      t3.id = "feedbackCanvas";
-      t1 = t3.style;
-      t1.position = "absolute";
-      t1 = t3.style;
-      t1.top = "0";
-      t1 = t3.style;
-      t1.left = "0";
-      t1 = t3.style;
-      t1.zIndex = "9998";
-      _this.canvas = t3;
-      t1 = t3.getContext("2d");
+      t1 = A.CanvasElement_CanvasElement(B.JSNumber_methods.round$0(t3), t1);
+      t1.id = "feedbackCanvas";
+      t3 = t1.style;
+      t3.position = "absolute";
+      t3 = t1.style;
+      t3.top = "0";
+      t3 = t1.style;
+      t3.left = "0";
+      t3 = t1.style;
+      t3.zIndex = "9998";
+      _this.canvas = t1;
+      t1 = t1.getContext("2d");
       t1.toString;
       _this.context = t1;
-      t1 = t2.body;
-      t1.toString;
-      t3 = _this.canvas;
-      t3.toString;
-      t1.appendChild(t3).toString;
-      t3 = t2.createElement("div");
-      t3.id = "canvasToolbar";
-      B.DivElement_methods.setInnerHtml$1(t3, '      <button id="drawRect"><i class="bi bi-square"></i></button>\n      <button id="drawArrow"><i class="bi bi-arrow-right"></i></button>\n      <button id="pinButton"><i class="bi bi-crosshair"></i></button>\n      <button id="reportButton"><i class="bi bi-file-earmark-text"></i> Report</button>\n    ');
-      t1 = t3.style;
-      t1.position = "fixed";
-      t1 = t3.style;
-      t1.top = "10px";
-      t1 = t3.style;
-      t1.left = "50%";
-      t1 = t3.style;
-      t1.toString;
-      B.CssStyleDeclaration_methods._setPropertyHelper$3(t1, B.CssStyleDeclaration_methods._browserPropertyName$1(t1, "transform"), "translateX(-50%)", "");
-      t1 = t3.style;
-      t1.backgroundColor = "white";
-      t1 = t3.style;
-      t1.padding = "10px";
-      t1 = t3.style;
-      t1.toString;
-      B.CssStyleDeclaration_methods._setPropertyHelper$3(t1, B.CssStyleDeclaration_methods._browserPropertyName$1(t1, "border-radius"), "5px", "");
-      t1 = t3.style;
-      t1.toString;
-      B.CssStyleDeclaration_methods._setPropertyHelper$3(t1, B.CssStyleDeclaration_methods._browserPropertyName$1(t1, "box-shadow"), "0px 0px 10px rgba(0, 0, 0, 0.1)", "");
-      t1 = t3.style;
-      t1.zIndex = "9999";
-      _this.toolbar = t3;
-      t2.body.appendChild(t3).toString;
-      t1 = t2.querySelector("#drawRect");
-      t1.toString;
-      t1 = J.get$onClick$x(t1);
-      t3 = t1.$ti;
-      A._EventStreamSubscription$(t1._target, t1._eventType, t3._eval$1("~(1)?")._as(new A.CanvasController_showCanvas_closure(_this)), false, t3._precomputed1);
-      t3 = t2.querySelector("#drawArrow");
-      t3.toString;
-      t3 = J.get$onClick$x(t3);
-      t1 = t3.$ti;
-      A._EventStreamSubscription$(t3._target, t3._eventType, t1._eval$1("~(1)?")._as(new A.CanvasController_showCanvas_closure0(_this)), false, t1._precomputed1);
-      t1 = t2.querySelector("#pinButton");
-      t1.toString;
-      t1 = J.get$onClick$x(t1);
-      t3 = t1.$ti;
-      A._EventStreamSubscription$(t1._target, t1._eventType, t3._eval$1("~(1)?")._as(new A.CanvasController_showCanvas_closure1(_this)), false, t3._precomputed1);
-      t2 = t2.querySelector("#reportButton");
+      t2 = t2.body;
       t2.toString;
-      t2 = J.get$onClick$x(t2);
-      t3 = t2.$ti;
-      A._EventStreamSubscription$(t2._target, t2._eventType, t3._eval$1("~(1)?")._as(new A.CanvasController_showCanvas_closure2(_this)), false, t3._precomputed1);
-      t3 = _this.canvas;
-      t3.toString;
+      t1 = _this.canvas;
+      t1.toString;
+      t2.appendChild(t1).toString;
+      _this._toolBar.createToolBar$0();
+      t1 = _this.canvas;
+      t1.toString;
       t2 = type$._ElementEventStreamImpl_MouseEvent;
-      t1 = t2._eval$1("~(1)?");
+      t3 = t2._eval$1("~(1)?");
       t2 = t2._precomputed1;
-      A._EventStreamSubscription$(t3, "mousedown", t1._as(new A.CanvasController_showCanvas_closure3(_this)), false, t2);
-      t3 = _this.canvas;
-      t3.toString;
-      A._EventStreamSubscription$(t3, "mousemove", t1._as(new A.CanvasController_showCanvas_closure4(_this)), false, t2);
-      t3 = _this.canvas;
-      t3.toString;
-      A._EventStreamSubscription$(t3, "mouseup", t1._as(new A.CanvasController_showCanvas_closure5(_this)), false, t2);
-      t3 = _this.canvas;
-      t3.toString;
-      A._EventStreamSubscription$(t3, "click", t1._as(new A.CanvasController_showCanvas_closure6(_this)), false, t2);
+      A._EventStreamSubscription$(t1, "mousedown", t3._as(new A.CanvasController_showCanvas_closure(_this)), false, t2);
+      t1 = _this.canvas;
+      t1.toString;
+      A._EventStreamSubscription$(t1, "mousemove", t3._as(new A.CanvasController_showCanvas_closure0(_this)), false, t2);
+      t1 = _this.canvas;
+      t1.toString;
+      A._EventStreamSubscription$(t1, "mouseup", t3._as(new A.CanvasController_showCanvas_closure1(_this)), false, t2);
+      t1 = _this.canvas;
+      t1.toString;
+      A._EventStreamSubscription$(t1, "click", t3._as(new A.CanvasController_showCanvas_closure2(_this)), false, t2);
     },
     _drawShape$1(endPoint) {
       var t1, _this = this;
       type$.Point_num._as(endPoint);
       if (_this.context == null || _this.startPoint == null)
         return;
-      t1 = _this.currentTool;
+      t1 = _this._toolBar.currentTool;
       if (t1 === "rect") {
         t1 = _this.startPoint;
         t1.toString;
@@ -8675,126 +21357,116 @@
       return this._drawShapes$1$includeNewShape(true);
     },
     handleCanvasClick$1($event) {
-      var t1, t2, circleDiv, t3, t4, inputContainer, t5, input, inputRemoveButton, commentMap, _this = this,
+      var t1, t2, t3, t4, circleDiv, t5, t6, inputContainer, input, inputRemoveButton, commentMap, _this = this,
         _s13_ = "border-radius",
         _s6_ = "center",
         _s11_ = "align-items",
         _s4_ = "none";
       ++_this.circleCount;
-      t1 = document;
-      t2 = t1.createElement("div");
+      t1 = $event.pageX;
+      t1.toString;
+      t2 = $event.pageY;
       t2.toString;
-      circleDiv = t1.createElement("div");
+      t3 = document;
+      t4 = t3.createElement("div");
+      t4.toString;
+      circleDiv = t3.createElement("div");
       circleDiv.className = "circleDiv";
-      t3 = circleDiv.style;
-      t3.position = "absolute";
-      t3 = circleDiv.style;
-      t3.toString;
-      t4 = $event.clientX;
-      t4.toString;
-      $event.clientY.toString;
-      t3.left = A.S(t4 - 10) + "px";
-      t3 = circleDiv.style;
-      t3.toString;
-      $event.clientX.toString;
-      t4 = $event.clientY;
-      t4.toString;
-      t3.top = A.S(t4 - 10) + "px";
-      t3 = circleDiv.style;
-      t3.width = "20px";
-      t3 = circleDiv.style;
-      t3.height = "20px";
-      t3 = circleDiv.style;
-      t3.toString;
-      B.CssStyleDeclaration_methods._setPropertyHelper$3(t3, B.CssStyleDeclaration_methods._browserPropertyName$1(t3, _s13_), "50%", "");
-      t3 = circleDiv.style;
-      t3.backgroundColor = "rgba(98, 0, 234, 0.7)";
-      t3 = circleDiv.style;
-      t3.display = "flex";
-      t3 = circleDiv.style;
-      t3.toString;
-      B.CssStyleDeclaration_methods._setPropertyHelper$3(t3, B.CssStyleDeclaration_methods._browserPropertyName$1(t3, _s11_), _s6_, "");
-      t3 = circleDiv.style;
-      t3.toString;
-      B.CssStyleDeclaration_methods._setPropertyHelper$3(t3, B.CssStyleDeclaration_methods._browserPropertyName$1(t3, "justify-content"), _s6_, "");
-      t3 = circleDiv.style;
-      t3.zIndex = "10000";
-      t3 = t1.createElement("span");
-      t3.toString;
-      B.SpanElement_methods.set$text(t3, B.JSInt_methods.toString$0(_this.circleCount));
-      t4 = t3.style;
-      t4.color = "white";
-      t4 = t3.style;
-      t4.fontSize = "14px";
-      t4 = t3.style;
-      t4.fontFamily = "Arial";
-      t4 = t3.style;
-      t4.fontWeight = "bold";
-      inputContainer = t1.createElement("div");
+      t5 = circleDiv.style;
+      t5.position = "absolute";
+      t5 = circleDiv.style;
+      t5.left = A.S(t1 - 10) + "px";
+      t5 = circleDiv.style;
+      t2 = A.S(t2 - 10) + "px";
+      t5.top = t2;
+      t5 = circleDiv.style;
+      t5.width = "20px";
+      t5 = circleDiv.style;
+      t5.height = "20px";
+      t5 = circleDiv.style;
+      t5.toString;
+      B.CssStyleDeclaration_methods._setPropertyHelper$3(t5, B.CssStyleDeclaration_methods._browserPropertyName$1(t5, _s13_), "50%", "");
+      t5 = circleDiv.style;
+      t5.backgroundColor = "rgba(98, 0, 234, 0.7)";
+      t5 = circleDiv.style;
+      t5.display = "flex";
+      t5 = circleDiv.style;
+      t5.toString;
+      B.CssStyleDeclaration_methods._setPropertyHelper$3(t5, B.CssStyleDeclaration_methods._browserPropertyName$1(t5, _s11_), _s6_, "");
+      t5 = circleDiv.style;
+      t5.toString;
+      B.CssStyleDeclaration_methods._setPropertyHelper$3(t5, B.CssStyleDeclaration_methods._browserPropertyName$1(t5, "justify-content"), _s6_, "");
+      t5 = circleDiv.style;
+      t5.zIndex = "10000";
+      t5 = t3.createElement("span");
+      t5.toString;
+      B.SpanElement_methods.set$text(t5, B.JSInt_methods.toString$0(_this.circleCount));
+      t6 = t5.style;
+      t6.color = "white";
+      t6 = t5.style;
+      t6.fontSize = "14px";
+      t6 = t5.style;
+      t6.fontFamily = "Arial";
+      t6 = t5.style;
+      t6.fontWeight = "bold";
+      inputContainer = t3.createElement("div");
       inputContainer.className = "inputContainer";
-      t4 = inputContainer.style;
-      t4.toString;
-      t5 = $event.clientX;
-      t5.toString;
-      $event.clientY.toString;
-      t4.left = A.S(t5 + 15) + "px";
-      t4 = inputContainer.style;
-      t4.toString;
-      $event.clientX.toString;
-      t5 = $event.clientY;
-      t5.toString;
-      t4.top = A.S(t5 - 10) + "px";
-      t4 = inputContainer.style;
-      t4.zIndex = "10001";
-      t4 = inputContainer.style;
-      t4.display = "flex";
-      t4 = inputContainer.style;
-      t4.toString;
-      B.CssStyleDeclaration_methods._setPropertyHelper$3(t4, B.CssStyleDeclaration_methods._browserPropertyName$1(t4, _s11_), _s6_, "");
-      t4 = inputContainer.style;
-      t4.toString;
-      B.CssStyleDeclaration_methods._setPropertyHelper$3(t4, B.CssStyleDeclaration_methods._browserPropertyName$1(t4, "gap"), "5px", "");
-      input = t1.createElement("textarea");
+      t6 = inputContainer.style;
+      t6.left = A.S(t1 + 15) + "px";
+      t1 = inputContainer.style;
+      t1.top = t2;
+      t1 = inputContainer.style;
+      t1.zIndex = "10001";
+      t1 = inputContainer.style;
+      t1.display = "flex";
+      t1 = inputContainer.style;
+      t1.toString;
+      B.CssStyleDeclaration_methods._setPropertyHelper$3(t1, B.CssStyleDeclaration_methods._browserPropertyName$1(t1, _s11_), _s6_, "");
+      t1 = inputContainer.style;
+      t1.toString;
+      B.CssStyleDeclaration_methods._setPropertyHelper$3(t1, B.CssStyleDeclaration_methods._browserPropertyName$1(t1, "gap"), "5px", "");
+      input = t3.createElement("textarea");
       input.placeholder = "Enter feedback...";
-      t4 = input.style;
-      t4.padding = "5px";
-      t4 = input.style;
-      t4.toString;
-      B.CssStyleDeclaration_methods._setPropertyHelper$3(t4, B.CssStyleDeclaration_methods._browserPropertyName$1(t4, _s13_), "5px", "");
-      t4 = input.style;
-      t4.border = "1px solid #6200ea";
-      t4 = input.style;
-      t4.toString;
-      B.CssStyleDeclaration_methods._setPropertyHelper$3(t4, B.CssStyleDeclaration_methods._browserPropertyName$1(t4, "resize"), _s4_, "");
-      t4 = input.style;
-      t4.width = "200px";
-      t4 = input.style;
-      t4.minHeight = "60px";
-      t4 = input.style;
-      t4.overflow = "hidden";
-      inputRemoveButton = t1.createElement("button");
+      t1 = input.style;
+      t1.padding = "5px";
+      t1 = input.style;
+      t1.toString;
+      B.CssStyleDeclaration_methods._setPropertyHelper$3(t1, B.CssStyleDeclaration_methods._browserPropertyName$1(t1, _s13_), "5px", "");
+      t1 = input.style;
+      t1.border = "1px solid #6200ea";
+      t1 = input.style;
+      t1.toString;
+      B.CssStyleDeclaration_methods._setPropertyHelper$3(t1, B.CssStyleDeclaration_methods._browserPropertyName$1(t1, "resize"), _s4_, "");
+      t1 = input.style;
+      t1.width = "200px";
+      t1 = input.style;
+      t1.minHeight = "60px";
+      t1 = input.style;
+      t1.overflow = "hidden";
+      inputRemoveButton = t3.createElement("button");
       inputRemoveButton.id = "inputRemoveButton";
       B.ButtonElement_methods.setInnerHtml$1(inputRemoveButton, '<i class="bi bi-x-circle-fill"></i>');
-      t4 = inputRemoveButton.style;
-      t4.background = _s4_;
-      t4 = inputRemoveButton.style;
-      t4.border = _s4_;
-      t4 = inputRemoveButton.style;
-      t4.cursor = "pointer";
-      t4 = inputRemoveButton.style;
-      t4.color = "#6200ea";
+      t1 = inputRemoveButton.style;
+      t1.background = _s4_;
+      t1 = inputRemoveButton.style;
+      t1.border = _s4_;
+      t1 = inputRemoveButton.style;
+      t1.cursor = "pointer";
+      t1 = inputRemoveButton.style;
+      t1.color = "#6200ea";
       commentMap = A.LinkedHashMap_LinkedHashMap$_literal(["comment", "", "count", _this.circleCount], type$.String, type$.dynamic);
       B.JSArray_methods.add$1(_this.commentsList, commentMap);
-      t4 = type$._ElementEventStreamImpl_Event;
-      A._EventStreamSubscription$(input, "input", t4._eval$1("~(1)?")._as(new A.CanvasController_handleCanvasClick_closure(input, commentMap)), false, t4._precomputed1);
-      t4 = type$._ElementEventStreamImpl_MouseEvent;
-      A._EventStreamSubscription$(inputRemoveButton, "click", t4._eval$1("~(1)?")._as(new A.CanvasController_handleCanvasClick_closure0(_this, t2, commentMap)), false, t4._precomputed1);
-      circleDiv.appendChild(t3).toString;
+      B.JSArray_methods.add$1(_this._toolBar.commentsList, commentMap);
+      t1 = type$._ElementEventStreamImpl_Event;
+      A._EventStreamSubscription$(input, "input", t1._eval$1("~(1)?")._as(new A.CanvasController_handleCanvasClick_closure(input, commentMap)), false, t1._precomputed1);
+      t1 = type$._ElementEventStreamImpl_MouseEvent;
+      A._EventStreamSubscription$(inputRemoveButton, "click", t1._eval$1("~(1)?")._as(new A.CanvasController_handleCanvasClick_closure0(_this, t4, commentMap)), false, t1._precomputed1);
+      circleDiv.appendChild(t5).toString;
       inputContainer.appendChild(input).toString;
       inputContainer.appendChild(inputRemoveButton).toString;
-      t2.appendChild(circleDiv).toString;
-      t2.appendChild(inputContainer).toString;
-      t1.body.appendChild(t2).toString;
+      t4.appendChild(circleDiv).toString;
+      t4.appendChild(inputContainer).toString;
+      t3.body.appendChild(t4).toString;
     },
     set$startPoint(startPoint) {
       this.startPoint = type$.nullable_Point_num._as(startPoint);
@@ -8802,50 +21474,18 @@
   };
   A.CanvasController_showCanvas_closure.prototype = {
     call$1($event) {
-      type$.MouseEvent._as($event);
-      this.$this.currentTool = "rect";
-      $event.stopPropagation();
-    },
-    $signature: 0
-  };
-  A.CanvasController_showCanvas_closure0.prototype = {
-    call$1($event) {
-      type$.MouseEvent._as($event);
-      this.$this.currentTool = "arrow";
-      $event.stopPropagation();
-    },
-    $signature: 0
-  };
-  A.CanvasController_showCanvas_closure1.prototype = {
-    call$1($event) {
-      type$.MouseEvent._as($event);
-      this.$this.currentTool = "pin";
-    },
-    $signature: 0
-  };
-  A.CanvasController_showCanvas_closure2.prototype = {
-    call$1($event) {
-      var t1;
-      type$.MouseEvent._as($event);
-      t1 = this.$this;
-      t1._reporter.showReportPopup$1(t1.commentsList);
-    },
-    $signature: 0
-  };
-  A.CanvasController_showCanvas_closure3.prototype = {
-    call$1($event) {
       var t1, t2;
       type$.MouseEvent._as($event);
       t1 = this.$this;
-      t2 = t1.currentTool;
+      t2 = t1._toolBar.currentTool;
       if (t2 === "rect" || t2 === "arrow") {
         t1.isDrawing = true;
         t1.set$startPoint(J.get$offset$x($event));
       }
     },
-    $signature: 0
+    $signature: 1
   };
-  A.CanvasController_showCanvas_closure4.prototype = {
+  A.CanvasController_showCanvas_closure0.prototype = {
     call$1($event) {
       var t1;
       type$.MouseEvent._as($event);
@@ -8855,15 +21495,15 @@
         t1._drawShape$1(J.get$offset$x($event));
       }
     },
-    $signature: 0
+    $signature: 1
   };
-  A.CanvasController_showCanvas_closure5.prototype = {
+  A.CanvasController_showCanvas_closure1.prototype = {
     call$1($event) {
       var t1, t2, t3;
       type$.MouseEvent._as($event);
       t1 = this.$this;
       if (t1.isDrawing && t1.startPoint != null) {
-        t2 = t1.currentTool;
+        t2 = t1._toolBar.currentTool;
         t3 = t1.startPoint;
         t3.toString;
         B.JSArray_methods.add$1(t1.shapes, new A.Shape(t2, t3, J.get$offset$x($event)));
@@ -8872,19 +21512,19 @@
         t1._drawShapes$0();
       }
     },
-    $signature: 0
+    $signature: 1
   };
-  A.CanvasController_showCanvas_closure6.prototype = {
+  A.CanvasController_showCanvas_closure2.prototype = {
     call$1($event) {
       var t1;
       type$.MouseEvent._as($event);
       t1 = this.$this;
-      if (t1.currentTool === "pin") {
+      if (t1._toolBar.currentTool === "pin") {
         $event.stopPropagation();
         t1.handleCanvasClick$1($event);
       }
     },
-    $signature: 0
+    $signature: 1
   };
   A.CanvasController_handleCanvasClick_closure.prototype = {
     call$1(_) {
@@ -8902,24 +21542,54 @@
       t1.toString;
       this.commentMap.$indexSet(0, "comment", t1);
     },
-    $signature: 7
+    $signature: 8
   };
   A.CanvasController_handleCanvasClick_closure0.prototype = {
     call$1($event) {
-      var t1;
+      var t1, t2;
       type$.MouseEvent._as($event);
       t1 = this.$this;
       --t1.circleCount;
       B.DivElement_methods.remove$0(this.handleDiv);
-      B.JSArray_methods.remove$1(t1.commentsList, this.commentMap);
+      t2 = this.commentMap;
+      B.JSArray_methods.remove$1(t1.commentsList, t2);
+      B.JSArray_methods.remove$1(t1._toolBar.commentsList, t2);
     },
-    $signature: 0
+    $signature: 1
+  };
+  A.main_closure.prototype = {
+    call$1($event) {
+      var t1;
+      type$.MouseEvent._as($event);
+      t1 = document.querySelector("#feedbackPopup").style;
+      t1.display = "block";
+    },
+    $signature: 1
+  };
+  A.main_closure0.prototype = {
+    call$1($event) {
+      var t1;
+      type$.MouseEvent._as($event);
+      t1 = document.querySelector("#feedbackPopup").style;
+      t1.display = "none";
+    },
+    $signature: 1
+  };
+  A.main_closure1.prototype = {
+    call$1($event) {
+      var t1;
+      type$.MouseEvent._as($event);
+      t1 = type$.JSArray_Map_String_dynamic;
+      new A.CanvasController(A._setArrayType([], type$.JSArray_Shape), A._setArrayType([], type$.JSArray_DivElement), A._setArrayType([], t1), new A.ToolBar(new A.Reporter(A._setArrayType([], t1), A._setArrayType([], type$.JSArray_ImageElement)), A._setArrayType([], t1))).showCanvas$0();
+      t1 = document.querySelector("#feedbackPopup").style;
+      t1.display = "none";
+    },
+    $signature: 1
   };
   A.Reporter.prototype = {
     showReportPopup$1(commentsList) {
       type$.List_Map_String_dynamic._as(commentsList);
       this._hideCommentBoxes$0();
-      A.print("comments==" + A.S(commentsList));
       this.set$_commentsList(commentsList);
       A.HttpRequest_getString("report_popup.html").then$1$1(new A.Reporter_showReportPopup_closure(this), type$.Null);
     },
@@ -9040,7 +21710,7 @@
       t3 = t2.$ti;
       A._EventStreamSubscription$(t2._target, t2._eventType, t3._eval$1("~(1)?")._as(new A.Reporter_showReportPopup__closure1(t1)), false, t3._precomputed1);
     },
-    $signature: 5
+    $signature: 24
   };
   A.Reporter_showReportPopup__closure.prototype = {
     call$1($event) {
@@ -9058,26 +21728,23 @@
       t1.toString;
       new A.ScreenshotController(canvas, t1, new A.Reporter_showReportPopup___closure(t2)).startSelection$0();
     },
-    $signature: 0
+    $signature: 1
   };
   A.Reporter_showReportPopup___closure.prototype = {
     call$1(imageUrl) {
-      var t3,
-        t1 = document,
-        t2 = t1.createElement("img");
-      t2.toString;
-      B.ImageElement_methods.set$src(t2, imageUrl);
-      t3 = t2.style;
-      t3.maxHeight = "100px";
-      t3 = t2.style;
-      t3.marginRight = "10px";
-      type$.DivElement._as(t1.querySelector("#screenshotList")).appendChild(t2).toString;
-      B.JSArray_methods.add$1(this.$this._screenshots, t2);
-      A.print("Screenshot image data: " + imageUrl);
+      var img = A.ImageElement_ImageElement(imageUrl),
+        t1 = img.style;
+      t1.maxHeight = "100px";
+      t1 = img.style;
+      t1.marginRight = "10px";
+      t1 = document;
+      type$.DivElement._as(t1.querySelector("#screenshotList")).appendChild(img).toString;
+      B.JSArray_methods.add$1(this.$this._screenshots, img);
+      A.print(imageUrl);
       t1 = t1.querySelector("#reportPopup").style;
       t1.visibility = "visible";
     },
-    $signature: 5
+    $signature: 24
   };
   A.Reporter_showReportPopup__closure0.prototype = {
     call$1($event) {
@@ -9086,7 +21753,7 @@
       t1 = document.querySelector("#reportPopup").style;
       t1.visibility = "hidden";
     },
-    $signature: 0
+    $signature: 1
   };
   A.Reporter_showReportPopup__closure1.prototype = {
     call$1($event) {
@@ -9100,7 +21767,7 @@
       t2.visibility = "visible";
       t1._showCommentBoxes$0();
     },
-    $signature: 0
+    $signature: 1
   };
   A.ScreenshotController.prototype = {
     startSelection$0() {
@@ -9110,7 +21777,7 @@
       t2.toString;
       t1 = t1.height;
       t1.toString;
-      _this.backupImageData = A.convertNativeToDart_ImageData(_this.context.getImageData(0, 0, t2, t1));
+      A.convertNativeToDart_ImageData(_this.context.getImageData(0, 0, t2, t1));
       t1 = document;
       t2 = t1.createElement("div");
       t3 = t2.style;
@@ -9127,20 +21794,44 @@
       t3.backgroundColor = "rgba(0, 0, 0, 0.5)";
       t3 = t2.style;
       t3.zIndex = "10001";
+      t3 = t2.style;
+      t3.cursor = "crosshair";
       _this.selectionOverlay = t2;
-      t1.body.appendChild(t2).toString;
-      t1 = _this.selectionOverlay;
+      t2 = A.CanvasElement_CanvasElement(null, null);
+      B.CanvasElement_methods.set$width(t2, window.innerWidth);
+      B.CanvasElement_methods.set$height(t2, window.innerHeight);
+      t3 = t2.style;
+      t3.position = "absolute";
+      t3 = t2.style;
+      t3.top = "0";
+      t3 = t2.style;
+      t3.left = "0";
+      _this.overlayCanvas = t2;
+      t2 = t2.getContext("2d");
+      t2.toString;
+      _this.overlayContext = t2;
+      t2 = _this.selectionOverlay;
+      t2.toString;
+      t3 = _this.overlayCanvas;
+      t3.toString;
+      t2.appendChild(t3).toString;
+      t1 = t1.body;
       t1.toString;
-      t2 = type$._ElementEventStreamImpl_MouseEvent;
-      t3 = t2._eval$1("~(1)?");
-      t2 = t2._precomputed1;
-      A._EventStreamSubscription$(t1, "mousedown", t3._as(new A.ScreenshotController_startSelection_closure(_this)), false, t2);
-      t1 = _this.selectionOverlay;
-      t1.toString;
-      A._EventStreamSubscription$(t1, "mousemove", t3._as(new A.ScreenshotController_startSelection_closure0(_this)), false, t2);
-      t1 = _this.selectionOverlay;
-      t1.toString;
-      A._EventStreamSubscription$(t1, "mouseup", t3._as(new A.ScreenshotController_startSelection_closure1(_this)), false, t2);
+      t3 = _this.selectionOverlay;
+      t3.toString;
+      t1.appendChild(t3).toString;
+      t3 = _this.selectionOverlay;
+      t3.toString;
+      t1 = type$._ElementEventStreamImpl_MouseEvent;
+      t2 = t1._eval$1("~(1)?");
+      t1 = t1._precomputed1;
+      A._EventStreamSubscription$(t3, "mousedown", t2._as(new A.ScreenshotController_startSelection_closure(_this)), false, t1);
+      t3 = _this.selectionOverlay;
+      t3.toString;
+      A._EventStreamSubscription$(t3, "mousemove", t2._as(new A.ScreenshotController_startSelection_closure0(_this)), false, t1);
+      t3 = _this.selectionOverlay;
+      t3.toString;
+      A._EventStreamSubscription$(t3, "mouseup", t2._as(new A.ScreenshotController_startSelection_closure1(_this)), false, t1);
     },
     _removeSelectionOverlay$0() {
       var t1 = this.selectionOverlay;
@@ -9148,22 +21839,34 @@
         B.DivElement_methods.remove$0(t1);
       this.selectionOverlay = null;
     },
-    _redrawCanvas$0() {
-      var t1 = this.backupImageData;
-      if (t1 != null)
-        B.CanvasRenderingContext2D_methods.putImageData$3(this.context, t1, 0, 0);
+    _redrawOverlay$0() {
+      var t2, t3,
+        t1 = this.overlayContext;
+      t1.toString;
+      t2 = this.overlayCanvas;
+      t3 = t2.width;
+      t3.toString;
+      t2 = t2.height;
+      t2.toString;
+      t1.clearRect(0, 0, t3, t2);
     },
     _takeScreenshot$2(start, end) {
-      var t2, t3, t4,
+      var t2, t3, documentWidth, documentHeight,
         t1 = type$.Point_num;
       t1._as(start);
       t1._as(end);
-      t1 = start.x;
-      t2 = start.y;
-      t3 = $.$get$_context();
-      t4 = document.body;
-      t2 = A.LinkedHashMap_LinkedHashMap$_literal(["x", t1, "y", t2, "width", end.x - t1, "height", end.y - t2, "onrendered", new A.ScreenshotController__takeScreenshot_closure(this)], type$.String, type$.Object);
-      t3.callMethod$2("html2canvas", [t4, A._wrapToDart(A.JsObject__convertDataTree(t2))]);
+      t1 = document;
+      t2 = t1.documentElement;
+      t3 = t2.scrollWidth;
+      t3.toString;
+      documentWidth = B.JSNumber_methods.round$0(t3);
+      t2 = t2.scrollHeight;
+      t2.toString;
+      documentHeight = B.JSNumber_methods.round$0(t2);
+      t2 = $.$get$_context();
+      t1 = t1.body;
+      t3 = A.LinkedHashMap_LinkedHashMap$_literal(["width", documentWidth, "height", documentHeight, "onrendered", new A.ScreenshotController__takeScreenshot_closure(this, end, start)], type$.String, type$.Object);
+      t2.callMethod$2("html2canvas", [t1, A._wrapToDart(A.JsObject__convertDataTree(t3))]);
     },
     set$start(_, start) {
       this.start = type$.nullable_Point_num._as(start);
@@ -9174,49 +21877,74 @@
   };
   A.ScreenshotController_startSelection_closure.prototype = {
     call$1($event) {
-      var t1, t2;
+      var t1, t2, t3, t4, t5;
       type$.MouseEvent._as($event);
-      t1 = $event.clientX;
-      t1.toString;
-      t2 = $event.clientY;
+      t1 = this.$this;
+      t2 = $event.clientX;
       t2.toString;
-      this.$this.set$start(0, new A.Point(t1, t2, type$.Point_num));
+      $event.clientY.toString;
+      t3 = window;
+      t3.toString;
+      t3 = B.Window_methods.get$scrollX(t3);
+      $event.clientX.toString;
+      t4 = $event.clientY;
+      t4.toString;
+      t5 = window;
+      t5.toString;
+      t1.set$start(0, new A.Point(t2 + t3, t4 + B.Window_methods.get$scrollY(t5), type$.Point_num));
+      t1.set$end(null);
     },
-    $signature: 0
+    $signature: 1
   };
   A.ScreenshotController_startSelection_closure0.prototype = {
     call$1($event) {
-      var t1, t2, t3, t4;
+      var t1, t2, t3, t4, t5, t6, t7, t8, t9;
       type$.MouseEvent._as($event);
       t1 = this.$this;
       if (t1.start != null) {
         t2 = $event.clientX;
         t2.toString;
-        t3 = $event.clientY;
+        $event.clientY.toString;
+        t3 = window;
         t3.toString;
-        t4 = type$.Point_num;
-        t1.set$end(new A.Point(t2, t3, t4));
-        t1._redrawCanvas$0();
+        t3 = B.Window_methods.get$scrollX(t3);
+        $event.clientX.toString;
+        t4 = $event.clientY;
+        t4.toString;
+        t5 = window;
+        t5.toString;
+        t1.set$end(new A.Point(t2 + t3, t4 + B.Window_methods.get$scrollY(t5), type$.Point_num));
+        t1._redrawOverlay$0();
         t2 = t1.start;
-        if (t2 != null && t1.end != null) {
-          t2.toString;
-          t3 = t1.end;
-          t3.toString;
-          t4._as(t2);
-          t4._as(t3);
-          t1 = t1.context;
-          t1.beginPath();
-          t4 = t2.x;
-          t2 = t2.y;
-          t1.rect(t4, t2, t3.x - t4, t3.y - t2);
-          B.CanvasRenderingContext2D_methods.set$strokeStyle(t1, "rgba(255, 0, 0, 0.7)");
-          t1.lineWidth = 2;
-          t1.stroke();
-          t1.closePath();
-        }
+        t3 = t2 != null;
+        if (t3 && t1.end != null)
+          if (t1.overlayContext != null && t3 && t1.end != null) {
+            t2 = Math.min(t2.x, t1.end.x);
+            t3 = window;
+            t3.toString;
+            t3 = B.Window_methods.get$scrollX(t3);
+            t4 = Math.min(t1.start.y, t1.end.y);
+            t5 = window;
+            t5.toString;
+            t5 = B.Window_methods.get$scrollY(t5);
+            t6 = t1.end;
+            t7 = t6.x;
+            t8 = t1.start;
+            t9 = t8.x;
+            t6 = t6.y;
+            t8 = t8.y;
+            t1.overlayContext.beginPath();
+            t1.overlayContext.rect(t2 - t3, t4 - t5, Math.abs(t7 - t9), Math.abs(t6 - t8));
+            t8 = t1.overlayContext;
+            t8.toString;
+            B.CanvasRenderingContext2D_methods.set$strokeStyle(t8, "rgba(255, 0, 0, 0.7)");
+            t1.overlayContext.lineWidth = 2;
+            t1.overlayContext.stroke();
+            t1.overlayContext.closePath();
+          }
       }
     },
-    $signature: 0
+    $signature: 1
   };
   A.ScreenshotController_startSelection_closure1.prototype = {
     call$1($event) {
@@ -9224,7 +21952,7 @@
       type$.MouseEvent._as($event);
       t1 = this.$this;
       if (t1.start != null && t1.end != null) {
-        t1._redrawCanvas$0();
+        t1._redrawOverlay$0();
         t1._removeSelectionOverlay$0();
         t2 = t1.start;
         t2.toString;
@@ -9234,18 +21962,132 @@
       }
       t1._removeSelectionOverlay$0();
     },
-    $signature: 0
+    $signature: 1
   };
   A.ScreenshotController__takeScreenshot_closure.prototype = {
     call$1(canvas) {
-      var imageUrl = J.toDataUrl$1$x(canvas, "image/png"),
-        t1 = this.$this;
-      t1.onScreenshotTaken.call$1(imageUrl);
-      A.print("Screenshot taken and image URL is " + imageUrl);
-      t1._redrawCanvas$0();
+      var image, t4,
+        fullImageUrl = J.toDataUrl$1$x(canvas, "image/png"),
+        t1 = this.end,
+        t2 = this.start,
+        t3 = B.JSNumber_methods.toInt$0(t1.x - t2.x),
+        cropCanvas = A.CanvasElement_CanvasElement(B.JSNumber_methods.toInt$0(t1.y - t2.y), t3);
+      t3 = cropCanvas.getContext("2d");
+      t3.toString;
+      image = A.ImageElement_ImageElement(fullImageUrl);
+      t4 = type$._ElementEventStreamImpl_Event;
+      A._EventStreamSubscription$(image, "load", t4._eval$1("~(1)?")._as(new A.ScreenshotController__takeScreenshot__closure(this.$this, t3, image, t2, t1, cropCanvas)), false, t4._precomputed1);
+    },
+    $signature: 12
+  };
+  A.ScreenshotController__takeScreenshot__closure.prototype = {
+    call$1(_) {
+      var t3, t4, croppedImageUrl, anchor, _this = this,
+        t1 = _this.start,
+        t2 = t1.x;
+      t1 = t1.y;
+      t3 = _this.end;
+      t4 = t3.x - t2;
+      t3 = t3.y - t1;
+      _this.cropContext.drawImage(_this.image, t2, t1, t4, t3, 0, 0, B.JSNumber_methods.toInt$0(t4), B.JSNumber_methods.toInt$0(t3));
+      croppedImageUrl = B.CanvasElement_methods._toDataUrl$2(_this.cropCanvas, "image/png", null);
+      t1 = _this.$this;
+      t1.onScreenshotTaken.call$1(croppedImageUrl);
+      anchor = A.AnchorElement_AnchorElement(croppedImageUrl);
+      anchor.setAttribute("download", "screenshot.png");
+      t2 = document.createEvent("Event");
+      t2.toString;
+      J._initEvent$3$x(t2, "click", true, true);
+      anchor.dispatchEvent(t2).toString;
+      t1._redrawOverlay$0();
       t1._removeSelectionOverlay$0();
     },
-    $signature: 4
+    $signature: 8
+  };
+  A.Shape.prototype = {};
+  A.ToolBar.prototype = {
+    createToolBar$0() {
+      var t2, t3, _this = this,
+        t1 = document,
+        $toolbar = t1.createElement("div");
+      $toolbar.id = "canvasToolbar";
+      B.DivElement_methods.setInnerHtml$1($toolbar, '      <button id="drawRect"><i class="bi bi-square"></i></button>\n      <button id="drawArrow"><i class="bi bi-arrow-right"></i></button>\n      <button id="pinButton"><i class="bi bi-crosshair"></i></button>\n      <button id="reportButton"><i class="bi bi-file-earmark-text"></i> Report</button>\n    ');
+      t2 = $toolbar.style;
+      t2.position = "fixed";
+      t2 = $toolbar.style;
+      t2.top = "10px";
+      t2 = $toolbar.style;
+      t2.left = "50%";
+      t2 = $toolbar.style;
+      t2.toString;
+      B.CssStyleDeclaration_methods._setPropertyHelper$3(t2, B.CssStyleDeclaration_methods._browserPropertyName$1(t2, "transform"), "translateX(-50%)", "");
+      t2 = $toolbar.style;
+      t2.backgroundColor = "white";
+      t2 = $toolbar.style;
+      t2.padding = "10px";
+      t2 = $toolbar.style;
+      t2.toString;
+      B.CssStyleDeclaration_methods._setPropertyHelper$3(t2, B.CssStyleDeclaration_methods._browserPropertyName$1(t2, "border-radius"), "5px", "");
+      t2 = $toolbar.style;
+      t2.toString;
+      B.CssStyleDeclaration_methods._setPropertyHelper$3(t2, B.CssStyleDeclaration_methods._browserPropertyName$1(t2, "box-shadow"), "0px 0px 10px rgba(0, 0, 0, 0.1)", "");
+      t2 = $toolbar.style;
+      t2.zIndex = "9999";
+      t1.body.appendChild($toolbar).toString;
+      t2 = t1.querySelector("#drawRect");
+      t2.toString;
+      t2 = J.get$onClick$x(t2);
+      t3 = t2.$ti;
+      A._EventStreamSubscription$(t2._target, t2._eventType, t3._eval$1("~(1)?")._as(new A.ToolBar_createToolBar_closure(_this)), false, t3._precomputed1);
+      t3 = t1.querySelector("#drawArrow");
+      t3.toString;
+      t3 = J.get$onClick$x(t3);
+      t2 = t3.$ti;
+      A._EventStreamSubscription$(t3._target, t3._eventType, t2._eval$1("~(1)?")._as(new A.ToolBar_createToolBar_closure0(_this)), false, t2._precomputed1);
+      t2 = t1.querySelector("#pinButton");
+      t2.toString;
+      t2 = J.get$onClick$x(t2);
+      t3 = t2.$ti;
+      A._EventStreamSubscription$(t2._target, t2._eventType, t3._eval$1("~(1)?")._as(new A.ToolBar_createToolBar_closure1(_this)), false, t3._precomputed1);
+      t1 = t1.querySelector("#reportButton");
+      t1.toString;
+      t1 = J.get$onClick$x(t1);
+      t3 = t1.$ti;
+      A._EventStreamSubscription$(t1._target, t1._eventType, t3._eval$1("~(1)?")._as(new A.ToolBar_createToolBar_closure2(_this)), false, t3._precomputed1);
+    }
+  };
+  A.ToolBar_createToolBar_closure.prototype = {
+    call$1($event) {
+      type$.MouseEvent._as($event);
+      this.$this.currentTool = "rect";
+      $event.stopPropagation();
+    },
+    $signature: 1
+  };
+  A.ToolBar_createToolBar_closure0.prototype = {
+    call$1($event) {
+      type$.MouseEvent._as($event);
+      this.$this.currentTool = "arrow";
+      $event.stopPropagation();
+    },
+    $signature: 1
+  };
+  A.ToolBar_createToolBar_closure1.prototype = {
+    call$1($event) {
+      type$.MouseEvent._as($event);
+      this.$this.currentTool = "pin";
+    },
+    $signature: 1
+  };
+  A.ToolBar_createToolBar_closure2.prototype = {
+    call$1($event) {
+      var t1;
+      type$.MouseEvent._as($event);
+      t1 = this.$this;
+      t1.currentTool = "showReportBox";
+      t1._reporter.showReportPopup$1(t1.commentsList);
+    },
+    $signature: 1
   };
   (function aliases() {
     var _ = J.Interceptor.prototype;
@@ -9257,6 +22099,18 @@
     _.super$JsLinkedHashMap$internalGet = _.internalGet$1;
     _.super$JsLinkedHashMap$internalSet = _.internalSet$2;
     _.super$JsLinkedHashMap$internalRemove = _.internalRemove$1;
+    _ = A._BufferingStreamSubscription.prototype;
+    _.super$_BufferingStreamSubscription$_add = _._async$_add$1;
+    _.super$_BufferingStreamSubscription$_addError = _._addError$2;
+    _.super$_BufferingStreamSubscription$_close = _._close$0;
+    _ = A._StreamSinkTransformer.prototype;
+    _.super$_StreamSinkTransformer$bind = _.bind$1;
+    _ = A.ListBase.prototype;
+    _.super$ListBase$setRange = _.setRange$4;
+    _ = A.Converter.prototype;
+    _.super$Converter$fuse = _.fuse$1$1;
+    _ = A._StringSinkConversionSink.prototype;
+    _.super$_StringSinkConversionSink$close = _.close$0;
     _ = A.Iterable.prototype;
     _.super$Iterable$where = _.where$1;
     _ = A.Object.prototype;
@@ -9267,51 +22121,118 @@
     _.super$_SimpleNodeValidator$allowsAttribute = _.allowsAttribute$3;
     _ = A.JsObject.prototype;
     _.super$JsObject$$index = _.$index;
+    _.super$JsObject$$indexSet = _.$indexSet;
+    _ = A._JsArray_JsObject_ListMixin.prototype;
+    _.super$_JsArray_JsObject_ListMixin$$indexSet = _.$indexSet;
+    _ = A.SourceSpanMixin.prototype;
+    _.super$SourceSpanMixin$compareTo = _.compareTo$1;
+    _.super$SourceSpanMixin$$eq = _.$eq;
   })();
   (function installTearOffs() {
-    var _static_1 = hunkHelpers._static_1,
-      _static_0 = hunkHelpers._static_0,
-      _instance = hunkHelpers.installInstanceTearOff,
+    var _static_0 = hunkHelpers._static_0,
+      _static_1 = hunkHelpers._static_1,
+      _static = hunkHelpers.installStaticTearOff,
       _static_2 = hunkHelpers._static_2,
-      _static = hunkHelpers.installStaticTearOff;
-    _static_1(A, "async__AsyncRun__scheduleImmediateJsOverride$closure", "_AsyncRun__scheduleImmediateJsOverride", 2);
-    _static_1(A, "async__AsyncRun__scheduleImmediateWithSetImmediate$closure", "_AsyncRun__scheduleImmediateWithSetImmediate", 2);
-    _static_1(A, "async__AsyncRun__scheduleImmediateWithTimer$closure", "_AsyncRun__scheduleImmediateWithTimer", 2);
-    _static_0(A, "async___startMicrotaskLoop$closure", "_startMicrotaskLoop", 1);
-    _instance(A._Completer.prototype, "get$completeError", 0, 1, null, ["call$2", "call$1"], ["completeError$2", "completeError$1"], 15, 0, 0);
-    _static_1(A, "core__identityHashCode$closure", "identityHashCode", 35);
-    _static_2(A, "core__identical$closure", "identical", 36);
-    _static(A, "html__Html5NodeValidator__standardAttributeValidator$closure", 4, null, ["call$4"], ["_Html5NodeValidator__standardAttributeValidator"], 10, 0);
-    _static(A, "html__Html5NodeValidator__uriAttributeValidator$closure", 4, null, ["call$4"], ["_Html5NodeValidator__uriAttributeValidator"], 10, 0);
-    _static_1(A, "js___convertToJS$closure", "_convertToJS", 37);
-    _static_1(A, "js___convertToDart$closure", "_convertToDart", 26);
+      _instance = hunkHelpers.installInstanceTearOff,
+      _instance_2_u = hunkHelpers._instance_2u,
+      _instance_1_i = hunkHelpers._instance_1i,
+      _instance_0_u = hunkHelpers._instance_0u,
+      _instance_1_u = hunkHelpers._instance_1u,
+      _instance_0_i = hunkHelpers._instance_0i,
+      _instance_2_i = hunkHelpers._instance_2i;
+    _static_0(A, "_js_helper_Primitives_dateNow$closure", "Primitives_dateNow", 4);
+    _static_1(A, "async__AsyncRun__scheduleImmediateJsOverride$closure", "_AsyncRun__scheduleImmediateJsOverride", 11);
+    _static_1(A, "async__AsyncRun__scheduleImmediateWithSetImmediate$closure", "_AsyncRun__scheduleImmediateWithSetImmediate", 11);
+    _static_1(A, "async__AsyncRun__scheduleImmediateWithTimer$closure", "_AsyncRun__scheduleImmediateWithTimer", 11);
+    _static(A, "async__FutureExtensions__ignore$closure", 1, function() {
+      return [null];
+    }, ["call$2", "call$1"], ["FutureExtensions__ignore", function(_) {
+      return A.FutureExtensions__ignore(_, null);
+    }], 85, 0);
+    _static_0(A, "async___startMicrotaskLoop$closure", "_startMicrotaskLoop", 0);
+    _static_1(A, "async___nullDataHandler$closure", "_nullDataHandler", 6);
+    _static_2(A, "async___nullErrorHandler$closure", "_nullErrorHandler", 3);
+    _instance(A._Completer.prototype, "get$completeError", 0, 1, null, ["call$2", "call$1"], ["completeError$2", "completeError$1"], 27, 0, 0);
+    _instance_2_u(A._Future.prototype, "get$_completeError", "_completeError$2", 3);
+    var _;
+    _instance_1_i(_ = A._StreamController.prototype, "get$add", "add$1", 7);
+    _instance(_, "get$addError", 0, 1, null, ["call$2", "call$1"], ["addError$2", "addError$1"], 27, 0, 0);
+    _instance_0_u(_ = A._ControllerSubscription.prototype, "get$_onPause", "_onPause$0", 0);
+    _instance_0_u(_, "get$_onResume", "_onResume$0", 0);
+    _instance_0_u(_ = A._BufferingStreamSubscription.prototype, "get$_onPause", "_onPause$0", 0);
+    _instance_0_u(_, "get$_onResume", "_onResume$0", 0);
+    _instance_1_u(_ = A._StreamIterator.prototype, "get$_async$_onData", "_async$_onData$1", 7);
+    _instance_2_u(_, "get$_onError", "_onError$2", 3);
+    _instance_0_u(_, "get$_onDone", "_onDone$0", 0);
+    _instance_0_u(_ = A._SinkTransformerStreamSubscription.prototype, "get$_onPause", "_onPause$0", 0);
+    _instance_0_u(_, "get$_onResume", "_onResume$0", 0);
+    _instance_1_u(_, "get$_handleData", "_handleData$1", 7);
+    _instance_2_u(_, "get$_handleError", "_handleError$2", 3);
+    _instance_0_u(_, "get$_handleDone", "_handleDone$0", 0);
+    _static_2(A, "collection___defaultEquals$closure", "_defaultEquals", 23);
+    _static_1(A, "collection___defaultHashCode$closure", "_defaultHashCode", 33);
+    _static_1(A, "convert___defaultToEncodable$closure", "_defaultToEncodable", 5);
+    _instance_0_i(A._JsonDecoderSink.prototype, "get$close", "close$0", 0);
+    _instance_1_i(_ = A._ByteCallbackSink.prototype, "get$add", "add$1", 7);
+    _instance_0_i(_, "get$close", "close$0", 0);
+    _static_1(A, "core__identityHashCode$closure", "identityHashCode", 33);
+    _static_2(A, "core__identical$closure", "identical", 23);
+    _static(A, "core_Uri_encodeQueryComponent$closure", 1, null, ["call$2$encoding", "call$1"], ["Uri_encodeQueryComponent", function(component) {
+      return A.Uri_encodeQueryComponent(component, B.C_Utf8Codec);
+    }], 88, 0);
+    _static_1(A, "core_Uri_decodeComponent$closure", "Uri_decodeComponent", 10);
+    _static(A, "html__Html5NodeValidator__standardAttributeValidator$closure", 4, null, ["call$4"], ["_Html5NodeValidator__standardAttributeValidator"], 29, 0);
+    _static(A, "html__Html5NodeValidator__uriAttributeValidator$closure", 4, null, ["call$4"], ["_Html5NodeValidator__uriAttributeValidator"], 29, 0);
+    _static_1(A, "js___convertToJS$closure", "_convertToJS", 28);
+    _static_1(A, "js___convertToDart$closure", "_convertToDart", 90);
+    _static(A, "math__max$closure", 2, null, ["call$1$2", "call$2"], ["max", function(a, b) {
+      return A.max(a, b, type$.num);
+    }], 91, 1);
+    _instance_2_u(_ = A.Interceptor0.prototype, "get$onResponse", "onResponse$2", 52);
+    _instance_2_i(_, "get$onError", "onError$2", 53);
+    _instance_2_u(A.ImplyContentTypeInterceptor.prototype, "get$onRequest", "onRequest$2", 60);
+    _static_1(A, "options___defaultValidateStatus$closure", "_defaultValidateStatus", 92);
+    _static_1(A, "fused_transformer_FusedTransformer__decodeUtf8ToJson$closure", "FusedTransformer__decodeUtf8ToJson", 67);
+    _static_1(A, "case_insensitive_map_CaseInsensitiveMap__canonicalizer$closure", "CaseInsensitiveMap__canonicalizer", 10);
+    _static(A, "compute__compute$closure", 2, null, ["call$2$3$debugLabel", "call$2", "call$2$2"], ["compute", function(callback, message) {
+      var t1 = type$.dynamic;
+      return A.compute(callback, message, null, t1, t1);
+    }, function(callback, message, $Q, $R) {
+      return A.compute(callback, message, null, $Q, $R);
+    }], 62, 0);
   })();
   (function inheritance() {
     var _mixin = hunkHelpers.mixin,
+      _mixinHard = hunkHelpers.mixinHard,
       _inherit = hunkHelpers.inherit,
       _inheritMany = hunkHelpers.inheritMany;
     _inherit(A.Object, null);
-    _inheritMany(A.Object, [A.JS_CONST, J.Interceptor, J.ArrayIterator, A.Error, A.SentinelValue, A.Iterable, A.ListIterator, A.MappedIterator, A.WhereIterator, A.FixedLengthListMixin, A.Symbol, A.MapView, A.ConstantMap, A._KeysOrValuesOrElementsIterator, A.JSInvocationMirror, A.Closure, A.TypeErrorDecoder, A.NullThrownFromJavaScriptException, A.ExceptionAndStackTrace, A._StackTrace, A._Required, A.MapBase, A.LinkedHashMapCell, A.LinkedHashMapKeyIterator, A.Rti, A._FunctionParameters, A._Type, A._TimerImpl, A._AsyncAwaitCompleter, A.AsyncError, A._Completer, A._FutureListener, A._Future, A._AsyncCallbackEntry, A.Stream, A._StreamIterator, A._Zone, A._HashMapKeyIterator, A.SetBase, A._LinkedHashSetCell, A._LinkedHashSetIterator, A.ListBase, A._UnmodifiableMapMixin, A.DateTime, A._Enum, A.StackOverflowError, A._Exception, A.Null, A._StringStackTrace, A.StringBuffer, A.CssStyleDeclarationBase, A.EventStreamProvider, A._EventStreamSubscription, A._Html5NodeValidator, A.ImmutableListMixin, A.NodeValidatorBuilder, A._SimpleNodeValidator, A._SvgNodeValidator, A.FixedSizeListIterator, A._DOMWindowCrossFrame, A._SameOriginUriPolicy, A._ValidatingTreeSanitizer, A._TypedImageData, A.JsObject, A.Point, A.DioMixin, A.OptionsMixin, A._RequestConfig, A._DioForBrowser_Object_DioMixin, A.AuthController, A.Shape, A.CanvasController, A.Reporter, A.ScreenshotController]);
+    _inheritMany(A.Object, [A.JS_CONST, J.Interceptor, J.ArrayIterator, A._BytesBuilder, A.Error, A.ListBase, A.Closure, A.SentinelValue, A.Iterable, A.ListIterator, A.MappedIterator, A.WhereIterator, A.ExpandIterator, A.SkipIterator, A.EmptyIterator, A.WhereTypeIterator, A.FixedLengthListMixin, A.UnmodifiableListMixin, A.Symbol, A.MapView, A.ConstantMap, A._KeysOrValuesOrElementsIterator, A.JSInvocationMirror, A.TypeErrorDecoder, A.NullThrownFromJavaScriptException, A.ExceptionAndStackTrace, A._StackTrace, A._Required, A.MapBase, A.LinkedHashMapCell, A.LinkedHashMapKeyIterator, A.JSSyntaxRegExp, A._MatchImplementation, A._AllMatchesIterator, A.StringMatch, A._StringAllMatchesIterator, A._Cell, A.Rti, A._FunctionParameters, A._Type, A._TimerImpl, A._AsyncAwaitCompleter, A.AsyncError, A._Completer, A._FutureListener, A._Future, A._AsyncCallbackEntry, A.Stream, A.StreamTransformerBase, A._StreamController, A._AsyncStreamControllerDispatch, A._BufferingStreamSubscription, A._DelayedEvent, A._DelayedDone, A._PendingEvents, A._StreamIterator, A._EventSinkWrapper, A._HandlerEventSink, A._Zone, A._HashMapKeyIterator, A.SetBase, A._LinkedHashSetCell, A._LinkedHashSetIterator, A._UnmodifiableMapMixin, A.StringConversionSink, A.Codec, A.Converter, A._Base64Encoder, A.ByteConversionSink, A.ChunkedConversionSink, A._ConverterStreamEventSink, A._JsonStringifier, A._ClosableStringSink, A._StringConversionSinkAsStringSinkAdapter, A._Utf8Encoder, A._Utf8Decoder, A._WeakReferenceWrapper, A.DateTime, A.Duration, A._Enum, A.OutOfMemoryError, A.StackOverflowError, A._Exception, A.FormatException, A.MapEntry, A.Null, A._StringStackTrace, A.Stopwatch, A.StringBuffer, A._Uri, A.UriData, A._SimpleUri, A.CssStyleDeclarationBase, A.EventStreamProvider, A._EventStreamSubscription, A._Html5NodeValidator, A.ImmutableListMixin, A.NodeValidatorBuilder, A._SimpleNodeValidator, A._SvgNodeValidator, A.FixedSizeListIterator, A._DOMWindowCrossFrame, A._SameOriginUriPolicy, A._ValidatingTreeSanitizer, A._AcceptStructuredClone, A._TypedImageData, A.JsObject, A.NullRejectionException, A._JSRandom, A.Point, A.CancelableOperation, A.CancelableCompleter, A.CanonicalizedMap, A.ResponseBody, A.DioException, A.DioMixin, A.InterceptorState, A._BaseHandler, A.Interceptor0, A.FormData, A.Headers, A.OptionsMixin, A._RequestConfig, A.Options, A.Response, A.Transformer, A.BrowserHttpClientAdapter, A._DioForBrowser_Object_DioMixin, A.MediaType, A.Context, A.Style, A.ParsedPath, A.PathException, A.SourceFile, A.SourceLocationMixin, A.SourceSpanMixin, A.Highlighter, A._Highlight, A._Line, A.SourceLocation, A.SourceSpanException, A.StringScanner, A.AuthController, A.CanvasController, A.Reporter, A.ScreenshotController, A.Shape, A.ToolBar]);
     _inheritMany(J.Interceptor, [J.JSBool, J.JSNull, J.JavaScriptObject, J.JavaScriptBigInt, J.JavaScriptSymbol, J.JSNumber, J.JSString]);
-    _inheritMany(J.JavaScriptObject, [J.LegacyJavaScriptObject, J.JSArray, A.NativeTypedData, A.EventTarget, A.Blob, A.CanvasRenderingContext2D, A._CssStyleDeclaration_JavaScriptObject_CssStyleDeclarationBase, A.DomException, A.DomImplementation, A.DomRectReadOnly, A.Event, A.ImageData, A.Location, A._NodeList_JavaScriptObject_ListMixin, A.__NamedNodeMap_JavaScriptObject_ListMixin, A.KeyRange]);
+    _inheritMany(J.JavaScriptObject, [J.LegacyJavaScriptObject, J.JSArray, A.NativeByteBuffer, A.NativeTypedData, A.EventTarget, A.Blob, A.CanvasRenderingContext2D, A._CssStyleDeclaration_JavaScriptObject_CssStyleDeclarationBase, A.DomException, A.DomImplementation, A.DomRectReadOnly, A.Event, A.ImageData, A.Location, A._NodeList_JavaScriptObject_ListMixin, A._Storage_JavaScriptObject_MapMixin, A.__NamedNodeMap_JavaScriptObject_ListMixin, A.KeyRange]);
     _inheritMany(J.LegacyJavaScriptObject, [J.PlainJavaScriptObject, J.UnknownJavaScriptObject, J.JavaScriptFunction]);
     _inherit(J.JSUnmodifiableArray, J.JSArray);
     _inheritMany(J.JSNumber, [J.JSInt, J.JSNumNotInt]);
-    _inheritMany(A.Error, [A.LateError, A.TypeError, A.JsNoSuchMethodError, A.UnknownJsTypeError, A._CyclicInitializationError, A.RuntimeError, A.AssertionError, A._Error, A.ArgumentError, A.NoSuchMethodError, A.UnsupportedError, A.UnimplementedError, A.StateError, A.ConcurrentModificationError]);
-    _inheritMany(A.Iterable, [A.EfficientLengthIterable, A.MappedIterable, A.WhereIterable, A._KeysOrValues]);
-    _inheritMany(A.EfficientLengthIterable, [A.ListIterable, A.LinkedHashMapKeyIterable, A._HashMapKeyIterable]);
+    _inheritMany(A.Error, [A.LateError, A.TypeError, A.JsNoSuchMethodError, A.UnknownJsTypeError, A._CyclicInitializationError, A.RuntimeError, A.AssertionError, A._Error, A.JsonUnsupportedObjectError, A.ArgumentError, A.NoSuchMethodError, A.UnsupportedError, A.UnimplementedError, A.StateError, A.ConcurrentModificationError]);
+    _inheritMany(A.ListBase, [A.UnmodifiableListBase, A._FrozenElementList, A._ChildNodeListLazy, A.Interceptors]);
+    _inherit(A.CodeUnits, A.UnmodifiableListBase);
+    _inheritMany(A.Closure, [A.Closure0Args, A.Instantiation, A.Closure2Args, A.TearOffClosure, A.JsLinkedHashMap_values_closure, A.initHooks_closure, A.initHooks_closure1, A._AsyncRun__initializeScheduleImmediate_internalCallback, A._AsyncRun__initializeScheduleImmediate_closure, A._awaitOnObject_closure, A._Future__chainForeignFuture_closure, A._Future__propagateToListeners_handleWhenCompleteCallback_closure, A.Stream_length_closure, A.Stream_toList_closure, A.Stream_first_closure0, A._StreamHandlerTransformer_closure, A._RootZone_bindUnaryCallbackGuarded_closure, A._LinkedCustomHashMap_closure, A.MapBase_entries_closure, A.Converter_bind_closure, A._createTables_setChars, A._createTables_setRange, A.Element_Element$html_closure, A.HttpRequest_getString_closure, A.HttpRequest_request_closure, A._EventStreamSubscription_closure, A._EventStreamSubscription_onData_closure, A.NodeValidatorBuilder_allowsElement_closure, A.NodeValidatorBuilder_allowsAttribute_closure, A._SimpleNodeValidator_closure, A._SimpleNodeValidator_closure0, A._TemplatingNodeValidator_closure, A.JsObject__convertDataTree__convert, A._convertToJS_closure, A._convertToJS_closure0, A._wrapToDart_closure, A._wrapToDart_closure0, A._wrapToDart_closure1, A.promiseToFuture_closure, A.promiseToFuture_closure0, A.CancelableCompleter_complete_closure, A.CanonicalizedMap_keys_closure, A.DioMixin_fetch_requestInterceptorWrapper, A.DioMixin_fetch_requestInterceptorWrapper_closure, A.DioMixin_fetch_responseInterceptorWrapper, A.DioMixin_fetch_responseInterceptorWrapper_closure, A.DioMixin_fetch_errorInterceptorWrapper, A.DioMixin_fetch_errorInterceptorWrapper_closure, A.FormData_finalize_writeUtf8, A.FormData_finalize_closure0, A.handleResponseStream_closure, A.encodeMap_closure, A.encodeMap_maybeEncode, A.caseInsensitiveKeyMap_closure0, A.BrowserHttpClientAdapter_fetch_closure0, A.BrowserHttpClientAdapter_fetch_closure1, A.BrowserHttpClientAdapter_fetch_closure3, A.BrowserHttpClientAdapter_fetch_closure4, A.BrowserHttpClientAdapter_fetch_closure5, A.MediaType_toString__closure, A.expectQuotedString_closure, A.Context_joinAll_closure, A.Context_split_closure, A._validateArgList_closure, A.Highlighter$__closure, A.Highlighter$___closure, A.Highlighter$__closure0, A.Highlighter__collateLines_closure, A.Highlighter__collateLines_closure1, A.Highlighter__collateLines__closure, A.Highlighter_highlight_closure, A.CanvasController_showCanvas_closure, A.CanvasController_showCanvas_closure0, A.CanvasController_showCanvas_closure1, A.CanvasController_showCanvas_closure2, A.CanvasController_handleCanvasClick_closure, A.CanvasController_handleCanvasClick_closure0, A.main_closure, A.main_closure0, A.main_closure1, A.Reporter_showReportPopup_closure, A.Reporter_showReportPopup__closure, A.Reporter_showReportPopup___closure, A.Reporter_showReportPopup__closure0, A.Reporter_showReportPopup__closure1, A.ScreenshotController_startSelection_closure, A.ScreenshotController_startSelection_closure0, A.ScreenshotController_startSelection_closure1, A.ScreenshotController__takeScreenshot_closure, A.ScreenshotController__takeScreenshot__closure, A.ToolBar_createToolBar_closure, A.ToolBar_createToolBar_closure0, A.ToolBar_createToolBar_closure1, A.ToolBar_createToolBar_closure2]);
+    _inheritMany(A.Closure0Args, [A.nullFuture_closure, A.Primitives_initTicker_closure, A._AsyncRun__scheduleImmediateJsOverride_internalCallback, A._AsyncRun__scheduleImmediateWithSetImmediate_internalCallback, A._TimerImpl_internalCallback, A.Future_Future_closure, A._Future__addListener_closure, A._Future__prependListeners_closure, A._Future__chainForeignFuture_closure1, A._Future__chainCoreFutureAsync_closure, A._Future__asyncCompleteWithValue_closure, A._Future__asyncCompleteError_closure, A._Future__propagateToListeners_handleWhenCompleteCallback, A._Future__propagateToListeners_handleValueCallback, A._Future__propagateToListeners_handleError, A.Stream_length_closure0, A.Stream_toList_closure0, A.Stream_first_closure, A._StreamController__subscribe_closure, A._StreamController__recordCancel_complete, A._BufferingStreamSubscription__sendError_sendError, A._BufferingStreamSubscription__sendDone_sendDone, A._PendingEvents_schedule_closure, A._cancelAndValue_closure, A._rootHandleError_closure, A._RootZone_bindCallbackGuarded_closure, A._Utf8Decoder__decoder_closure, A._Utf8Decoder__decoderNonfatal_closure, A.DioMixin_fetch_requestInterceptorWrapper__closure, A.DioMixin_fetch_responseInterceptorWrapper__closure, A.DioMixin_fetch_errorInterceptorWrapper_closure_handleError, A.DioMixin_fetch_closure, A.DioMixin__dispatchRequest_closure, A.FormData_finalize_writeLine, A.FormData_finalize_closure, A.FormData_finalize_closure1, A.handleResponseStream_stopWatchReceiveTimeout, A.handleResponseStream_watchReceiveTimeout, A.handleResponseStream_watchReceiveTimeout_closure, A.handleResponseStream_closure0, A.writeStreamToSink_closure, A.BrowserHttpClientAdapter_fetch_stopWatchReceiveTimeout, A.BrowserHttpClientAdapter_fetch_watchReceiveTimeout, A.BrowserHttpClientAdapter_fetch_watchReceiveTimeout_closure, A.BrowserHttpClientAdapter_fetch_closure2, A.BrowserHttpClientAdapter_fetch_closure7, A.MediaType_MediaType$parse_closure, A.Highlighter_closure, A.Highlighter__writeFileStart_closure, A.Highlighter__writeMultilineHighlights_closure, A.Highlighter__writeMultilineHighlights_closure0, A.Highlighter__writeMultilineHighlights_closure1, A.Highlighter__writeMultilineHighlights_closure2, A.Highlighter__writeMultilineHighlights__closure, A.Highlighter__writeMultilineHighlights__closure0, A.Highlighter__writeHighlightedText_closure, A.Highlighter__writeIndicator_closure, A.Highlighter__writeIndicator_closure0, A.Highlighter__writeIndicator_closure1, A.Highlighter__writeSidebar_closure, A._Highlight_closure]);
+    _inheritMany(A.Iterable, [A.EfficientLengthIterable, A.MappedIterable, A.WhereIterable, A.ExpandIterable, A.SkipIterable, A.WhereTypeIterable, A._KeysOrValues, A._AllMatchesIterable, A._StringAllMatchesIterable]);
+    _inheritMany(A.EfficientLengthIterable, [A.ListIterable, A.EmptyIterable, A.LinkedHashMapKeyIterable, A._HashMapKeyIterable]);
+    _inheritMany(A.ListIterable, [A.SubListIterable, A.MappedListIterable, A.ReversedListIterable, A._JsonMapKeyIterable]);
     _inherit(A.EfficientLengthMappedIterable, A.MappedIterable);
-    _inherit(A.MappedListIterable, A.ListIterable);
+    _inherit(A.EfficientLengthSkipIterable, A.SkipIterable);
     _inherit(A._UnmodifiableMapView_MapView__UnmodifiableMapMixin, A.MapView);
     _inherit(A.UnmodifiableMapView, A._UnmodifiableMapView_MapView__UnmodifiableMapMixin);
     _inherit(A.ConstantMapView, A.UnmodifiableMapView);
     _inherit(A.ConstantStringMap, A.ConstantMap);
-    _inheritMany(A.Closure, [A.Closure2Args, A.Closure0Args, A.TearOffClosure, A.initHooks_closure, A.initHooks_closure1, A._AsyncRun__initializeScheduleImmediate_internalCallback, A._AsyncRun__initializeScheduleImmediate_closure, A._awaitOnObject_closure, A._Future__chainForeignFuture_closure, A._Future__propagateToListeners_handleWhenCompleteCallback_closure, A.Stream_length_closure, A._RootZone_bindUnaryCallbackGuarded_closure, A._LinkedCustomHashMap_closure, A.Element_Element$html_closure, A.HttpRequest_getString_closure, A.HttpRequest_request_closure, A._EventStreamSubscription_closure, A.NodeValidatorBuilder_allowsElement_closure, A.NodeValidatorBuilder_allowsAttribute_closure, A._SimpleNodeValidator_closure, A._SimpleNodeValidator_closure0, A._TemplatingNodeValidator_closure, A.JsObject__convertDataTree__convert, A._convertToJS_closure, A._convertToJS_closure0, A._wrapToDart_closure, A._wrapToDart_closure0, A._wrapToDart_closure1, A.caseInsensitiveKeyMap_closure0, A.main_closure, A.main_closure0, A.main_closure1, A.CanvasController_showCanvas_closure, A.CanvasController_showCanvas_closure0, A.CanvasController_showCanvas_closure1, A.CanvasController_showCanvas_closure2, A.CanvasController_showCanvas_closure3, A.CanvasController_showCanvas_closure4, A.CanvasController_showCanvas_closure5, A.CanvasController_showCanvas_closure6, A.CanvasController_handleCanvasClick_closure, A.CanvasController_handleCanvasClick_closure0, A.Reporter_showReportPopup_closure, A.Reporter_showReportPopup__closure, A.Reporter_showReportPopup___closure, A.Reporter_showReportPopup__closure0, A.Reporter_showReportPopup__closure1, A.ScreenshotController_startSelection_closure, A.ScreenshotController_startSelection_closure0, A.ScreenshotController_startSelection_closure1, A.ScreenshotController__takeScreenshot_closure]);
-    _inheritMany(A.Closure2Args, [A.Primitives_functionNoSuchMethod_closure, A.initHooks_closure0, A._awaitOnObject_closure0, A._wrapJsFunctionForAsync_closure, A._Future__chainForeignFuture_closure0, A.MapBase_mapToString_closure, A.NoSuchMethodError_toString_closure, A._ValidatingTreeSanitizer_sanitizeTree_walk, A.caseInsensitiveKeyMap_closure]);
+    _inherit(A.Instantiation1, A.Instantiation);
+    _inheritMany(A.Closure2Args, [A.Primitives_functionNoSuchMethod_closure, A.JsLinkedHashMap_addAll_closure, A.initHooks_closure0, A._awaitOnObject_closure0, A._wrapJsFunctionForAsync_closure, A._Future__chainForeignFuture_closure0, A.LinkedHashMap_LinkedHashMap$from_closure, A.MapBase_mapToString_closure, A._JsonStringifier_writeMap_closure, A.NoSuchMethodError_toString_closure, A.Uri_splitQueryString_closure, A.Uri__parseIPv4Address_error, A.Uri_parseIPv6Address_error, A.Uri_parseIPv6Address_parseHex, A._createTables_build, A.Storage_keys_closure, A._ValidatingTreeSanitizer_sanitizeTree_walk, A._AcceptStructuredClone_walk_closure, A.CancelableCompleter_complete_closure0, A.CanonicalizedMap_addAll_closure, A.CanonicalizedMap_forEach_closure, A.DioMixin_fetch_closure0, A.FormData__init_closure, A.FormData__headerForFile_closure, A.Headers$fromMap_closure, A.Headers_toString_closure, A.handleResponseStream_closure1, A.Transformer_urlEncodeQueryMap_closure, A.encodeMap_urlEncode, A.encodeMap_urlEncode_closure, A.caseInsensitiveKeyMap_closure, A.BrowserHttpClientAdapter_fetch_closure, A.BrowserHttpClientAdapter_fetch__closure, A.BrowserHttpClientAdapter_fetch_closure6, A._transform_closure, A.MediaType_toString_closure, A.Highlighter__collateLines_closure0]);
     _inherit(A.NullError, A.TypeError);
     _inheritMany(A.TearOffClosure, [A.StaticClosure, A.BoundClosure]);
     _inherit(A._AssertionError, A.AssertionError);
-    _inheritMany(A.MapBase, [A.JsLinkedHashMap, A._HashMap, A._AttributeMap]);
+    _inheritMany(A.MapBase, [A.JsLinkedHashMap, A._HashMap, A._JsonMap, A._AttributeMap]);
     _inheritMany(A.JsLinkedHashMap, [A.JsIdentityLinkedHashMap, A._LinkedCustomHashMap]);
     _inheritMany(A.NativeTypedData, [A.NativeByteData, A.NativeTypedArray]);
     _inheritMany(A.NativeTypedArray, [A._NativeTypedArrayOfDouble_NativeTypedArray_ListMixin, A._NativeTypedArrayOfInt_NativeTypedArray_ListMixin]);
@@ -9322,96 +22243,169 @@
     _inheritMany(A.NativeTypedArrayOfDouble, [A.NativeFloat32List, A.NativeFloat64List]);
     _inheritMany(A.NativeTypedArrayOfInt, [A.NativeInt16List, A.NativeInt32List, A.NativeInt8List, A.NativeUint16List, A.NativeUint32List, A.NativeUint8ClampedList, A.NativeUint8List]);
     _inherit(A._TypeError, A._Error);
-    _inheritMany(A.Closure0Args, [A._AsyncRun__scheduleImmediateJsOverride_internalCallback, A._AsyncRun__scheduleImmediateWithSetImmediate_internalCallback, A._TimerImpl_internalCallback, A._Future__addListener_closure, A._Future__prependListeners_closure, A._Future__chainForeignFuture_closure1, A._Future__chainCoreFutureAsync_closure, A._Future__asyncCompleteWithValue_closure, A._Future__asyncCompleteError_closure, A._Future__propagateToListeners_handleWhenCompleteCallback, A._Future__propagateToListeners_handleValueCallback, A._Future__propagateToListeners_handleError, A.Stream_length_closure0, A._rootHandleError_closure, A._RootZone_bindCallbackGuarded_closure]);
     _inherit(A._AsyncCompleter, A._Completer);
+    _inherit(A._AsyncStreamController, A._StreamController);
+    _inheritMany(A.Stream, [A._StreamImpl, A._BoundSinkStream, A._EventStream]);
+    _inherit(A._ControllerStream, A._StreamImpl);
+    _inheritMany(A._BufferingStreamSubscription, [A._ControllerSubscription, A._SinkTransformerStreamSubscription]);
+    _inheritMany(A._DelayedEvent, [A._DelayedData, A._DelayedError]);
+    _inherit(A._StreamSinkTransformer, A.StreamTransformerBase);
+    _inherit(A._StreamHandlerTransformer, A._StreamSinkTransformer);
     _inherit(A._RootZone, A._Zone);
     _inherit(A._IdentityHashMap, A._HashMap);
     _inherit(A._SetBase, A.SetBase);
     _inherit(A._LinkedHashSet, A._SetBase);
+    _inheritMany(A.StringConversionSink, [A._StringSinkConversionSink, A._StringAdapterSink]);
+    _inherit(A._JsonDecoderSink, A._StringSinkConversionSink);
+    _inheritMany(A.Codec, [A.Base64Codec, A.Encoding, A.JsonCodec]);
+    _inheritMany(A.Converter, [A.Base64Encoder, A._FusedConverter, A.JsonEncoder, A.JsonDecoder, A.Utf8Encoder, A.Utf8Decoder]);
+    _inherit(A._BufferCachingBase64Encoder, A._Base64Encoder);
+    _inheritMany(A.ByteConversionSink, [A._Base64EncoderSink, A._ByteAdapterSink, A._ByteCallbackSink, A._Utf8StringSinkAdapter, A._Utf8ConversionSink]);
+    _inheritMany(A._Base64EncoderSink, [A._AsciiBase64EncoderSink, A._Utf8Base64EncoderSink]);
+    _inherit(A.JsonCyclicError, A.JsonUnsupportedObjectError);
+    _inherit(A._JsonEncoderSink, A.ChunkedConversionSink);
+    _inherit(A._JsonStringStringifier, A._JsonStringifier);
+    _inherit(A.Utf8Codec, A.Encoding);
+    _inherit(A.__Utf8EncoderSink__Utf8Encoder_StringConversionSink, A._Utf8Encoder);
+    _inherit(A._Utf8EncoderSink, A.__Utf8EncoderSink__Utf8Encoder_StringConversionSink);
     _inheritMany(A.ArgumentError, [A.RangeError, A.IndexError]);
+    _inherit(A._DataUri, A._Uri);
     _inheritMany(A.EventTarget, [A.Node, A.HttpRequestEventTarget, A.Window, A.WorkerGlobalScope]);
     _inheritMany(A.Node, [A.Element, A.CharacterData, A.Document, A._Attr]);
     _inheritMany(A.Element, [A.HtmlElement, A.SvgElement]);
     _inheritMany(A.HtmlElement, [A.AnchorElement, A.AreaElement, A.BaseElement, A.BodyElement, A.ButtonElement, A.CanvasElement, A.DivElement, A.FormElement, A.ImageElement, A.SelectElement, A.SpanElement, A.StyleElement, A.TableElement, A.TableRowElement, A.TableSectionElement, A.TemplateElement]);
     _inherit(A.CssStyleDeclaration, A._CssStyleDeclaration_JavaScriptObject_CssStyleDeclarationBase);
-    _inheritMany(A.ListBase, [A._FrozenElementList, A._ChildNodeListLazy]);
     _inherit(A.HtmlDocument, A.Document);
     _inherit(A.HttpRequest, A.HttpRequestEventTarget);
     _inheritMany(A.Event, [A.UIEvent, A.ProgressEvent]);
     _inherit(A.MouseEvent, A.UIEvent);
     _inherit(A._NodeList_JavaScriptObject_ListMixin_ImmutableListMixin, A._NodeList_JavaScriptObject_ListMixin);
     _inherit(A.NodeList, A._NodeList_JavaScriptObject_ListMixin_ImmutableListMixin);
+    _inherit(A.Storage, A._Storage_JavaScriptObject_MapMixin);
     _inherit(A._DomRect, A.DomRectReadOnly);
     _inherit(A.__NamedNodeMap_JavaScriptObject_ListMixin_ImmutableListMixin, A.__NamedNodeMap_JavaScriptObject_ListMixin);
     _inherit(A._NamedNodeMap, A.__NamedNodeMap_JavaScriptObject_ListMixin_ImmutableListMixin);
     _inherit(A._ElementAttributeMap, A._AttributeMap);
-    _inherit(A._EventStream, A.Stream);
     _inherit(A._ElementEventStreamImpl, A._EventStream);
     _inherit(A._TemplatingNodeValidator, A._SimpleNodeValidator);
+    _inherit(A._AcceptStructuredCloneDart2Js, A._AcceptStructuredClone);
     _inheritMany(A.JsObject, [A.JsFunction, A._JsArray_JsObject_ListMixin]);
     _inherit(A.JsArray, A._JsArray_JsObject_ListMixin);
     _inherit(A.ScriptElement0, A.SvgElement);
-    _inherit(A.ResponseType, A._Enum);
-    _inherit(A._BaseOptions__RequestConfig_OptionsMixin, A._RequestConfig);
+    _inheritMany(A._Enum, [A.DioExceptionType, A.InterceptorResultType, A.ResponseType, A.ListFormat]);
+    _inheritMany(A._BaseHandler, [A.RequestInterceptorHandler, A.ResponseInterceptorHandler, A.ErrorInterceptorHandler]);
+    _inherit(A.ImplyContentTypeInterceptor, A.Interceptor0);
+    _inheritMany(A._RequestConfig, [A._BaseOptions__RequestConfig_OptionsMixin, A._RequestOptions__RequestConfig_OptionsMixin]);
     _inherit(A.BaseOptions, A._BaseOptions__RequestConfig_OptionsMixin);
+    _inherit(A.RequestOptions, A._RequestOptions__RequestConfig_OptionsMixin);
+    _inherit(A.FusedTransformer, A.Transformer);
     _inherit(A.DioForBrowser, A._DioForBrowser_Object_DioMixin);
+    _inherit(A.CaseInsensitiveMap, A.CanonicalizedMap);
+    _inherit(A.InternalStyle, A.Style);
+    _inheritMany(A.InternalStyle, [A.PosixStyle, A.UrlStyle, A.WindowsStyle]);
+    _inherit(A.FileLocation, A.SourceLocationMixin);
+    _inheritMany(A.SourceSpanMixin, [A._FileSpan, A.SourceSpanBase]);
+    _inherit(A.SourceSpanFormatException, A.SourceSpanException);
+    _inherit(A.SourceSpanWithContext, A.SourceSpanBase);
+    _inherit(A.StringScannerException, A.SourceSpanFormatException);
+    _mixin(A.UnmodifiableListBase, A.UnmodifiableListMixin);
     _mixin(A._NativeTypedArrayOfDouble_NativeTypedArray_ListMixin, A.ListBase);
     _mixin(A._NativeTypedArrayOfDouble_NativeTypedArray_ListMixin_FixedLengthListMixin, A.FixedLengthListMixin);
     _mixin(A._NativeTypedArrayOfInt_NativeTypedArray_ListMixin, A.ListBase);
     _mixin(A._NativeTypedArrayOfInt_NativeTypedArray_ListMixin_FixedLengthListMixin, A.FixedLengthListMixin);
+    _mixin(A._AsyncStreamController, A._AsyncStreamControllerDispatch);
     _mixin(A._UnmodifiableMapView_MapView__UnmodifiableMapMixin, A._UnmodifiableMapMixin);
+    _mixin(A.__Utf8EncoderSink__Utf8Encoder_StringConversionSink, A.StringConversionSink);
     _mixin(A._CssStyleDeclaration_JavaScriptObject_CssStyleDeclarationBase, A.CssStyleDeclarationBase);
     _mixin(A._NodeList_JavaScriptObject_ListMixin, A.ListBase);
     _mixin(A._NodeList_JavaScriptObject_ListMixin_ImmutableListMixin, A.ImmutableListMixin);
+    _mixin(A._Storage_JavaScriptObject_MapMixin, A.MapBase);
     _mixin(A.__NamedNodeMap_JavaScriptObject_ListMixin, A.ListBase);
     _mixin(A.__NamedNodeMap_JavaScriptObject_ListMixin_ImmutableListMixin, A.ImmutableListMixin);
-    _mixin(A._JsArray_JsObject_ListMixin, A.ListBase);
+    _mixinHard(A._JsArray_JsObject_ListMixin, A.ListBase);
     _mixin(A._BaseOptions__RequestConfig_OptionsMixin, A.OptionsMixin);
+    _mixin(A._RequestOptions__RequestConfig_OptionsMixin, A.OptionsMixin);
     _mixin(A._DioForBrowser_Object_DioMixin, A.DioMixin);
   })();
   var init = {
     typeUniverse: {eC: new Map(), tR: {}, eT: {}, tPV: {}, sEA: []},
     mangledGlobalNames: {int: "int", double: "double", num: "num", String: "String", bool: "bool", Null: "Null", List: "List", Object: "Object", Map: "Map"},
     mangledNames: {},
-    types: ["~(MouseEvent)", "~()", "~(~())", "@(@)", "Null(@)", "Null(String)", "Null()", "~(Event)", "bool(NodeValidator)", "bool(String)", "bool(Element,String,String,_Html5NodeValidator)", "@(String)", "~(@)", "Null(@,StackTrace)", "~(int,@)", "~(Object[StackTrace?])", "Null(Object,StackTrace)", "~(String,@)", "bool(@)", "~(Object?,Object?)", "~(Symbol0,@)", "bool(Node)", "String(HttpRequest)", "_Future<@>(@)", "String(String)", "~(Node,Node?)", "Object?(@)", "JsFunction(@)", "JsArray<@>(@)", "JsObject(@)", "bool(String,String)", "int(String)", "@(@,String)", "@(Object?)", "Null(~())", "int(Object?)", "bool(Object?,Object?)", "Object?(Object?)", "~(ProgressEvent)"],
+    types: ["~()", "~(MouseEvent)", "Null()", "~(Object,StackTrace)", "int()", "@(@)", "~(@)", "~(Object?)", "~(Event)", "bool(String)", "String(String)", "~(~())", "Null(@)", "Future<InterceptorState<@>>()", "Null(ProgressEvent)", "bool(_Highlight)", "~(ProgressEvent)", "~(String,List<String>)", "~(@,@)", "~(Object?,Object?)", "@()", "~(Uint8List,String,int)", "~(String,String)", "bool(Object?,Object?)", "Null(String)", "Null(Object,StackTrace)", "String(Match)", "~(Object[StackTrace?])", "Object?(Object?)", "bool(Element,String,String,_Html5NodeValidator)", "Object(@)", "~(String,@)", "bool(NodeValidator)", "int(Object?)", "@(String)", "Future<Null>()", "String(HttpRequest)", "Null(@,StackTrace)", "~(Node,Node?)", "@(@,@)", "@(Object?)", "JsFunction(@)", "JsArray<@>(@)", "@(@,String)", "@(@)(~(RequestOptions,RequestInterceptorHandler))", "bool(Node)", "~(int,@)", "@(@)(~(Response<@>,ResponseInterceptorHandler))", "@(Object)(~(DioException,ErrorInterceptorHandler))", "Future<@>(@)", "InterceptorState<RequestOptions>()", "Future<~>(RequestOptions,RequestInterceptorHandler)", "~(Response<@>,ResponseInterceptorHandler)", "~(DioException,ErrorInterceptorHandler)", "Null(String,Object?)", "JsObject(@)", "~(String)", "Future<~>()", "Null(~)", "MapEntry<String,List<String>>(String,List<String>)", "~(RequestOptions,RequestInterceptorHandler)", "~(Uint8List)", "Future<1^>(1^/(0^),0^{debugLabel:String?})<Object?,Object?>", "String(String,Object?)", "Uint8List(@,@)", "~(Object?,String)", "bool(String,String)", "Future<Object?>(Uint8List)", "int(int,int)", "MapEntry<String,List<String>>(String,String)", "~(List<int>)", "MediaType()", "~(String,int?)", "String(String?)", "String?()", "int(_Line)", "Null(~())", "Object(_Line)", "Object(_Highlight)", "int(_Highlight,_Highlight)", "List<_Line>(MapEntry<Object,List<_Highlight>>)", "SourceSpanWithContext()", "~(String,int)", "Map<String,String>(Map<String,String>,String)", "_Future<@>(@)", "~(Object?[Object?])", "~(Symbol0,@)", "_ConverterStreamEventSink<@,@>(EventSink<@>)", "String(String{encoding:Encoding})", "bool(@)", "Object?(@)", "0^(0^,0^)<num>", "bool(int?)", "int(String)", "Null(@,@)"],
     interceptorsByTag: null,
     leafTags: null,
     arrayRti: Symbol("$ti")
   };
-  A._Universe_addRules(init.typeUniverse, JSON.parse('{"PlainJavaScriptObject":"LegacyJavaScriptObject","UnknownJavaScriptObject":"LegacyJavaScriptObject","JavaScriptFunction":"LegacyJavaScriptObject","AbortPaymentEvent":"Event","ExtendableEvent":"Event","AElement":"SvgElement","GraphicsElement":"SvgElement","_ResourceProgressEvent":"ProgressEvent","AudioElement":"HtmlElement","MediaElement":"HtmlElement","ShadowRoot":"Node","DocumentFragment":"Node","XmlDocument":"Document","PointerEvent":"MouseEvent","CompositionEvent":"UIEvent","DedicatedWorkerGlobalScope":"WorkerGlobalScope","CDataSection":"CharacterData","Text":"CharacterData","MathMLElement":"Element","File":"Blob","JSBool":{"bool":[],"TrustedGetRuntimeType":[]},"JSNull":{"Null":[],"TrustedGetRuntimeType":[]},"JSArray":{"List":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"]},"JSUnmodifiableArray":{"JSArray":["1"],"List":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"]},"ArrayIterator":{"Iterator":["1"]},"JSNumber":{"double":[],"num":[]},"JSInt":{"double":[],"int":[],"num":[],"TrustedGetRuntimeType":[]},"JSNumNotInt":{"double":[],"num":[],"TrustedGetRuntimeType":[]},"JSString":{"String":[],"Pattern":[],"TrustedGetRuntimeType":[]},"LateError":{"Error":[]},"EfficientLengthIterable":{"Iterable":["1"]},"ListIterable":{"EfficientLengthIterable":["1"],"Iterable":["1"]},"ListIterator":{"Iterator":["1"]},"MappedIterable":{"Iterable":["2"],"Iterable.E":"2"},"EfficientLengthMappedIterable":{"MappedIterable":["1","2"],"EfficientLengthIterable":["2"],"Iterable":["2"],"Iterable.E":"2"},"MappedIterator":{"Iterator":["2"]},"MappedListIterable":{"ListIterable":["2"],"EfficientLengthIterable":["2"],"Iterable":["2"],"ListIterable.E":"2","Iterable.E":"2"},"WhereIterable":{"Iterable":["1"],"Iterable.E":"1"},"WhereIterator":{"Iterator":["1"]},"Symbol":{"Symbol0":[]},"ConstantMapView":{"UnmodifiableMapView":["1","2"],"_UnmodifiableMapView_MapView__UnmodifiableMapMixin":["1","2"],"MapView":["1","2"],"_UnmodifiableMapMixin":["1","2"],"Map":["1","2"]},"ConstantMap":{"Map":["1","2"]},"ConstantStringMap":{"ConstantMap":["1","2"],"Map":["1","2"]},"_KeysOrValues":{"Iterable":["1"],"Iterable.E":"1"},"_KeysOrValuesOrElementsIterator":{"Iterator":["1"]},"JSInvocationMirror":{"Invocation":[]},"NullError":{"TypeError":[],"Error":[]},"JsNoSuchMethodError":{"Error":[]},"UnknownJsTypeError":{"Error":[]},"_StackTrace":{"StackTrace":[]},"Closure":{"Function":[]},"Closure0Args":{"Function":[]},"Closure2Args":{"Function":[]},"TearOffClosure":{"Function":[]},"StaticClosure":{"Function":[]},"BoundClosure":{"Function":[]},"_CyclicInitializationError":{"Error":[]},"RuntimeError":{"Error":[]},"_AssertionError":{"Error":[]},"JsLinkedHashMap":{"MapBase":["1","2"],"LinkedHashMap":["1","2"],"Map":["1","2"],"MapBase.K":"1","MapBase.V":"2"},"LinkedHashMapKeyIterable":{"EfficientLengthIterable":["1"],"Iterable":["1"],"Iterable.E":"1"},"LinkedHashMapKeyIterator":{"Iterator":["1"]},"JsIdentityLinkedHashMap":{"JsLinkedHashMap":["1","2"],"MapBase":["1","2"],"LinkedHashMap":["1","2"],"Map":["1","2"],"MapBase.K":"1","MapBase.V":"2"},"NativeTypedData":{"TypedData":[]},"NativeByteData":{"TypedData":[],"TrustedGetRuntimeType":[]},"NativeTypedArray":{"JavaScriptIndexingBehavior":["1"],"TypedData":[]},"NativeTypedArrayOfDouble":{"ListBase":["double"],"List":["double"],"JavaScriptIndexingBehavior":["double"],"EfficientLengthIterable":["double"],"TypedData":[],"Iterable":["double"],"FixedLengthListMixin":["double"]},"NativeTypedArrayOfInt":{"ListBase":["int"],"List":["int"],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"],"FixedLengthListMixin":["int"]},"NativeFloat32List":{"ListBase":["double"],"List":["double"],"JavaScriptIndexingBehavior":["double"],"EfficientLengthIterable":["double"],"TypedData":[],"Iterable":["double"],"FixedLengthListMixin":["double"],"TrustedGetRuntimeType":[],"ListBase.E":"double"},"NativeFloat64List":{"ListBase":["double"],"List":["double"],"JavaScriptIndexingBehavior":["double"],"EfficientLengthIterable":["double"],"TypedData":[],"Iterable":["double"],"FixedLengthListMixin":["double"],"TrustedGetRuntimeType":[],"ListBase.E":"double"},"NativeInt16List":{"ListBase":["int"],"List":["int"],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int"},"NativeInt32List":{"ListBase":["int"],"List":["int"],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int"},"NativeInt8List":{"ListBase":["int"],"List":["int"],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int"},"NativeUint16List":{"ListBase":["int"],"List":["int"],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int"},"NativeUint32List":{"ListBase":["int"],"List":["int"],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int"},"NativeUint8ClampedList":{"ListBase":["int"],"Uint8ClampedList":[],"List":["int"],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int"},"NativeUint8List":{"ListBase":["int"],"List":["int"],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int"},"_Error":{"Error":[]},"_TypeError":{"TypeError":[],"Error":[]},"_Future":{"Future":["1"]},"AsyncError":{"Error":[]},"_AsyncCompleter":{"_Completer":["1"]},"_Zone":{"Zone":[]},"_RootZone":{"_Zone":[],"Zone":[]},"_HashMap":{"MapBase":["1","2"],"Map":["1","2"]},"_IdentityHashMap":{"_HashMap":["1","2"],"MapBase":["1","2"],"Map":["1","2"],"MapBase.K":"1","MapBase.V":"2"},"_HashMapKeyIterable":{"EfficientLengthIterable":["1"],"Iterable":["1"],"Iterable.E":"1"},"_HashMapKeyIterator":{"Iterator":["1"]},"_LinkedCustomHashMap":{"JsLinkedHashMap":["1","2"],"MapBase":["1","2"],"LinkedHashMap":["1","2"],"Map":["1","2"],"MapBase.K":"1","MapBase.V":"2"},"_LinkedHashSet":{"SetBase":["1"],"Set":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"]},"_LinkedHashSetIterator":{"Iterator":["1"]},"ListBase":{"List":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"]},"MapBase":{"Map":["1","2"]},"MapView":{"Map":["1","2"]},"UnmodifiableMapView":{"_UnmodifiableMapView_MapView__UnmodifiableMapMixin":["1","2"],"MapView":["1","2"],"_UnmodifiableMapMixin":["1","2"],"Map":["1","2"]},"SetBase":{"Set":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"]},"_SetBase":{"SetBase":["1"],"Set":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"]},"double":{"num":[]},"int":{"num":[]},"List":{"EfficientLengthIterable":["1"],"Iterable":["1"]},"String":{"Pattern":[]},"AssertionError":{"Error":[]},"TypeError":{"Error":[]},"ArgumentError":{"Error":[]},"RangeError":{"Error":[]},"IndexError":{"Error":[]},"NoSuchMethodError":{"Error":[]},"UnsupportedError":{"Error":[]},"UnimplementedError":{"Error":[]},"StateError":{"Error":[]},"ConcurrentModificationError":{"Error":[]},"StackOverflowError":{"Error":[]},"_StringStackTrace":{"StackTrace":[]},"DivElement":{"Element":[],"Node":[],"EventTarget":[]},"Element":{"Node":[],"EventTarget":[]},"HttpRequest":{"EventTarget":[]},"ImageElement":{"Element":[],"Node":[],"EventTarget":[]},"MouseEvent":{"Event":[]},"Node":{"EventTarget":[]},"ProgressEvent":{"Event":[]},"_Html5NodeValidator":{"NodeValidator":[]},"HtmlElement":{"Element":[],"Node":[],"EventTarget":[]},"AnchorElement":{"Element":[],"Node":[],"EventTarget":[]},"AreaElement":{"Element":[],"Node":[],"EventTarget":[]},"BaseElement":{"Element":[],"Node":[],"EventTarget":[]},"BodyElement":{"Element":[],"Node":[],"EventTarget":[]},"ButtonElement":{"Element":[],"Node":[],"EventTarget":[]},"CanvasElement":{"Element":[],"Node":[],"EventTarget":[]},"CharacterData":{"Node":[],"EventTarget":[]},"Document":{"Node":[],"EventTarget":[]},"DomRectReadOnly":{"Rectangle":["num"]},"_FrozenElementList":{"ListBase":["1"],"List":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"],"ListBase.E":"1"},"FormElement":{"Element":[],"Node":[],"EventTarget":[]},"HtmlDocument":{"Node":[],"EventTarget":[]},"HttpRequestEventTarget":{"EventTarget":[]},"_ChildNodeListLazy":{"ListBase":["Node"],"List":["Node"],"EfficientLengthIterable":["Node"],"Iterable":["Node"],"ListBase.E":"Node"},"NodeList":{"ListBase":["Node"],"ImmutableListMixin":["Node"],"List":["Node"],"JavaScriptIndexingBehavior":["Node"],"EfficientLengthIterable":["Node"],"Iterable":["Node"],"ListBase.E":"Node","ImmutableListMixin.E":"Node"},"SelectElement":{"Element":[],"Node":[],"EventTarget":[]},"SpanElement":{"Element":[],"Node":[],"EventTarget":[]},"StyleElement":{"Element":[],"Node":[],"EventTarget":[]},"TableElement":{"Element":[],"Node":[],"EventTarget":[]},"TableRowElement":{"Element":[],"Node":[],"EventTarget":[]},"TableSectionElement":{"Element":[],"Node":[],"EventTarget":[]},"TemplateElement":{"Element":[],"Node":[],"EventTarget":[]},"UIEvent":{"Event":[]},"Window":{"WindowBase":[],"EventTarget":[]},"WorkerGlobalScope":{"EventTarget":[]},"_Attr":{"Node":[],"EventTarget":[]},"_DomRect":{"Rectangle":["num"]},"_NamedNodeMap":{"ListBase":["Node"],"ImmutableListMixin":["Node"],"List":["Node"],"JavaScriptIndexingBehavior":["Node"],"EfficientLengthIterable":["Node"],"Iterable":["Node"],"ListBase.E":"Node","ImmutableListMixin.E":"Node"},"_AttributeMap":{"MapBase":["String","String"],"Map":["String","String"]},"_ElementAttributeMap":{"MapBase":["String","String"],"Map":["String","String"],"MapBase.K":"String","MapBase.V":"String"},"_EventStream":{"Stream":["1"]},"_ElementEventStreamImpl":{"_EventStream":["1"],"Stream":["1"]},"_EventStreamSubscription":{"StreamSubscription":["1"]},"NodeValidatorBuilder":{"NodeValidator":[]},"_SimpleNodeValidator":{"NodeValidator":[]},"_TemplatingNodeValidator":{"NodeValidator":[]},"_SvgNodeValidator":{"NodeValidator":[]},"FixedSizeListIterator":{"Iterator":["1"]},"_DOMWindowCrossFrame":{"WindowBase":[],"EventTarget":[]},"_SameOriginUriPolicy":{"UriPolicy":[]},"_ValidatingTreeSanitizer":{"NodeTreeSanitizer":[]},"_TypedImageData":{"ImageData":[]},"JsArray":{"ListBase":["1"],"List":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"],"ListBase.E":"1"},"ScriptElement0":{"SvgElement":[],"Element":[],"Node":[],"EventTarget":[]},"SvgElement":{"Element":[],"Node":[],"EventTarget":[]},"DioForBrowser":{"Dio":[]},"ByteData":{"TypedData":[]},"Int8List":{"List":["int"],"EfficientLengthIterable":["int"],"Iterable":["int"],"TypedData":[]},"Uint8List":{"List":["int"],"EfficientLengthIterable":["int"],"Iterable":["int"],"TypedData":[]},"Uint8ClampedList":{"List":["int"],"EfficientLengthIterable":["int"],"Iterable":["int"],"TypedData":[]},"Int16List":{"List":["int"],"EfficientLengthIterable":["int"],"Iterable":["int"],"TypedData":[]},"Uint16List":{"List":["int"],"EfficientLengthIterable":["int"],"Iterable":["int"],"TypedData":[]},"Int32List":{"List":["int"],"EfficientLengthIterable":["int"],"Iterable":["int"],"TypedData":[]},"Uint32List":{"List":["int"],"EfficientLengthIterable":["int"],"Iterable":["int"],"TypedData":[]},"Float32List":{"List":["double"],"EfficientLengthIterable":["double"],"Iterable":["double"],"TypedData":[]},"Float64List":{"List":["double"],"EfficientLengthIterable":["double"],"Iterable":["double"],"TypedData":[]}}'));
-  A._Universe_addErasedTypes(init.typeUniverse, JSON.parse('{"EfficientLengthIterable":1,"NativeTypedArray":1,"_SetBase":1,"_JsArray_JsObject_ListMixin":1}'));
+  A._Universe_addRules(init.typeUniverse, JSON.parse('{"PlainJavaScriptObject":"LegacyJavaScriptObject","UnknownJavaScriptObject":"LegacyJavaScriptObject","JavaScriptFunction":"LegacyJavaScriptObject","AbortPaymentEvent":"Event","ExtendableEvent":"Event","AElement":"SvgElement","GraphicsElement":"SvgElement","_ResourceProgressEvent":"ProgressEvent","AudioElement":"HtmlElement","MediaElement":"HtmlElement","ShadowRoot":"Node","DocumentFragment":"Node","XmlDocument":"Document","PointerEvent":"MouseEvent","CompositionEvent":"UIEvent","DedicatedWorkerGlobalScope":"WorkerGlobalScope","CDataSection":"CharacterData","Text":"CharacterData","MathMLElement":"Element","HttpRequestUpload":"HttpRequestEventTarget","File":"Blob","JSBool":{"bool":[],"TrustedGetRuntimeType":[]},"JSNull":{"Null":[],"TrustedGetRuntimeType":[]},"JSArray":{"List":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"],"JSIndexable":["1"]},"JSUnmodifiableArray":{"JSArray":["1"],"List":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"],"JSIndexable":["1"]},"ArrayIterator":{"Iterator":["1"]},"JSNumber":{"double":[],"num":[]},"JSInt":{"double":[],"int":[],"num":[],"TrustedGetRuntimeType":[]},"JSNumNotInt":{"double":[],"num":[],"TrustedGetRuntimeType":[]},"JSString":{"String":[],"Pattern":[],"JSIndexable":["@"],"TrustedGetRuntimeType":[]},"LateError":{"Error":[]},"CodeUnits":{"ListBase":["int"],"UnmodifiableListMixin":["int"],"List":["int"],"EfficientLengthIterable":["int"],"Iterable":["int"],"ListBase.E":"int","UnmodifiableListMixin.E":"int"},"EfficientLengthIterable":{"Iterable":["1"]},"ListIterable":{"EfficientLengthIterable":["1"],"Iterable":["1"]},"SubListIterable":{"ListIterable":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"],"ListIterable.E":"1","Iterable.E":"1"},"ListIterator":{"Iterator":["1"]},"MappedIterable":{"Iterable":["2"],"Iterable.E":"2"},"EfficientLengthMappedIterable":{"MappedIterable":["1","2"],"EfficientLengthIterable":["2"],"Iterable":["2"],"Iterable.E":"2"},"MappedIterator":{"Iterator":["2"]},"MappedListIterable":{"ListIterable":["2"],"EfficientLengthIterable":["2"],"Iterable":["2"],"ListIterable.E":"2","Iterable.E":"2"},"WhereIterable":{"Iterable":["1"],"Iterable.E":"1"},"WhereIterator":{"Iterator":["1"]},"ExpandIterable":{"Iterable":["2"],"Iterable.E":"2"},"ExpandIterator":{"Iterator":["2"]},"SkipIterable":{"Iterable":["1"],"Iterable.E":"1"},"EfficientLengthSkipIterable":{"SkipIterable":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"],"Iterable.E":"1"},"SkipIterator":{"Iterator":["1"]},"EmptyIterable":{"EfficientLengthIterable":["1"],"Iterable":["1"],"Iterable.E":"1"},"EmptyIterator":{"Iterator":["1"]},"WhereTypeIterable":{"Iterable":["1"],"Iterable.E":"1"},"WhereTypeIterator":{"Iterator":["1"]},"UnmodifiableListBase":{"ListBase":["1"],"UnmodifiableListMixin":["1"],"List":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"]},"ReversedListIterable":{"ListIterable":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"],"ListIterable.E":"1","Iterable.E":"1"},"Symbol":{"Symbol0":[]},"ConstantMapView":{"UnmodifiableMapView":["1","2"],"_UnmodifiableMapView_MapView__UnmodifiableMapMixin":["1","2"],"MapView":["1","2"],"_UnmodifiableMapMixin":["1","2"],"Map":["1","2"]},"ConstantMap":{"Map":["1","2"]},"ConstantStringMap":{"ConstantMap":["1","2"],"Map":["1","2"]},"_KeysOrValues":{"Iterable":["1"],"Iterable.E":"1"},"_KeysOrValuesOrElementsIterator":{"Iterator":["1"]},"Instantiation":{"Closure":[],"Function":[]},"Instantiation1":{"Closure":[],"Function":[]},"JSInvocationMirror":{"Invocation":[]},"NullError":{"TypeError":[],"Error":[]},"JsNoSuchMethodError":{"Error":[]},"UnknownJsTypeError":{"Error":[]},"NullThrownFromJavaScriptException":{"Exception":[]},"_StackTrace":{"StackTrace":[]},"Closure":{"Function":[]},"Closure0Args":{"Closure":[],"Function":[]},"Closure2Args":{"Closure":[],"Function":[]},"TearOffClosure":{"Closure":[],"Function":[]},"StaticClosure":{"Closure":[],"Function":[]},"BoundClosure":{"Closure":[],"Function":[]},"_CyclicInitializationError":{"Error":[]},"RuntimeError":{"Error":[]},"_AssertionError":{"Error":[]},"JsLinkedHashMap":{"MapBase":["1","2"],"LinkedHashMap":["1","2"],"Map":["1","2"],"MapBase.K":"1","MapBase.V":"2"},"LinkedHashMapKeyIterable":{"EfficientLengthIterable":["1"],"Iterable":["1"],"Iterable.E":"1"},"LinkedHashMapKeyIterator":{"Iterator":["1"]},"JsIdentityLinkedHashMap":{"JsLinkedHashMap":["1","2"],"MapBase":["1","2"],"LinkedHashMap":["1","2"],"Map":["1","2"],"MapBase.K":"1","MapBase.V":"2"},"JSSyntaxRegExp":{"RegExp":[],"Pattern":[]},"_MatchImplementation":{"RegExpMatch":[],"Match":[]},"_AllMatchesIterable":{"Iterable":["RegExpMatch"],"Iterable.E":"RegExpMatch"},"_AllMatchesIterator":{"Iterator":["RegExpMatch"]},"StringMatch":{"Match":[]},"_StringAllMatchesIterable":{"Iterable":["Match"],"Iterable.E":"Match"},"_StringAllMatchesIterator":{"Iterator":["Match"]},"NativeByteBuffer":{"ByteBuffer":[],"TrustedGetRuntimeType":[]},"NativeTypedData":{"TypedData":[]},"NativeByteData":{"TypedData":[],"TrustedGetRuntimeType":[]},"NativeTypedArray":{"JavaScriptIndexingBehavior":["1"],"TypedData":[],"JSIndexable":["1"]},"NativeTypedArrayOfDouble":{"ListBase":["double"],"NativeTypedArray":["double"],"List":["double"],"JavaScriptIndexingBehavior":["double"],"EfficientLengthIterable":["double"],"TypedData":[],"JSIndexable":["double"],"Iterable":["double"],"FixedLengthListMixin":["double"]},"NativeTypedArrayOfInt":{"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"JSIndexable":["int"],"Iterable":["int"],"FixedLengthListMixin":["int"]},"NativeFloat32List":{"ListBase":["double"],"NativeTypedArray":["double"],"List":["double"],"JavaScriptIndexingBehavior":["double"],"EfficientLengthIterable":["double"],"TypedData":[],"JSIndexable":["double"],"Iterable":["double"],"FixedLengthListMixin":["double"],"TrustedGetRuntimeType":[],"ListBase.E":"double","FixedLengthListMixin.E":"double"},"NativeFloat64List":{"ListBase":["double"],"NativeTypedArray":["double"],"List":["double"],"JavaScriptIndexingBehavior":["double"],"EfficientLengthIterable":["double"],"TypedData":[],"JSIndexable":["double"],"Iterable":["double"],"FixedLengthListMixin":["double"],"TrustedGetRuntimeType":[],"ListBase.E":"double","FixedLengthListMixin.E":"double"},"NativeInt16List":{"NativeTypedArrayOfInt":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"JSIndexable":["int"],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int","FixedLengthListMixin.E":"int"},"NativeInt32List":{"NativeTypedArrayOfInt":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"JSIndexable":["int"],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int","FixedLengthListMixin.E":"int"},"NativeInt8List":{"NativeTypedArrayOfInt":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"JSIndexable":["int"],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int","FixedLengthListMixin.E":"int"},"NativeUint16List":{"NativeTypedArrayOfInt":[],"ListBase":["int"],"NativeTypedArray":["int"],"List":["int"],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"JSIndexable":["int"],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int","FixedLengthListMixin.E":"int"},"NativeUint32List":{"NativeTypedArrayOfInt":[],"ListBase":["int"],"Uint32List":[],"NativeTypedArray":["int"],"List":["int"],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"JSIndexable":["int"],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int","FixedLengthListMixin.E":"int"},"NativeUint8ClampedList":{"NativeTypedArrayOfInt":[],"ListBase":["int"],"Uint8ClampedList":[],"NativeTypedArray":["int"],"List":["int"],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"JSIndexable":["int"],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int","FixedLengthListMixin.E":"int"},"NativeUint8List":{"NativeTypedArrayOfInt":[],"ListBase":["int"],"Uint8List":[],"NativeTypedArray":["int"],"List":["int"],"JavaScriptIndexingBehavior":["int"],"EfficientLengthIterable":["int"],"TypedData":[],"JSIndexable":["int"],"Iterable":["int"],"FixedLengthListMixin":["int"],"TrustedGetRuntimeType":[],"ListBase.E":"int","FixedLengthListMixin.E":"int"},"_Error":{"Error":[]},"_TypeError":{"TypeError":[],"Error":[]},"_Future":{"Future":["1"]},"EventSink":{"Sink":["1"]},"_HandlerEventSink":{"EventSink":["1"],"Sink":["1"]},"_AsyncAwaitCompleter":{"Completer":["1"]},"AsyncError":{"Error":[]},"_Completer":{"Completer":["1"]},"_AsyncCompleter":{"_Completer":["1"],"Completer":["1"]},"StreamTransformerBase":{"StreamTransformer":["1","2"]},"_StreamController":{"EventSink":["1"],"Sink":["1"],"_StreamControllerLifecycle":["1"],"_EventSink":["1"],"_EventDispatch":["1"]},"_AsyncStreamController":{"_AsyncStreamControllerDispatch":["1"],"_StreamController":["1"],"EventSink":["1"],"Sink":["1"],"_StreamControllerLifecycle":["1"],"_EventSink":["1"],"_EventDispatch":["1"]},"_ControllerStream":{"_StreamImpl":["1"],"Stream":["1"],"Stream.T":"1"},"_ControllerSubscription":{"_BufferingStreamSubscription":["1"],"StreamSubscription":["1"],"_EventSink":["1"],"_EventDispatch":["1"],"_BufferingStreamSubscription.T":"1"},"_BufferingStreamSubscription":{"StreamSubscription":["1"],"_EventSink":["1"],"_EventDispatch":["1"],"_BufferingStreamSubscription.T":"1"},"_StreamImpl":{"Stream":["1"]},"_DelayedData":{"_DelayedEvent":["1"]},"_DelayedError":{"_DelayedEvent":["@"]},"_DelayedDone":{"_DelayedEvent":["@"]},"_EventSinkWrapper":{"EventSink":["1"],"Sink":["1"]},"_SinkTransformerStreamSubscription":{"_BufferingStreamSubscription":["2"],"StreamSubscription":["2"],"_EventSink":["2"],"_EventDispatch":["2"],"_BufferingStreamSubscription.T":"2"},"_StreamSinkTransformer":{"StreamTransformer":["1","2"]},"_BoundSinkStream":{"Stream":["2"],"Stream.T":"2"},"_StreamHandlerTransformer":{"_StreamSinkTransformer":["1","2"],"StreamTransformer":["1","2"]},"_Zone":{"Zone":[]},"_RootZone":{"_Zone":[],"Zone":[]},"_HashMap":{"MapBase":["1","2"],"Map":["1","2"]},"_IdentityHashMap":{"_HashMap":["1","2"],"MapBase":["1","2"],"Map":["1","2"],"MapBase.K":"1","MapBase.V":"2"},"_HashMapKeyIterable":{"EfficientLengthIterable":["1"],"Iterable":["1"],"Iterable.E":"1"},"_HashMapKeyIterator":{"Iterator":["1"]},"_LinkedCustomHashMap":{"JsLinkedHashMap":["1","2"],"MapBase":["1","2"],"LinkedHashMap":["1","2"],"Map":["1","2"],"MapBase.K":"1","MapBase.V":"2"},"_LinkedHashSet":{"SetBase":["1"],"Set":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"]},"_LinkedHashSetIterator":{"Iterator":["1"]},"ListBase":{"List":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"]},"MapBase":{"Map":["1","2"]},"MapView":{"Map":["1","2"]},"UnmodifiableMapView":{"_UnmodifiableMapView_MapView__UnmodifiableMapMixin":["1","2"],"MapView":["1","2"],"_UnmodifiableMapMixin":["1","2"],"Map":["1","2"]},"SetBase":{"Set":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"]},"_SetBase":{"SetBase":["1"],"Set":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"]},"_ConverterStreamEventSink":{"EventSink":["1"],"Sink":["1"]},"Encoding":{"Codec":["String","List<int>"]},"_JsonMap":{"MapBase":["String","@"],"Map":["String","@"],"MapBase.K":"String","MapBase.V":"@"},"_JsonMapKeyIterable":{"ListIterable":["String"],"EfficientLengthIterable":["String"],"Iterable":["String"],"ListIterable.E":"String","Iterable.E":"String"},"_JsonDecoderSink":{"_StringSinkConversionSink":["StringBuffer"],"StringConversionSink":[],"Sink":["String"],"_StringSinkConversionSink.0":"StringBuffer"},"Base64Codec":{"Codec":["List<int>","String"]},"Base64Encoder":{"Converter":["List<int>","String"],"StreamTransformer":["List<int>","String"],"Converter.S":"List<int>","Converter.T":"String"},"_BufferCachingBase64Encoder":{"_Base64Encoder":[]},"_Base64EncoderSink":{"ByteConversionSink":[],"Sink":["List<int>"]},"_AsciiBase64EncoderSink":{"ByteConversionSink":[],"Sink":["List<int>"]},"_Utf8Base64EncoderSink":{"ByteConversionSink":[],"Sink":["List<int>"]},"ByteConversionSink":{"Sink":["List<int>"]},"_ByteAdapterSink":{"ByteConversionSink":[],"Sink":["List<int>"]},"_ByteCallbackSink":{"ByteConversionSink":[],"Sink":["List<int>"]},"ChunkedConversionSink":{"Sink":["1"]},"Converter":{"StreamTransformer":["1","2"]},"_FusedConverter":{"Converter":["1","3"],"StreamTransformer":["1","3"],"Converter.S":"1","Converter.T":"3"},"JsonUnsupportedObjectError":{"Error":[]},"JsonCyclicError":{"Error":[]},"JsonCodec":{"Codec":["Object?","String"]},"JsonEncoder":{"Converter":["Object?","String"],"StreamTransformer":["Object?","String"],"Converter.S":"Object?","Converter.T":"String"},"_JsonEncoderSink":{"Sink":["Object?"]},"JsonDecoder":{"Converter":["String","Object?"],"StreamTransformer":["String","Object?"],"Converter.S":"String","Converter.T":"Object?"},"StringConversionSink":{"Sink":["String"]},"_ClosableStringSink":{"StringSink":[]},"_StringConversionSinkAsStringSinkAdapter":{"StringSink":[]},"_StringSinkConversionSink":{"StringConversionSink":[],"Sink":["String"]},"_StringAdapterSink":{"StringConversionSink":[],"Sink":["String"]},"_Utf8StringSinkAdapter":{"ByteConversionSink":[],"Sink":["List<int>"]},"_Utf8ConversionSink":{"ByteConversionSink":[],"Sink":["List<int>"]},"Utf8Codec":{"Encoding":[],"Codec":["String","List<int>"]},"Utf8Encoder":{"Converter":["String","List<int>"],"StreamTransformer":["String","List<int>"],"Converter.S":"String","Converter.T":"List<int>"},"_Utf8EncoderSink":{"StringConversionSink":[],"Sink":["String"]},"Utf8Decoder":{"Converter":["List<int>","String"],"StreamTransformer":["List<int>","String"],"Converter.S":"List<int>","Converter.T":"String"},"double":{"num":[]},"int":{"num":[]},"List":{"EfficientLengthIterable":["1"],"Iterable":["1"]},"RegExpMatch":{"Match":[]},"String":{"Pattern":[]},"StringBuffer":{"StringSink":[]},"AssertionError":{"Error":[]},"TypeError":{"Error":[]},"ArgumentError":{"Error":[]},"RangeError":{"Error":[]},"IndexError":{"Error":[]},"NoSuchMethodError":{"Error":[]},"UnsupportedError":{"Error":[]},"UnimplementedError":{"Error":[]},"StateError":{"Error":[]},"ConcurrentModificationError":{"Error":[]},"OutOfMemoryError":{"Error":[]},"StackOverflowError":{"Error":[]},"_Exception":{"Exception":[]},"FormatException":{"Exception":[]},"_StringStackTrace":{"StackTrace":[]},"_Uri":{"Uri":[]},"_SimpleUri":{"Uri":[]},"_DataUri":{"Uri":[]},"DivElement":{"Element":[],"Node":[],"EventTarget":[]},"Element":{"Node":[],"EventTarget":[]},"HttpRequest":{"EventTarget":[]},"ImageElement":{"Element":[],"Node":[],"EventTarget":[]},"MouseEvent":{"Event":[]},"Node":{"EventTarget":[]},"ProgressEvent":{"Event":[]},"_Html5NodeValidator":{"NodeValidator":[]},"HtmlElement":{"Element":[],"Node":[],"EventTarget":[]},"AnchorElement":{"Element":[],"Node":[],"EventTarget":[]},"AreaElement":{"Element":[],"Node":[],"EventTarget":[]},"BaseElement":{"Element":[],"Node":[],"EventTarget":[]},"BodyElement":{"Element":[],"Node":[],"EventTarget":[]},"ButtonElement":{"Element":[],"Node":[],"EventTarget":[]},"CanvasElement":{"Element":[],"Node":[],"EventTarget":[]},"CharacterData":{"Node":[],"EventTarget":[]},"Document":{"Node":[],"EventTarget":[]},"DomRectReadOnly":{"Rectangle":["num"]},"_FrozenElementList":{"ListBase":["1"],"List":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"],"ListBase.E":"1"},"FormElement":{"Element":[],"Node":[],"EventTarget":[]},"HtmlDocument":{"Document":[],"Node":[],"EventTarget":[]},"HttpRequestEventTarget":{"EventTarget":[]},"_ChildNodeListLazy":{"ListBase":["Node"],"List":["Node"],"EfficientLengthIterable":["Node"],"Iterable":["Node"],"ListBase.E":"Node"},"NodeList":{"ListBase":["Node"],"ImmutableListMixin":["Node"],"List":["Node"],"JavaScriptIndexingBehavior":["Node"],"EfficientLengthIterable":["Node"],"Iterable":["Node"],"JSIndexable":["Node"],"ListBase.E":"Node","ImmutableListMixin.E":"Node"},"SelectElement":{"Element":[],"Node":[],"EventTarget":[]},"SpanElement":{"Element":[],"Node":[],"EventTarget":[]},"Storage":{"MapBase":["String","String"],"Map":["String","String"],"MapBase.K":"String","MapBase.V":"String"},"StyleElement":{"Element":[],"Node":[],"EventTarget":[]},"TableElement":{"Element":[],"Node":[],"EventTarget":[]},"TableRowElement":{"Element":[],"Node":[],"EventTarget":[]},"TableSectionElement":{"Element":[],"Node":[],"EventTarget":[]},"TemplateElement":{"Element":[],"Node":[],"EventTarget":[]},"UIEvent":{"Event":[]},"Window":{"WindowBase":[],"EventTarget":[]},"WorkerGlobalScope":{"EventTarget":[]},"_Attr":{"Node":[],"EventTarget":[]},"_DomRect":{"Rectangle":["num"]},"_NamedNodeMap":{"ListBase":["Node"],"ImmutableListMixin":["Node"],"List":["Node"],"JavaScriptIndexingBehavior":["Node"],"EfficientLengthIterable":["Node"],"Iterable":["Node"],"JSIndexable":["Node"],"ListBase.E":"Node","ImmutableListMixin.E":"Node"},"_AttributeMap":{"MapBase":["String","String"],"Map":["String","String"]},"_ElementAttributeMap":{"MapBase":["String","String"],"Map":["String","String"],"MapBase.K":"String","MapBase.V":"String"},"_EventStream":{"Stream":["1"],"Stream.T":"1"},"_ElementEventStreamImpl":{"_EventStream":["1"],"Stream":["1"],"Stream.T":"1"},"_EventStreamSubscription":{"StreamSubscription":["1"]},"NodeValidatorBuilder":{"NodeValidator":[]},"_SimpleNodeValidator":{"NodeValidator":[]},"_TemplatingNodeValidator":{"NodeValidator":[]},"_SvgNodeValidator":{"NodeValidator":[]},"FixedSizeListIterator":{"Iterator":["1"]},"_DOMWindowCrossFrame":{"WindowBase":[],"EventTarget":[]},"_SameOriginUriPolicy":{"UriPolicy":[]},"_ValidatingTreeSanitizer":{"NodeTreeSanitizer":[]},"_TypedImageData":{"ImageData":[]},"JsArray":{"ListBase":["1"],"List":["1"],"EfficientLengthIterable":["1"],"Iterable":["1"],"ListBase.E":"1"},"NullRejectionException":{"Exception":[]},"ScriptElement0":{"SvgElement":[],"Element":[],"Node":[],"EventTarget":[]},"SvgElement":{"Element":[],"Node":[],"EventTarget":[]},"CanonicalizedMap":{"Map":["2","3"]},"DioException":{"Exception":[]},"Interceptors":{"ListBase":["Interceptor0"],"List":["Interceptor0"],"EfficientLengthIterable":["Interceptor0"],"Iterable":["Interceptor0"],"ListBase.E":"Interceptor0"},"ImplyContentTypeInterceptor":{"Interceptor0":[]},"FusedTransformer":{"Transformer":[]},"BrowserHttpClientAdapter":{"HttpClientAdapter":[]},"DioForBrowser":{"Dio":[]},"CaseInsensitiveMap":{"CanonicalizedMap":["String","String","1"],"Map":["String","1"],"CanonicalizedMap.K":"String","CanonicalizedMap.V":"1","CanonicalizedMap.C":"String"},"PathException":{"Exception":[]},"PosixStyle":{"InternalStyle":[]},"UrlStyle":{"InternalStyle":[]},"WindowsStyle":{"InternalStyle":[]},"FileLocation":{"SourceLocation":[]},"_FileSpan":{"SourceSpanWithContext":[],"SourceSpan":[]},"SourceLocationMixin":{"SourceLocation":[]},"SourceSpanBase":{"SourceSpan":[]},"SourceSpanException":{"Exception":[]},"SourceSpanFormatException":{"FormatException":[],"Exception":[]},"SourceSpanMixin":{"SourceSpan":[]},"SourceSpanWithContext":{"SourceSpan":[]},"StringScannerException":{"FormatException":[],"Exception":[]},"ByteData":{"TypedData":[]},"Int8List":{"List":["int"],"EfficientLengthIterable":["int"],"Iterable":["int"],"TypedData":[]},"Uint8List":{"List":["int"],"EfficientLengthIterable":["int"],"Iterable":["int"],"TypedData":[]},"Uint8ClampedList":{"List":["int"],"EfficientLengthIterable":["int"],"Iterable":["int"],"TypedData":[]},"Int16List":{"List":["int"],"EfficientLengthIterable":["int"],"Iterable":["int"],"TypedData":[]},"Uint16List":{"List":["int"],"EfficientLengthIterable":["int"],"Iterable":["int"],"TypedData":[]},"Int32List":{"List":["int"],"EfficientLengthIterable":["int"],"Iterable":["int"],"TypedData":[]},"Uint32List":{"List":["int"],"EfficientLengthIterable":["int"],"Iterable":["int"],"TypedData":[]},"Float32List":{"List":["double"],"EfficientLengthIterable":["double"],"Iterable":["double"],"TypedData":[]},"Float64List":{"List":["double"],"EfficientLengthIterable":["double"],"Iterable":["double"],"TypedData":[]}}'));
+  A._Universe_addErasedTypes(init.typeUniverse, JSON.parse('{"EfficientLengthIterable":1,"UnmodifiableListBase":1,"NativeTypedArray":1,"StreamTransformerBase":2,"_DelayedEvent":1,"_SetBase":1,"ChunkedConversionSink":1,"_JsArray_JsObject_ListMixin":1}'));
   var string$ = {
-    Error_: "Error handler must accept one Object or one Object and a StackTrace as arguments, and return a value of the returned future's type"
+    _must_: " must not be greater than the number of characters in the file, ",
+    _or_im: " or improve the response time of the server.",
+    ABCDEF: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",
+    Cannotff: "Cannot extract a file path from a URI with a fragment component",
+    Cannotfq: "Cannot extract a file path from a URI with a query component",
+    Cannotn: "Cannot extract a non-Windows file path from a file URI with an authority",
+    Error_: "Error handler must accept one Object or one Object and a StackTrace as arguments, and return a value of the returned future's type",
+    The__h: "The `handler` has already been called, make sure each handler gets called only once."
   };
   var type$ = (function rtii() {
     var findType = A.findType;
     return {
+      $env_1_1_dynamic: findType("@<@>"),
+      $env_1_1_void: findType("@<~>"),
       AsyncError: findType("AsyncError"),
       BaseElement: findType("BaseElement"),
       BaseOptions: findType("BaseOptions"),
       Blob: findType("Blob"),
       BodyElement: findType("BodyElement"),
+      ByteBuffer: findType("ByteBuffer"),
+      CancelableCompleter_ResponseBody: findType("CancelableCompleter<ResponseBody>"),
+      CancelableOperation_ResponseBody: findType("CancelableOperation<ResponseBody>"),
       CanvasElement: findType("CanvasElement"),
+      CaseInsensitiveMap_String: findType("CaseInsensitiveMap<String>"),
+      CodeUnits: findType("CodeUnits"),
       ConstantMapView_Symbol_dynamic: findType("ConstantMapView<Symbol0,@>"),
+      DioException: findType("DioException"),
       DivElement: findType("DivElement"),
+      Document: findType("Document"),
       EfficientLengthIterable_dynamic: findType("EfficientLengthIterable<@>"),
       Element: findType("Element"),
       Error: findType("Error"),
       Event: findType("Event"),
+      EventSink_Uint8List: findType("EventSink<Uint8List>"),
+      Exception: findType("Exception"),
+      FormatException: findType("FormatException"),
       Function: findType("Function"),
       Future_dynamic: findType("Future<@>"),
       HttpRequest: findType("HttpRequest"),
       ImageData: findType("ImageData"),
+      Interceptor: findType("Interceptor0"),
+      InterceptorState_DioException: findType("InterceptorState<DioException>"),
+      InterceptorState_RequestOptions: findType("InterceptorState<RequestOptions>"),
+      InterceptorState_Response_dynamic: findType("InterceptorState<Response<@>>"),
+      InterceptorState_dynamic: findType("InterceptorState<@>"),
       Invocation: findType("Invocation"),
       Iterable_Node: findType("Iterable<Node>"),
+      Iterable_String: findType("Iterable<String>"),
       Iterable_dynamic: findType("Iterable<@>"),
+      Iterable_int: findType("Iterable<int>"),
       JSArray_DivElement: findType("JSArray<DivElement>"),
       JSArray_ImageElement: findType("JSArray<ImageElement>"),
+      JSArray_MapEntry_String_MultipartFile: findType("JSArray<MapEntry<String,MultipartFile>>"),
+      JSArray_MapEntry_String_String: findType("JSArray<MapEntry<String,String>>"),
       JSArray_Map_String_dynamic: findType("JSArray<Map<String,@>>"),
       JSArray_NodeValidator: findType("JSArray<NodeValidator>"),
+      JSArray_RedirectRecord: findType("JSArray<RedirectRecord>"),
       JSArray_Shape: findType("JSArray<Shape>"),
       JSArray_String: findType("JSArray<String>"),
+      JSArray_Uint8List: findType("JSArray<Uint8List>"),
+      JSArray__Highlight: findType("JSArray<_Highlight>"),
+      JSArray__Line: findType("JSArray<_Line>"),
       JSArray_dynamic: findType("JSArray<@>"),
+      JSArray_int: findType("JSArray<int>"),
+      JSArray_nullable_Interceptor: findType("JSArray<Interceptor0?>"),
+      JSArray_nullable_String: findType("JSArray<String?>"),
+      JSIndexable_dynamic: findType("JSIndexable<@>"),
       JSNull: findType("JSNull"),
       JavaScriptFunction: findType("JavaScriptFunction"),
       JavaScriptIndexingBehavior_dynamic: findType("JavaScriptIndexingBehavior<@>"),
@@ -9419,12 +22413,25 @@
       JsLinkedHashMap_Symbol_dynamic: findType("JsLinkedHashMap<Symbol0,@>"),
       KeyRange: findType("KeyRange"),
       List_Map_String_dynamic: findType("List<Map<String,@>>"),
+      List_String: findType("List<String>"),
       List_dynamic: findType("List<@>"),
+      List_int: findType("List<int>"),
+      List_nullable__Highlight: findType("List<_Highlight?>"),
       Location: findType("Location"),
+      MapEntry_String_MultipartFile: findType("MapEntry<String,MultipartFile>"),
+      MapEntry_String_String: findType("MapEntry<String,String>"),
+      MapEntry_of_Object_and_List__Highlight: findType("MapEntry<Object,List<_Highlight>>"),
+      MapEntry_of_String_and_List_String: findType("MapEntry<String,List<String>>"),
+      Map_String_String: findType("Map<String,String>"),
       Map_String_dynamic: findType("Map<String,@>"),
       Map_dynamic_dynamic: findType("Map<@,@>"),
+      Map_of_String_and_List_String: findType("Map<String,List<String>>"),
       MappedListIterable_String_String: findType("MappedListIterable<String,String>"),
+      MappedListIterable_String_dynamic: findType("MappedListIterable<String,@>"),
+      MediaType: findType("MediaType"),
       MouseEvent: findType("MouseEvent"),
+      NativeTypedArrayOfInt: findType("NativeTypedArrayOfInt"),
+      NativeUint8List: findType("NativeUint8List"),
       Node: findType("Node"),
       NodeValidator: findType("NodeValidator"),
       Null: findType("Null"),
@@ -9433,9 +22440,21 @@
       ProgressEvent: findType("ProgressEvent"),
       Record: findType("Record"),
       Rectangle_num: findType("Rectangle<num>"),
+      RegExpMatch: findType("RegExpMatch"),
+      RequestOptions: findType("RequestOptions"),
+      ResponseBody: findType("ResponseBody"),
+      Response_dynamic: findType("Response<@>"),
       ScriptElement: findType("ScriptElement0"),
+      Sink_List_int: findType("Sink<List<int>>"),
+      Sink_String: findType("Sink<String>"),
+      SourceLocation: findType("SourceLocation"),
+      SourceSpan: findType("SourceSpan"),
+      SourceSpanWithContext: findType("SourceSpanWithContext"),
       StackTrace: findType("StackTrace"),
+      Stream_Uint8List: findType("Stream<Uint8List>"),
       String: findType("String"),
+      StringConversionSink: findType("StringConversionSink"),
+      String_Function_Match: findType("String(Match)"),
       String_Function_String: findType("String(String)"),
       SvgElement: findType("SvgElement"),
       Symbol: findType("Symbol0"),
@@ -9443,44 +22462,83 @@
       TrustedGetRuntimeType: findType("TrustedGetRuntimeType"),
       TypeError: findType("TypeError"),
       TypedData: findType("TypedData"),
+      Uint8List: findType("Uint8List"),
       UnknownJavaScriptObject: findType("UnknownJavaScriptObject"),
+      UnmodifiableMapView_String_String: findType("UnmodifiableMapView<String,String>"),
+      Uri: findType("Uri"),
+      WhereTypeIterable_String: findType("WhereTypeIterable<String>"),
       Window: findType("Window"),
       WindowBase: findType("WindowBase"),
       WorkerGlobalScope: findType("WorkerGlobalScope"),
       _AsyncCompleter_HttpRequest: findType("_AsyncCompleter<HttpRequest>"),
+      _AsyncCompleter_InterceptorState_dynamic: findType("_AsyncCompleter<InterceptorState<@>>"),
+      _AsyncCompleter_ResponseBody: findType("_AsyncCompleter<ResponseBody>"),
+      _AsyncCompleter_Uint8List: findType("_AsyncCompleter<Uint8List>"),
+      _AsyncCompleter_void: findType("_AsyncCompleter<~>"),
+      _AsyncStreamController_Uint8List: findType("_AsyncStreamController<Uint8List>"),
       _Attr: findType("_Attr"),
       _ChildNodeListLazy: findType("_ChildNodeListLazy"),
+      _ConverterStreamEventSink_dynamic_dynamic: findType("_ConverterStreamEventSink<@,@>"),
       _ElementEventStreamImpl_Event: findType("_ElementEventStreamImpl<Event>"),
       _ElementEventStreamImpl_MouseEvent: findType("_ElementEventStreamImpl<MouseEvent>"),
+      _EventStream_ProgressEvent: findType("_EventStream<ProgressEvent>"),
       _FrozenElementList_Element: findType("_FrozenElementList<Element>"),
       _Future_HttpRequest: findType("_Future<HttpRequest>"),
+      _Future_InterceptorState_dynamic: findType("_Future<InterceptorState<@>>"),
+      _Future_ResponseBody: findType("_Future<ResponseBody>"),
+      _Future_Uint8List: findType("_Future<Uint8List>"),
+      _Future_bool: findType("_Future<bool>"),
       _Future_dynamic: findType("_Future<@>"),
       _Future_int: findType("_Future<int>"),
+      _Future_void: findType("_Future<~>"),
+      _Highlight: findType("_Highlight"),
       _Html5NodeValidator: findType("_Html5NodeValidator"),
       _IdentityHashMap_dynamic_dynamic: findType("_IdentityHashMap<@,@>"),
+      _Line: findType("_Line"),
+      _StreamControllerAddStreamState_nullable_Object: findType("_StreamControllerAddStreamState<Object?>"),
+      _StreamIterator_Uint8List: findType("_StreamIterator<Uint8List>"),
+      _WeakReferenceWrapper_CancelableOperation_ResponseBody: findType("_WeakReferenceWrapper<CancelableOperation<ResponseBody>>"),
       bool: findType("bool"),
       bool_Function_Object: findType("bool(Object)"),
+      bool_Function__Highlight: findType("bool(_Highlight)"),
       double: findType("double"),
       dynamic: findType("@"),
       dynamic_Function: findType("@()"),
       dynamic_Function_Object: findType("@(Object)"),
       dynamic_Function_Object_StackTrace: findType("@(Object,StackTrace)"),
+      dynamic_Function_String: findType("@(String)"),
+      dynamic_Function_dynamic_dynamic: findType("@(@,@)"),
       int: findType("int"),
       legacy_Never: findType("0&*"),
       legacy_Object: findType("Object*"),
       nullable_EventTarget: findType("EventTarget?"),
       nullable_Future_Null: findType("Future<Null>?"),
+      nullable_List_dynamic: findType("List<@>?"),
+      nullable_Map_String_dynamic: findType("Map<String,@>?"),
       nullable_Object: findType("Object?"),
       nullable_Point_num: findType("Point<num>?"),
+      nullable_StackTrace: findType("StackTrace?"),
+      nullable_Stream_Uint8List: findType("Stream<Uint8List>?"),
+      nullable_String_Function_Match: findType("String(Match)?"),
+      nullable__DelayedEvent_dynamic: findType("_DelayedEvent<@>?"),
       nullable__FutureListener_dynamic_dynamic: findType("_FutureListener<@,@>?"),
+      nullable__Highlight: findType("_Highlight?"),
       nullable__LinkedHashSetCell: findType("_LinkedHashSetCell?"),
       nullable_dynamic_Function_Event: findType("@(Event)?"),
+      nullable_int_Function_Node_Node: findType("int(Node,Node)?"),
       nullable_void_Function: findType("~()?"),
       nullable_void_Function_ProgressEvent: findType("~(ProgressEvent)?"),
       num: findType("num"),
       void: findType("~"),
       void_Function: findType("~()"),
-      void_Function_String_String: findType("~(String,String)")
+      void_Function_2_Response_dynamic_and_ResponseInterceptorHandler: findType("~(Response<@>,ResponseInterceptorHandler)"),
+      void_Function_DioException_ErrorInterceptorHandler: findType("~(DioException,ErrorInterceptorHandler)"),
+      void_Function_List_int: findType("~(List<int>)"),
+      void_Function_Object: findType("~(Object)"),
+      void_Function_Object_StackTrace: findType("~(Object,StackTrace)"),
+      void_Function_RequestOptions_RequestInterceptorHandler: findType("~(RequestOptions,RequestInterceptorHandler)"),
+      void_Function_String_String: findType("~(String,String)"),
+      void_Function_String_dynamic: findType("~(String,@)")
     };
   })();
   (function constants() {
@@ -9503,11 +22561,20 @@
     B.JSString_methods = J.JSString.prototype;
     B.JavaScriptFunction_methods = J.JavaScriptFunction.prototype;
     B.JavaScriptObject_methods = J.JavaScriptObject.prototype;
+    B.NativeUint32List_methods = A.NativeUint32List.prototype;
+    B.NativeUint8List_methods = A.NativeUint8List.prototype;
+    B.NodeList_methods = A.NodeList.prototype;
     B.PlainJavaScriptObject_methods = J.PlainJavaScriptObject.prototype;
     B.SpanElement_methods = A.SpanElement.prototype;
     B.StyleElement_methods = A.StyleElement.prototype;
     B.TableElement_methods = A.TableElement.prototype;
     B.UnknownJavaScriptObject_methods = J.UnknownJavaScriptObject.prototype;
+    B.Window_methods = A.Window.prototype;
+    B.CONSTANT = new A.Instantiation1(A.math__max$closure(), A.findType("Instantiation1<int>"));
+    B.C_Base64Encoder = new A.Base64Encoder();
+    B.C_Base64Codec = new A.Base64Codec();
+    B.C_EmptyIterator = new A.EmptyIterator(A.findType("EmptyIterator<0&>"));
+    B.C_ImplyContentTypeInterceptor = new A.ImplyContentTypeInterceptor();
     B.C_JS_CONST = function getTagFallback(o) {
   var s = Object.prototype.toString.call(o);
   return s.substring(8, s.length - 1);
@@ -9633,20 +22700,61 @@
 };
     B.C_JS_CONST3 = function(hooks) { return hooks; }
 ;
+    B.C_JsonCodec = new A.JsonCodec();
+    B.C_OutOfMemoryError = new A.OutOfMemoryError();
     B.C_SentinelValue = new A.SentinelValue();
+    B.C_Utf8Codec = new A.Utf8Codec();
+    B.C_Utf8Encoder = new A.Utf8Encoder();
+    B.C__DelayedDone = new A._DelayedDone();
+    B.C__JSRandom = new A._JSRandom();
     B.C__Required = new A._Required();
     B.C__RootZone = new A._RootZone();
     B.C__StringStackTrace = new A._StringStackTrace();
+    B.DioExceptionType_0 = new A.DioExceptionType("connectionTimeout");
+    B.DioExceptionType_1 = new A.DioExceptionType("sendTimeout");
+    B.DioExceptionType_2 = new A.DioExceptionType("receiveTimeout");
+    B.DioExceptionType_3 = new A.DioExceptionType("badCertificate");
+    B.DioExceptionType_4 = new A.DioExceptionType("badResponse");
+    B.DioExceptionType_5 = new A.DioExceptionType("cancel");
+    B.DioExceptionType_6 = new A.DioExceptionType("connectionError");
+    B.DioExceptionType_7 = new A.DioExceptionType("unknown");
+    B.Duration_0 = new A.Duration(0);
+    B.InterceptorResultType_0 = new A.InterceptorResultType("next");
+    B.InterceptorResultType_1 = new A.InterceptorResultType("resolve");
+    B.InterceptorResultType_2 = new A.InterceptorResultType("resolveCallFollowing");
+    B.InterceptorResultType_4 = new A.InterceptorResultType("rejectCallFollowing");
+    B.JsonDecoder_null = new A.JsonDecoder(null);
+    B.JsonEncoder_null = new A.JsonEncoder(null);
+    B.ListFormat_0 = new A.ListFormat("csv");
+    B.ListFormat_1 = new A.ListFormat("ssv");
+    B.ListFormat_2 = new A.ListFormat("tsv");
+    B.ListFormat_3 = new A.ListFormat("pipes");
+    B.ListFormat_4 = new A.ListFormat("multi");
+    B.ListFormat_5 = new A.ListFormat("multiCompatible");
+    B.List_2jN = A._setArrayType(makeConstList([0, 0, 32722, 12287, 65534, 34815, 65534, 18431]), type$.JSArray_int);
+    B.List_42A = A._setArrayType(makeConstList([0, 0, 65490, 45055, 65535, 34815, 65534, 18431]), type$.JSArray_int);
+    B.List_4AN = A._setArrayType(makeConstList([0, 0, 32754, 11263, 65534, 34815, 65534, 18431]), type$.JSArray_int);
     B.List_4Jt = A._setArrayType(makeConstList(["A::href", "AREA::href", "BLOCKQUOTE::cite", "BODY::background", "COMMAND::icon", "DEL::cite", "FORM::action", "IMG::src", "INPUT::src", "INS::cite", "Q::cite", "VIDEO::poster"]), type$.JSArray_String);
     B.List_AOY = A._setArrayType(makeConstList(["*::class", "*::dir", "*::draggable", "*::hidden", "*::id", "*::inert", "*::itemprop", "*::itemref", "*::itemscope", "*::lang", "*::spellcheck", "*::title", "*::translate", "A::accesskey", "A::coords", "A::hreflang", "A::name", "A::shape", "A::tabindex", "A::target", "A::type", "AREA::accesskey", "AREA::alt", "AREA::coords", "AREA::nohref", "AREA::shape", "AREA::tabindex", "AREA::target", "AUDIO::controls", "AUDIO::loop", "AUDIO::mediagroup", "AUDIO::muted", "AUDIO::preload", "BDO::dir", "BODY::alink", "BODY::bgcolor", "BODY::link", "BODY::text", "BODY::vlink", "BR::clear", "BUTTON::accesskey", "BUTTON::disabled", "BUTTON::name", "BUTTON::tabindex", "BUTTON::type", "BUTTON::value", "CANVAS::height", "CANVAS::width", "CAPTION::align", "COL::align", "COL::char", "COL::charoff", "COL::span", "COL::valign", "COL::width", "COLGROUP::align", "COLGROUP::char", "COLGROUP::charoff", "COLGROUP::span", "COLGROUP::valign", "COLGROUP::width", "COMMAND::checked", "COMMAND::command", "COMMAND::disabled", "COMMAND::label", "COMMAND::radiogroup", "COMMAND::type", "DATA::value", "DEL::datetime", "DETAILS::open", "DIR::compact", "DIV::align", "DL::compact", "FIELDSET::disabled", "FONT::color", "FONT::face", "FONT::size", "FORM::accept", "FORM::autocomplete", "FORM::enctype", "FORM::method", "FORM::name", "FORM::novalidate", "FORM::target", "FRAME::name", "H1::align", "H2::align", "H3::align", "H4::align", "H5::align", "H6::align", "HR::align", "HR::noshade", "HR::size", "HR::width", "HTML::version", "IFRAME::align", "IFRAME::frameborder", "IFRAME::height", "IFRAME::marginheight", "IFRAME::marginwidth", "IFRAME::width", "IMG::align", "IMG::alt", "IMG::border", "IMG::height", "IMG::hspace", "IMG::ismap", "IMG::name", "IMG::usemap", "IMG::vspace", "IMG::width", "INPUT::accept", "INPUT::accesskey", "INPUT::align", "INPUT::alt", "INPUT::autocomplete", "INPUT::autofocus", "INPUT::checked", "INPUT::disabled", "INPUT::inputmode", "INPUT::ismap", "INPUT::list", "INPUT::max", "INPUT::maxlength", "INPUT::min", "INPUT::multiple", "INPUT::name", "INPUT::placeholder", "INPUT::readonly", "INPUT::required", "INPUT::size", "INPUT::step", "INPUT::tabindex", "INPUT::type", "INPUT::usemap", "INPUT::value", "INS::datetime", "KEYGEN::disabled", "KEYGEN::keytype", "KEYGEN::name", "LABEL::accesskey", "LABEL::for", "LEGEND::accesskey", "LEGEND::align", "LI::type", "LI::value", "LINK::sizes", "MAP::name", "MENU::compact", "MENU::label", "MENU::type", "METER::high", "METER::low", "METER::max", "METER::min", "METER::value", "OBJECT::typemustmatch", "OL::compact", "OL::reversed", "OL::start", "OL::type", "OPTGROUP::disabled", "OPTGROUP::label", "OPTION::disabled", "OPTION::label", "OPTION::selected", "OPTION::value", "OUTPUT::for", "OUTPUT::name", "P::align", "PRE::width", "PROGRESS::max", "PROGRESS::min", "PROGRESS::value", "SELECT::autocomplete", "SELECT::disabled", "SELECT::multiple", "SELECT::name", "SELECT::required", "SELECT::size", "SELECT::tabindex", "SOURCE::type", "TABLE::align", "TABLE::bgcolor", "TABLE::border", "TABLE::cellpadding", "TABLE::cellspacing", "TABLE::frame", "TABLE::rules", "TABLE::summary", "TABLE::width", "TBODY::align", "TBODY::char", "TBODY::charoff", "TBODY::valign", "TD::abbr", "TD::align", "TD::axis", "TD::bgcolor", "TD::char", "TD::charoff", "TD::colspan", "TD::headers", "TD::height", "TD::nowrap", "TD::rowspan", "TD::scope", "TD::valign", "TD::width", "TEXTAREA::accesskey", "TEXTAREA::autocomplete", "TEXTAREA::cols", "TEXTAREA::disabled", "TEXTAREA::inputmode", "TEXTAREA::name", "TEXTAREA::placeholder", "TEXTAREA::readonly", "TEXTAREA::required", "TEXTAREA::rows", "TEXTAREA::tabindex", "TEXTAREA::wrap", "TFOOT::align", "TFOOT::char", "TFOOT::charoff", "TFOOT::valign", "TH::abbr", "TH::align", "TH::axis", "TH::bgcolor", "TH::char", "TH::charoff", "TH::colspan", "TH::headers", "TH::height", "TH::nowrap", "TH::rowspan", "TH::scope", "TH::valign", "TH::width", "THEAD::align", "THEAD::char", "THEAD::charoff", "THEAD::valign", "TR::align", "TR::bgcolor", "TR::char", "TR::charoff", "TR::valign", "TRACK::default", "TRACK::kind", "TRACK::label", "TRACK::srclang", "UL::compact", "UL::type", "VIDEO::controls", "VIDEO::height", "VIDEO::loop", "VIDEO::mediagroup", "VIDEO::muted", "VIDEO::preload", "VIDEO::width"]), type$.JSArray_String);
+    B.List_GVy = A._setArrayType(makeConstList([0, 0, 26624, 1023, 65534, 2047, 65534, 2047]), type$.JSArray_int);
+    B.List_M2I = A._setArrayType(makeConstList([0, 0, 65490, 12287, 65535, 34815, 65534, 18431]), type$.JSArray_int);
+    B.List_VOY = A._setArrayType(makeConstList([0, 0, 32776, 33792, 1, 10240, 0, 0]), type$.JSArray_int);
     B.List_Vet = A._setArrayType(makeConstList(["HEAD", "AREA", "BASE", "BASEFONT", "BR", "COL", "COLGROUP", "EMBED", "FRAME", "FRAMESET", "HR", "IMAGE", "IMG", "INPUT", "ISINDEX", "LINK", "META", "PARAM", "SOURCE", "STYLE", "TITLE", "WBR"]), type$.JSArray_String);
+    B.List_empty1 = A._setArrayType(makeConstList([]), type$.JSArray_RedirectRecord);
     B.List_empty0 = A._setArrayType(makeConstList([]), type$.JSArray_String);
+    B.List_empty2 = A._setArrayType(makeConstList([]), type$.JSArray_int);
     B.List_empty = A._setArrayType(makeConstList([]), type$.JSArray_dynamic);
+    B.List_piR = A._setArrayType(makeConstList([0, 0, 24576, 1023, 65534, 34815, 65534, 18431]), type$.JSArray_int);
     B.List_ym9 = A._setArrayType(makeConstList(["bind", "if", "ref", "repeat", "syntax"]), type$.JSArray_String);
     B.Object_empty = {};
+    B.Map_empty0 = new A.ConstantStringMap(B.Object_empty, [], A.findType("ConstantStringMap<String,String>"));
     B.Map_empty = new A.ConstantStringMap(B.Object_empty, [], A.findType("ConstantStringMap<Symbol0,@>"));
     B.ResponseType_0 = new A.ResponseType("json");
+    B.ResponseType_1 = new A.ResponseType("stream");
+    B.ResponseType_2 = new A.ResponseType("plain");
+    B.ResponseType_3 = new A.ResponseType("bytes");
     B.Symbol_call = new A.Symbol("call");
+    B.Type_ByteBuffer_EOZ = A.typeLiteral("ByteBuffer");
     B.Type_ByteData_mF8 = A.typeLiteral("ByteData");
     B.Type_Float32List_Ymk = A.typeLiteral("Float32List");
     B.Type_Float64List_Ymk = A.typeLiteral("Float64List");
@@ -9654,15 +22762,21 @@
     B.Type_Int32List_m1p = A.typeLiteral("Int32List");
     B.Type_Int8List_woc = A.typeLiteral("Int8List");
     B.Type_Object_QJv = A.typeLiteral("Object");
+    B.Type_String_J2O = A.typeLiteral("String");
     B.Type_Uint16List_2mh = A.typeLiteral("Uint16List");
     B.Type_Uint32List_2mh = A.typeLiteral("Uint32List");
     B.Type_Uint8ClampedList_9Bb = A.typeLiteral("Uint8ClampedList");
     B.Type_Uint8List_CSc = A.typeLiteral("Uint8List");
+    B.Type_dynamic_PLF = A.typeLiteral("@");
+    B.Utf8Decoder_false = new A.Utf8Decoder(false);
+    B.Utf8Decoder_true = new A.Utf8Decoder(true);
   })();
   (function staticFields() {
     $._JS_INTEROP_INTERCEPTOR_TAG = null;
     $.toStringVisiting = A._setArrayType([], A.findType("JSArray<Object>"));
     $.Primitives__identityHashCodeProperty = null;
+    $.Primitives_timerFrequency = 0;
+    $.Primitives_timerTicks = A._js_helper_Primitives_dateNow$closure();
     $.BoundClosure__receiverFieldNameCache = null;
     $.BoundClosure__interceptorFieldNameCache = null;
     $.getTagFunction = null;
@@ -9676,15 +22790,21 @@
     $._lastPriorityCallback = null;
     $._isInCallbackLoop = false;
     $.Zone__current = B.C__RootZone;
+    $.Uri__cachedBaseString = "";
+    $.Uri__cachedBaseUri = null;
     $.Element__parseDocument = null;
     $.Element__parseRange = null;
     $.Element__defaultValidator = null;
     $.Element__defaultSanitizer = null;
     $._Html5NodeValidator__attributeValidators = A.LinkedHashMap_LinkedHashMap$_empty(type$.String, type$.Function);
+    $._currentUriBase = null;
+    $._current = null;
   })();
   (function lazyInitializers() {
     var _lazyFinal = hunkHelpers.lazyFinal;
     _lazyFinal($, "DART_CLOSURE_PROPERTY_NAME", "$get$DART_CLOSURE_PROPERTY_NAME", () => A.getIsolateAffinityTag("_$dart_dartClosure"));
+    _lazyFinal($, "_CopyingBytesBuilder__emptyList", "$get$_CopyingBytesBuilder__emptyList", () => A.NativeUint8List_NativeUint8List(0));
+    _lazyFinal($, "nullFuture", "$get$nullFuture", () => B.C__RootZone.run$1$1(new A.nullFuture_closure(), A.findType("Future<Null>")));
     _lazyFinal($, "TypeErrorDecoder_noSuchMethodPattern", "$get$TypeErrorDecoder_noSuchMethodPattern", () => A.TypeErrorDecoder_extractPattern(A.TypeErrorDecoder_provokeCallErrorOn({
       toString: function() {
         return "$receiver$";
@@ -9730,7 +22850,20 @@
       }
     }()));
     _lazyFinal($, "_AsyncRun__scheduleImmediateClosure", "$get$_AsyncRun__scheduleImmediateClosure", () => A._AsyncRun__initializeScheduleImmediate());
+    _lazyFinal($, "Future__nullFuture", "$get$Future__nullFuture", () => A.findType("_Future<Null>")._as($.$get$nullFuture()));
+    _lazyFinal($, "Future__falseFuture", "$get$Future__falseFuture", () => A._Future$zoneValue(false, B.C__RootZone, type$.bool));
+    _lazyFinal($, "_Utf8Decoder__reusableBuffer", "$get$_Utf8Decoder__reusableBuffer", () => A.NativeUint8List_NativeUint8List(4096));
+    _lazyFinal($, "_Utf8Decoder__decoder", "$get$_Utf8Decoder__decoder", () => new A._Utf8Decoder__decoder_closure().call$0());
+    _lazyFinal($, "_Utf8Decoder__decoderNonfatal", "$get$_Utf8Decoder__decoderNonfatal", () => new A._Utf8Decoder__decoderNonfatal_closure().call$0());
+    _lazyFinal($, "_Base64Decoder__inverseAlphabet", "$get$_Base64Decoder__inverseAlphabet", () => A.NativeInt8List__create1(A._ensureNativeList(A._setArrayType([-2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -1, -2, -2, -2, -2, -2, 62, -2, 62, -2, 63, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -2, -2, -2, -1, -2, -2, -2, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -2, -2, -2, -2, 63, -2, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -2, -2, -2, -2, -2], type$.JSArray_int))));
+    _lazyFinal($, "_WeakReferenceWrapper__weakRefConstructor", "$get$_WeakReferenceWrapper__weakRefConstructor", () => A._WeakReferenceWrapper__findWeakRefConstructor());
+    _lazyFinal($, "_Uri__needsNoEncoding", "$get$_Uri__needsNoEncoding", () => A.RegExp_RegExp("^[\\-\\.0-9A-Z_a-z~]*$"));
     _lazyFinal($, "_hashSeed", "$get$_hashSeed", () => A.objectHashCode(B.Type_Object_QJv));
+    _lazyFinal($, "Stopwatch__frequency", "$get$Stopwatch__frequency", () => {
+      A.Primitives_initTicker();
+      return $.Primitives_timerFrequency;
+    });
+    _lazyFinal($, "_scannerTables", "$get$_scannerTables", () => A._createTables());
     _lazyFinal($, "CssStyleDeclaration__propertyCache", "$get$CssStyleDeclaration__propertyCache", () => ({}));
     _lazyFinal($, "_Html5NodeValidator__allowedElements", "$get$_Html5NodeValidator__allowedElements", () => A.LinkedHashSet_LinkedHashSet$from(["A", "ABBR", "ACRONYM", "ADDRESS", "AREA", "ARTICLE", "ASIDE", "AUDIO", "B", "BDI", "BDO", "BIG", "BLOCKQUOTE", "BR", "BUTTON", "CANVAS", "CAPTION", "CENTER", "CITE", "CODE", "COL", "COLGROUP", "COMMAND", "DATA", "DATALIST", "DD", "DEL", "DETAILS", "DFN", "DIR", "DIV", "DL", "DT", "EM", "FIELDSET", "FIGCAPTION", "FIGURE", "FONT", "FOOTER", "FORM", "H1", "H2", "H3", "H4", "H5", "H6", "HEADER", "HGROUP", "HR", "I", "IFRAME", "IMG", "INPUT", "INS", "KBD", "LABEL", "LEGEND", "LI", "MAP", "MARK", "MENU", "METER", "NAV", "NOBR", "OL", "OPTGROUP", "OPTION", "OUTPUT", "P", "PRE", "PROGRESS", "Q", "S", "SAMP", "SECTION", "SELECT", "SMALL", "SOURCE", "SPAN", "STRIKE", "STRONG", "SUB", "SUMMARY", "SUP", "TABLE", "TBODY", "TD", "TEXTAREA", "TFOOT", "TH", "THEAD", "TIME", "TR", "TRACK", "TT", "U", "UL", "VAR", "VIDEO", "WBR"], type$.String));
     _lazyFinal($, "Device_isOpera", "$get$Device_isOpera", () => B.JSString_methods.contains$2(A.Device_userAgent(), "Opera", 0));
@@ -9751,6 +22884,21 @@
     _lazyFinal($, "_dartProxyCtor", "$get$_dartProxyCtor", () => function DartObject(o) {
       this.o = o;
     });
+    _lazyFinal($, "_rnU8", "$get$_rnU8", () => A.NativeUint8List_NativeUint8List$fromList(A._setArrayType([13, 10], type$.JSArray_int)));
+    _lazyFinal($, "_random", "$get$_random", () => B.C__JSRandom);
+    _lazyFinal($, "FusedTransformer__utf8JsonDecoder", "$get$FusedTransformer__utf8JsonDecoder", () => B.Utf8Decoder_false.super$Converter$fuse(A.findType("Converter<String,Object?>")._as(B.JsonDecoder_null), type$.nullable_Object));
+    _lazyFinal($, "_escapedChar", "$get$_escapedChar", () => A.RegExp_RegExp('["\\x00-\\x1F\\x7F]'));
+    _lazyFinal($, "token", "$get$token", () => A.RegExp_RegExp('[^()<>@,;:"\\\\/[\\]?={} \\t\\x00-\\x1F\\x7F]+'));
+    _lazyFinal($, "_lws", "$get$_lws", () => A.RegExp_RegExp("(?:\\r\\n)?[ \\t]+"));
+    _lazyFinal($, "_quotedString", "$get$_quotedString", () => A.RegExp_RegExp('"(?:[^"\\x00-\\x1F\\x7F]|\\\\.)*"'));
+    _lazyFinal($, "_quotedPair", "$get$_quotedPair", () => A.RegExp_RegExp("\\\\(.)"));
+    _lazyFinal($, "nonToken", "$get$nonToken", () => A.RegExp_RegExp('[()<>@,;:"\\\\/\\[\\]?={} \\t\\x00-\\x1F\\x7F]'));
+    _lazyFinal($, "whitespace", "$get$whitespace", () => A.RegExp_RegExp("(?:" + $.$get$_lws().pattern + ")*"));
+    _lazyFinal($, "context", "$get$context", () => new A.Context($.$get$Style_platform()));
+    _lazyFinal($, "Style_posix", "$get$Style_posix", () => new A.PosixStyle(A.RegExp_RegExp("/"), A.RegExp_RegExp("[^/]$"), A.RegExp_RegExp("^/")));
+    _lazyFinal($, "Style_windows", "$get$Style_windows", () => new A.WindowsStyle(A.RegExp_RegExp("[/\\\\]"), A.RegExp_RegExp("[^/\\\\]$"), A.RegExp_RegExp("^(\\\\\\\\[^\\\\]+\\\\[^\\\\/]+|[a-zA-Z]:[/\\\\])"), A.RegExp_RegExp("^[/\\\\](?![/\\\\])")));
+    _lazyFinal($, "Style_url", "$get$Style_url", () => new A.UrlStyle(A.RegExp_RegExp("/"), A.RegExp_RegExp("(^[a-zA-Z][-+.a-zA-Z\\d]*://|[^/])$"), A.RegExp_RegExp("[a-zA-Z][-+.a-zA-Z\\d]*://[^/]*"), A.RegExp_RegExp("^/")));
+    _lazyFinal($, "Style_platform", "$get$Style_platform", () => A.Style__getPlatformStyle());
   })();
   (function nativeSupport() {
     !function() {
@@ -9775,8 +22923,8 @@
       }
       init.dispatchPropertyName = init.getIsolateTag("dispatch_record");
     }();
-    hunkHelpers.setOrUpdateInterceptorsByTag({DOMError: J.JavaScriptObject, MediaError: J.JavaScriptObject, Navigator: J.JavaScriptObject, NavigatorConcurrentHardware: J.JavaScriptObject, NavigatorUserMediaError: J.JavaScriptObject, OverconstrainedError: J.JavaScriptObject, PositionError: J.JavaScriptObject, GeolocationPositionError: J.JavaScriptObject, Range: J.JavaScriptObject, ArrayBufferView: A.NativeTypedData, DataView: A.NativeByteData, Float32Array: A.NativeFloat32List, Float64Array: A.NativeFloat64List, Int16Array: A.NativeInt16List, Int32Array: A.NativeInt32List, Int8Array: A.NativeInt8List, Uint16Array: A.NativeUint16List, Uint32Array: A.NativeUint32List, Uint8ClampedArray: A.NativeUint8ClampedList, CanvasPixelArray: A.NativeUint8ClampedList, Uint8Array: A.NativeUint8List, HTMLAudioElement: A.HtmlElement, HTMLBRElement: A.HtmlElement, HTMLContentElement: A.HtmlElement, HTMLDListElement: A.HtmlElement, HTMLDataElement: A.HtmlElement, HTMLDataListElement: A.HtmlElement, HTMLDetailsElement: A.HtmlElement, HTMLDialogElement: A.HtmlElement, HTMLEmbedElement: A.HtmlElement, HTMLFieldSetElement: A.HtmlElement, HTMLHRElement: A.HtmlElement, HTMLHeadElement: A.HtmlElement, HTMLHeadingElement: A.HtmlElement, HTMLHtmlElement: A.HtmlElement, HTMLIFrameElement: A.HtmlElement, HTMLInputElement: A.HtmlElement, HTMLLIElement: A.HtmlElement, HTMLLabelElement: A.HtmlElement, HTMLLegendElement: A.HtmlElement, HTMLLinkElement: A.HtmlElement, HTMLMapElement: A.HtmlElement, HTMLMediaElement: A.HtmlElement, HTMLMenuElement: A.HtmlElement, HTMLMetaElement: A.HtmlElement, HTMLMeterElement: A.HtmlElement, HTMLModElement: A.HtmlElement, HTMLOListElement: A.HtmlElement, HTMLObjectElement: A.HtmlElement, HTMLOptGroupElement: A.HtmlElement, HTMLOptionElement: A.HtmlElement, HTMLOutputElement: A.HtmlElement, HTMLParagraphElement: A.HtmlElement, HTMLParamElement: A.HtmlElement, HTMLPictureElement: A.HtmlElement, HTMLPreElement: A.HtmlElement, HTMLProgressElement: A.HtmlElement, HTMLQuoteElement: A.HtmlElement, HTMLScriptElement: A.HtmlElement, HTMLShadowElement: A.HtmlElement, HTMLSlotElement: A.HtmlElement, HTMLSourceElement: A.HtmlElement, HTMLTableCaptionElement: A.HtmlElement, HTMLTableCellElement: A.HtmlElement, HTMLTableDataCellElement: A.HtmlElement, HTMLTableHeaderCellElement: A.HtmlElement, HTMLTableColElement: A.HtmlElement, HTMLTextAreaElement: A.HtmlElement, HTMLTimeElement: A.HtmlElement, HTMLTitleElement: A.HtmlElement, HTMLTrackElement: A.HtmlElement, HTMLUListElement: A.HtmlElement, HTMLUnknownElement: A.HtmlElement, HTMLVideoElement: A.HtmlElement, HTMLDirectoryElement: A.HtmlElement, HTMLFontElement: A.HtmlElement, HTMLFrameElement: A.HtmlElement, HTMLFrameSetElement: A.HtmlElement, HTMLMarqueeElement: A.HtmlElement, HTMLElement: A.HtmlElement, HTMLAnchorElement: A.AnchorElement, HTMLAreaElement: A.AreaElement, HTMLBaseElement: A.BaseElement, Blob: A.Blob, File: A.Blob, HTMLBodyElement: A.BodyElement, HTMLButtonElement: A.ButtonElement, HTMLCanvasElement: A.CanvasElement, CanvasRenderingContext2D: A.CanvasRenderingContext2D, CDATASection: A.CharacterData, CharacterData: A.CharacterData, Comment: A.CharacterData, ProcessingInstruction: A.CharacterData, Text: A.CharacterData, CSSStyleDeclaration: A.CssStyleDeclaration, MSStyleCSSProperties: A.CssStyleDeclaration, CSS2Properties: A.CssStyleDeclaration, HTMLDivElement: A.DivElement, XMLDocument: A.Document, Document: A.Document, DOMException: A.DomException, DOMImplementation: A.DomImplementation, DOMRectReadOnly: A.DomRectReadOnly, MathMLElement: A.Element, Element: A.Element, AbortPaymentEvent: A.Event, AnimationEvent: A.Event, AnimationPlaybackEvent: A.Event, ApplicationCacheErrorEvent: A.Event, BackgroundFetchClickEvent: A.Event, BackgroundFetchEvent: A.Event, BackgroundFetchFailEvent: A.Event, BackgroundFetchedEvent: A.Event, BeforeInstallPromptEvent: A.Event, BeforeUnloadEvent: A.Event, BlobEvent: A.Event, CanMakePaymentEvent: A.Event, ClipboardEvent: A.Event, CloseEvent: A.Event, CustomEvent: A.Event, DeviceMotionEvent: A.Event, DeviceOrientationEvent: A.Event, ErrorEvent: A.Event, ExtendableEvent: A.Event, ExtendableMessageEvent: A.Event, FetchEvent: A.Event, FontFaceSetLoadEvent: A.Event, ForeignFetchEvent: A.Event, GamepadEvent: A.Event, HashChangeEvent: A.Event, InstallEvent: A.Event, MediaEncryptedEvent: A.Event, MediaKeyMessageEvent: A.Event, MediaQueryListEvent: A.Event, MediaStreamEvent: A.Event, MediaStreamTrackEvent: A.Event, MessageEvent: A.Event, MIDIConnectionEvent: A.Event, MIDIMessageEvent: A.Event, MutationEvent: A.Event, NotificationEvent: A.Event, PageTransitionEvent: A.Event, PaymentRequestEvent: A.Event, PaymentRequestUpdateEvent: A.Event, PopStateEvent: A.Event, PresentationConnectionAvailableEvent: A.Event, PresentationConnectionCloseEvent: A.Event, PromiseRejectionEvent: A.Event, PushEvent: A.Event, RTCDataChannelEvent: A.Event, RTCDTMFToneChangeEvent: A.Event, RTCPeerConnectionIceEvent: A.Event, RTCTrackEvent: A.Event, SecurityPolicyViolationEvent: A.Event, SensorErrorEvent: A.Event, SpeechRecognitionError: A.Event, SpeechRecognitionEvent: A.Event, SpeechSynthesisEvent: A.Event, StorageEvent: A.Event, SyncEvent: A.Event, TrackEvent: A.Event, TransitionEvent: A.Event, WebKitTransitionEvent: A.Event, VRDeviceEvent: A.Event, VRDisplayEvent: A.Event, VRSessionEvent: A.Event, MojoInterfaceRequestEvent: A.Event, USBConnectionEvent: A.Event, IDBVersionChangeEvent: A.Event, AudioProcessingEvent: A.Event, OfflineAudioCompletionEvent: A.Event, WebGLContextEvent: A.Event, Event: A.Event, InputEvent: A.Event, SubmitEvent: A.Event, EventTarget: A.EventTarget, HTMLFormElement: A.FormElement, HTMLDocument: A.HtmlDocument, XMLHttpRequest: A.HttpRequest, XMLHttpRequestEventTarget: A.HttpRequestEventTarget, ImageData: A.ImageData, HTMLImageElement: A.ImageElement, Location: A.Location, MouseEvent: A.MouseEvent, DragEvent: A.MouseEvent, PointerEvent: A.MouseEvent, WheelEvent: A.MouseEvent, DocumentFragment: A.Node, ShadowRoot: A.Node, DocumentType: A.Node, Node: A.Node, NodeList: A.NodeList, RadioNodeList: A.NodeList, ProgressEvent: A.ProgressEvent, ResourceProgressEvent: A.ProgressEvent, HTMLSelectElement: A.SelectElement, HTMLSpanElement: A.SpanElement, HTMLStyleElement: A.StyleElement, HTMLTableElement: A.TableElement, HTMLTableRowElement: A.TableRowElement, HTMLTableSectionElement: A.TableSectionElement, HTMLTemplateElement: A.TemplateElement, CompositionEvent: A.UIEvent, FocusEvent: A.UIEvent, KeyboardEvent: A.UIEvent, TextEvent: A.UIEvent, TouchEvent: A.UIEvent, UIEvent: A.UIEvent, Window: A.Window, DOMWindow: A.Window, DedicatedWorkerGlobalScope: A.WorkerGlobalScope, ServiceWorkerGlobalScope: A.WorkerGlobalScope, SharedWorkerGlobalScope: A.WorkerGlobalScope, WorkerGlobalScope: A.WorkerGlobalScope, Attr: A._Attr, ClientRect: A._DomRect, DOMRect: A._DomRect, NamedNodeMap: A._NamedNodeMap, MozNamedAttrMap: A._NamedNodeMap, IDBKeyRange: A.KeyRange, SVGScriptElement: A.ScriptElement0, SVGAElement: A.SvgElement, SVGAnimateElement: A.SvgElement, SVGAnimateMotionElement: A.SvgElement, SVGAnimateTransformElement: A.SvgElement, SVGAnimationElement: A.SvgElement, SVGCircleElement: A.SvgElement, SVGClipPathElement: A.SvgElement, SVGDefsElement: A.SvgElement, SVGDescElement: A.SvgElement, SVGDiscardElement: A.SvgElement, SVGEllipseElement: A.SvgElement, SVGFEBlendElement: A.SvgElement, SVGFEColorMatrixElement: A.SvgElement, SVGFEComponentTransferElement: A.SvgElement, SVGFECompositeElement: A.SvgElement, SVGFEConvolveMatrixElement: A.SvgElement, SVGFEDiffuseLightingElement: A.SvgElement, SVGFEDisplacementMapElement: A.SvgElement, SVGFEDistantLightElement: A.SvgElement, SVGFEFloodElement: A.SvgElement, SVGFEFuncAElement: A.SvgElement, SVGFEFuncBElement: A.SvgElement, SVGFEFuncGElement: A.SvgElement, SVGFEFuncRElement: A.SvgElement, SVGFEGaussianBlurElement: A.SvgElement, SVGFEImageElement: A.SvgElement, SVGFEMergeElement: A.SvgElement, SVGFEMergeNodeElement: A.SvgElement, SVGFEMorphologyElement: A.SvgElement, SVGFEOffsetElement: A.SvgElement, SVGFEPointLightElement: A.SvgElement, SVGFESpecularLightingElement: A.SvgElement, SVGFESpotLightElement: A.SvgElement, SVGFETileElement: A.SvgElement, SVGFETurbulenceElement: A.SvgElement, SVGFilterElement: A.SvgElement, SVGForeignObjectElement: A.SvgElement, SVGGElement: A.SvgElement, SVGGeometryElement: A.SvgElement, SVGGraphicsElement: A.SvgElement, SVGImageElement: A.SvgElement, SVGLineElement: A.SvgElement, SVGLinearGradientElement: A.SvgElement, SVGMarkerElement: A.SvgElement, SVGMaskElement: A.SvgElement, SVGMetadataElement: A.SvgElement, SVGPathElement: A.SvgElement, SVGPatternElement: A.SvgElement, SVGPolygonElement: A.SvgElement, SVGPolylineElement: A.SvgElement, SVGRadialGradientElement: A.SvgElement, SVGRectElement: A.SvgElement, SVGSetElement: A.SvgElement, SVGStopElement: A.SvgElement, SVGStyleElement: A.SvgElement, SVGSVGElement: A.SvgElement, SVGSwitchElement: A.SvgElement, SVGSymbolElement: A.SvgElement, SVGTSpanElement: A.SvgElement, SVGTextContentElement: A.SvgElement, SVGTextElement: A.SvgElement, SVGTextPathElement: A.SvgElement, SVGTextPositioningElement: A.SvgElement, SVGTitleElement: A.SvgElement, SVGUseElement: A.SvgElement, SVGViewElement: A.SvgElement, SVGGradientElement: A.SvgElement, SVGComponentTransferFunctionElement: A.SvgElement, SVGFEDropShadowElement: A.SvgElement, SVGMPathElement: A.SvgElement, SVGElement: A.SvgElement});
-    hunkHelpers.setOrUpdateLeafTags({DOMError: true, MediaError: true, Navigator: true, NavigatorConcurrentHardware: true, NavigatorUserMediaError: true, OverconstrainedError: true, PositionError: true, GeolocationPositionError: true, Range: true, ArrayBufferView: false, DataView: true, Float32Array: true, Float64Array: true, Int16Array: true, Int32Array: true, Int8Array: true, Uint16Array: true, Uint32Array: true, Uint8ClampedArray: true, CanvasPixelArray: true, Uint8Array: false, HTMLAudioElement: true, HTMLBRElement: true, HTMLContentElement: true, HTMLDListElement: true, HTMLDataElement: true, HTMLDataListElement: true, HTMLDetailsElement: true, HTMLDialogElement: true, HTMLEmbedElement: true, HTMLFieldSetElement: true, HTMLHRElement: true, HTMLHeadElement: true, HTMLHeadingElement: true, HTMLHtmlElement: true, HTMLIFrameElement: true, HTMLInputElement: true, HTMLLIElement: true, HTMLLabelElement: true, HTMLLegendElement: true, HTMLLinkElement: true, HTMLMapElement: true, HTMLMediaElement: true, HTMLMenuElement: true, HTMLMetaElement: true, HTMLMeterElement: true, HTMLModElement: true, HTMLOListElement: true, HTMLObjectElement: true, HTMLOptGroupElement: true, HTMLOptionElement: true, HTMLOutputElement: true, HTMLParagraphElement: true, HTMLParamElement: true, HTMLPictureElement: true, HTMLPreElement: true, HTMLProgressElement: true, HTMLQuoteElement: true, HTMLScriptElement: true, HTMLShadowElement: true, HTMLSlotElement: true, HTMLSourceElement: true, HTMLTableCaptionElement: true, HTMLTableCellElement: true, HTMLTableDataCellElement: true, HTMLTableHeaderCellElement: true, HTMLTableColElement: true, HTMLTextAreaElement: true, HTMLTimeElement: true, HTMLTitleElement: true, HTMLTrackElement: true, HTMLUListElement: true, HTMLUnknownElement: true, HTMLVideoElement: true, HTMLDirectoryElement: true, HTMLFontElement: true, HTMLFrameElement: true, HTMLFrameSetElement: true, HTMLMarqueeElement: true, HTMLElement: false, HTMLAnchorElement: true, HTMLAreaElement: true, HTMLBaseElement: true, Blob: true, File: true, HTMLBodyElement: true, HTMLButtonElement: true, HTMLCanvasElement: true, CanvasRenderingContext2D: true, CDATASection: true, CharacterData: true, Comment: true, ProcessingInstruction: true, Text: true, CSSStyleDeclaration: true, MSStyleCSSProperties: true, CSS2Properties: true, HTMLDivElement: true, XMLDocument: true, Document: false, DOMException: true, DOMImplementation: true, DOMRectReadOnly: false, MathMLElement: true, Element: false, AbortPaymentEvent: true, AnimationEvent: true, AnimationPlaybackEvent: true, ApplicationCacheErrorEvent: true, BackgroundFetchClickEvent: true, BackgroundFetchEvent: true, BackgroundFetchFailEvent: true, BackgroundFetchedEvent: true, BeforeInstallPromptEvent: true, BeforeUnloadEvent: true, BlobEvent: true, CanMakePaymentEvent: true, ClipboardEvent: true, CloseEvent: true, CustomEvent: true, DeviceMotionEvent: true, DeviceOrientationEvent: true, ErrorEvent: true, ExtendableEvent: true, ExtendableMessageEvent: true, FetchEvent: true, FontFaceSetLoadEvent: true, ForeignFetchEvent: true, GamepadEvent: true, HashChangeEvent: true, InstallEvent: true, MediaEncryptedEvent: true, MediaKeyMessageEvent: true, MediaQueryListEvent: true, MediaStreamEvent: true, MediaStreamTrackEvent: true, MessageEvent: true, MIDIConnectionEvent: true, MIDIMessageEvent: true, MutationEvent: true, NotificationEvent: true, PageTransitionEvent: true, PaymentRequestEvent: true, PaymentRequestUpdateEvent: true, PopStateEvent: true, PresentationConnectionAvailableEvent: true, PresentationConnectionCloseEvent: true, PromiseRejectionEvent: true, PushEvent: true, RTCDataChannelEvent: true, RTCDTMFToneChangeEvent: true, RTCPeerConnectionIceEvent: true, RTCTrackEvent: true, SecurityPolicyViolationEvent: true, SensorErrorEvent: true, SpeechRecognitionError: true, SpeechRecognitionEvent: true, SpeechSynthesisEvent: true, StorageEvent: true, SyncEvent: true, TrackEvent: true, TransitionEvent: true, WebKitTransitionEvent: true, VRDeviceEvent: true, VRDisplayEvent: true, VRSessionEvent: true, MojoInterfaceRequestEvent: true, USBConnectionEvent: true, IDBVersionChangeEvent: true, AudioProcessingEvent: true, OfflineAudioCompletionEvent: true, WebGLContextEvent: true, Event: false, InputEvent: false, SubmitEvent: false, EventTarget: false, HTMLFormElement: true, HTMLDocument: true, XMLHttpRequest: true, XMLHttpRequestEventTarget: false, ImageData: true, HTMLImageElement: true, Location: true, MouseEvent: true, DragEvent: true, PointerEvent: true, WheelEvent: true, DocumentFragment: true, ShadowRoot: true, DocumentType: true, Node: false, NodeList: true, RadioNodeList: true, ProgressEvent: true, ResourceProgressEvent: true, HTMLSelectElement: true, HTMLSpanElement: true, HTMLStyleElement: true, HTMLTableElement: true, HTMLTableRowElement: true, HTMLTableSectionElement: true, HTMLTemplateElement: true, CompositionEvent: true, FocusEvent: true, KeyboardEvent: true, TextEvent: true, TouchEvent: true, UIEvent: false, Window: true, DOMWindow: true, DedicatedWorkerGlobalScope: true, ServiceWorkerGlobalScope: true, SharedWorkerGlobalScope: true, WorkerGlobalScope: true, Attr: true, ClientRect: true, DOMRect: true, NamedNodeMap: true, MozNamedAttrMap: true, IDBKeyRange: true, SVGScriptElement: true, SVGAElement: true, SVGAnimateElement: true, SVGAnimateMotionElement: true, SVGAnimateTransformElement: true, SVGAnimationElement: true, SVGCircleElement: true, SVGClipPathElement: true, SVGDefsElement: true, SVGDescElement: true, SVGDiscardElement: true, SVGEllipseElement: true, SVGFEBlendElement: true, SVGFEColorMatrixElement: true, SVGFEComponentTransferElement: true, SVGFECompositeElement: true, SVGFEConvolveMatrixElement: true, SVGFEDiffuseLightingElement: true, SVGFEDisplacementMapElement: true, SVGFEDistantLightElement: true, SVGFEFloodElement: true, SVGFEFuncAElement: true, SVGFEFuncBElement: true, SVGFEFuncGElement: true, SVGFEFuncRElement: true, SVGFEGaussianBlurElement: true, SVGFEImageElement: true, SVGFEMergeElement: true, SVGFEMergeNodeElement: true, SVGFEMorphologyElement: true, SVGFEOffsetElement: true, SVGFEPointLightElement: true, SVGFESpecularLightingElement: true, SVGFESpotLightElement: true, SVGFETileElement: true, SVGFETurbulenceElement: true, SVGFilterElement: true, SVGForeignObjectElement: true, SVGGElement: true, SVGGeometryElement: true, SVGGraphicsElement: true, SVGImageElement: true, SVGLineElement: true, SVGLinearGradientElement: true, SVGMarkerElement: true, SVGMaskElement: true, SVGMetadataElement: true, SVGPathElement: true, SVGPatternElement: true, SVGPolygonElement: true, SVGPolylineElement: true, SVGRadialGradientElement: true, SVGRectElement: true, SVGSetElement: true, SVGStopElement: true, SVGStyleElement: true, SVGSVGElement: true, SVGSwitchElement: true, SVGSymbolElement: true, SVGTSpanElement: true, SVGTextContentElement: true, SVGTextElement: true, SVGTextPathElement: true, SVGTextPositioningElement: true, SVGTitleElement: true, SVGUseElement: true, SVGViewElement: true, SVGGradientElement: true, SVGComponentTransferFunctionElement: true, SVGFEDropShadowElement: true, SVGMPathElement: true, SVGElement: false});
+    hunkHelpers.setOrUpdateInterceptorsByTag({DOMError: J.JavaScriptObject, MediaError: J.JavaScriptObject, Navigator: J.JavaScriptObject, NavigatorConcurrentHardware: J.JavaScriptObject, NavigatorUserMediaError: J.JavaScriptObject, OverconstrainedError: J.JavaScriptObject, PositionError: J.JavaScriptObject, GeolocationPositionError: J.JavaScriptObject, Range: J.JavaScriptObject, SVGAnimatedEnumeration: J.JavaScriptObject, ArrayBuffer: A.NativeByteBuffer, ArrayBufferView: A.NativeTypedData, DataView: A.NativeByteData, Float32Array: A.NativeFloat32List, Float64Array: A.NativeFloat64List, Int16Array: A.NativeInt16List, Int32Array: A.NativeInt32List, Int8Array: A.NativeInt8List, Uint16Array: A.NativeUint16List, Uint32Array: A.NativeUint32List, Uint8ClampedArray: A.NativeUint8ClampedList, CanvasPixelArray: A.NativeUint8ClampedList, Uint8Array: A.NativeUint8List, HTMLAudioElement: A.HtmlElement, HTMLBRElement: A.HtmlElement, HTMLContentElement: A.HtmlElement, HTMLDListElement: A.HtmlElement, HTMLDataElement: A.HtmlElement, HTMLDataListElement: A.HtmlElement, HTMLDetailsElement: A.HtmlElement, HTMLDialogElement: A.HtmlElement, HTMLEmbedElement: A.HtmlElement, HTMLFieldSetElement: A.HtmlElement, HTMLHRElement: A.HtmlElement, HTMLHeadElement: A.HtmlElement, HTMLHeadingElement: A.HtmlElement, HTMLHtmlElement: A.HtmlElement, HTMLIFrameElement: A.HtmlElement, HTMLInputElement: A.HtmlElement, HTMLLIElement: A.HtmlElement, HTMLLabelElement: A.HtmlElement, HTMLLegendElement: A.HtmlElement, HTMLLinkElement: A.HtmlElement, HTMLMapElement: A.HtmlElement, HTMLMediaElement: A.HtmlElement, HTMLMenuElement: A.HtmlElement, HTMLMetaElement: A.HtmlElement, HTMLMeterElement: A.HtmlElement, HTMLModElement: A.HtmlElement, HTMLOListElement: A.HtmlElement, HTMLObjectElement: A.HtmlElement, HTMLOptGroupElement: A.HtmlElement, HTMLOptionElement: A.HtmlElement, HTMLOutputElement: A.HtmlElement, HTMLParagraphElement: A.HtmlElement, HTMLParamElement: A.HtmlElement, HTMLPictureElement: A.HtmlElement, HTMLPreElement: A.HtmlElement, HTMLProgressElement: A.HtmlElement, HTMLQuoteElement: A.HtmlElement, HTMLScriptElement: A.HtmlElement, HTMLShadowElement: A.HtmlElement, HTMLSlotElement: A.HtmlElement, HTMLSourceElement: A.HtmlElement, HTMLTableCaptionElement: A.HtmlElement, HTMLTableCellElement: A.HtmlElement, HTMLTableDataCellElement: A.HtmlElement, HTMLTableHeaderCellElement: A.HtmlElement, HTMLTableColElement: A.HtmlElement, HTMLTextAreaElement: A.HtmlElement, HTMLTimeElement: A.HtmlElement, HTMLTitleElement: A.HtmlElement, HTMLTrackElement: A.HtmlElement, HTMLUListElement: A.HtmlElement, HTMLUnknownElement: A.HtmlElement, HTMLVideoElement: A.HtmlElement, HTMLDirectoryElement: A.HtmlElement, HTMLFontElement: A.HtmlElement, HTMLFrameElement: A.HtmlElement, HTMLFrameSetElement: A.HtmlElement, HTMLMarqueeElement: A.HtmlElement, HTMLElement: A.HtmlElement, HTMLAnchorElement: A.AnchorElement, HTMLAreaElement: A.AreaElement, HTMLBaseElement: A.BaseElement, Blob: A.Blob, File: A.Blob, HTMLBodyElement: A.BodyElement, HTMLButtonElement: A.ButtonElement, HTMLCanvasElement: A.CanvasElement, CanvasRenderingContext2D: A.CanvasRenderingContext2D, CDATASection: A.CharacterData, CharacterData: A.CharacterData, Comment: A.CharacterData, ProcessingInstruction: A.CharacterData, Text: A.CharacterData, CSSStyleDeclaration: A.CssStyleDeclaration, MSStyleCSSProperties: A.CssStyleDeclaration, CSS2Properties: A.CssStyleDeclaration, HTMLDivElement: A.DivElement, XMLDocument: A.Document, Document: A.Document, DOMException: A.DomException, DOMImplementation: A.DomImplementation, DOMRectReadOnly: A.DomRectReadOnly, MathMLElement: A.Element, Element: A.Element, AbortPaymentEvent: A.Event, AnimationEvent: A.Event, AnimationPlaybackEvent: A.Event, ApplicationCacheErrorEvent: A.Event, BackgroundFetchClickEvent: A.Event, BackgroundFetchEvent: A.Event, BackgroundFetchFailEvent: A.Event, BackgroundFetchedEvent: A.Event, BeforeInstallPromptEvent: A.Event, BeforeUnloadEvent: A.Event, BlobEvent: A.Event, CanMakePaymentEvent: A.Event, ClipboardEvent: A.Event, CloseEvent: A.Event, CustomEvent: A.Event, DeviceMotionEvent: A.Event, DeviceOrientationEvent: A.Event, ErrorEvent: A.Event, ExtendableEvent: A.Event, ExtendableMessageEvent: A.Event, FetchEvent: A.Event, FontFaceSetLoadEvent: A.Event, ForeignFetchEvent: A.Event, GamepadEvent: A.Event, HashChangeEvent: A.Event, InstallEvent: A.Event, MediaEncryptedEvent: A.Event, MediaKeyMessageEvent: A.Event, MediaQueryListEvent: A.Event, MediaStreamEvent: A.Event, MediaStreamTrackEvent: A.Event, MessageEvent: A.Event, MIDIConnectionEvent: A.Event, MIDIMessageEvent: A.Event, MutationEvent: A.Event, NotificationEvent: A.Event, PageTransitionEvent: A.Event, PaymentRequestEvent: A.Event, PaymentRequestUpdateEvent: A.Event, PopStateEvent: A.Event, PresentationConnectionAvailableEvent: A.Event, PresentationConnectionCloseEvent: A.Event, PromiseRejectionEvent: A.Event, PushEvent: A.Event, RTCDataChannelEvent: A.Event, RTCDTMFToneChangeEvent: A.Event, RTCPeerConnectionIceEvent: A.Event, RTCTrackEvent: A.Event, SecurityPolicyViolationEvent: A.Event, SensorErrorEvent: A.Event, SpeechRecognitionError: A.Event, SpeechRecognitionEvent: A.Event, SpeechSynthesisEvent: A.Event, StorageEvent: A.Event, SyncEvent: A.Event, TrackEvent: A.Event, TransitionEvent: A.Event, WebKitTransitionEvent: A.Event, VRDeviceEvent: A.Event, VRDisplayEvent: A.Event, VRSessionEvent: A.Event, MojoInterfaceRequestEvent: A.Event, USBConnectionEvent: A.Event, IDBVersionChangeEvent: A.Event, AudioProcessingEvent: A.Event, OfflineAudioCompletionEvent: A.Event, WebGLContextEvent: A.Event, Event: A.Event, InputEvent: A.Event, SubmitEvent: A.Event, EventTarget: A.EventTarget, HTMLFormElement: A.FormElement, HTMLDocument: A.HtmlDocument, XMLHttpRequest: A.HttpRequest, XMLHttpRequestUpload: A.HttpRequestEventTarget, XMLHttpRequestEventTarget: A.HttpRequestEventTarget, ImageData: A.ImageData, HTMLImageElement: A.ImageElement, Location: A.Location, MouseEvent: A.MouseEvent, DragEvent: A.MouseEvent, PointerEvent: A.MouseEvent, WheelEvent: A.MouseEvent, DocumentFragment: A.Node, ShadowRoot: A.Node, DocumentType: A.Node, Node: A.Node, NodeList: A.NodeList, RadioNodeList: A.NodeList, ProgressEvent: A.ProgressEvent, ResourceProgressEvent: A.ProgressEvent, HTMLSelectElement: A.SelectElement, HTMLSpanElement: A.SpanElement, Storage: A.Storage, HTMLStyleElement: A.StyleElement, HTMLTableElement: A.TableElement, HTMLTableRowElement: A.TableRowElement, HTMLTableSectionElement: A.TableSectionElement, HTMLTemplateElement: A.TemplateElement, CompositionEvent: A.UIEvent, FocusEvent: A.UIEvent, KeyboardEvent: A.UIEvent, TextEvent: A.UIEvent, TouchEvent: A.UIEvent, UIEvent: A.UIEvent, Window: A.Window, DOMWindow: A.Window, DedicatedWorkerGlobalScope: A.WorkerGlobalScope, ServiceWorkerGlobalScope: A.WorkerGlobalScope, SharedWorkerGlobalScope: A.WorkerGlobalScope, WorkerGlobalScope: A.WorkerGlobalScope, Attr: A._Attr, ClientRect: A._DomRect, DOMRect: A._DomRect, NamedNodeMap: A._NamedNodeMap, MozNamedAttrMap: A._NamedNodeMap, IDBKeyRange: A.KeyRange, SVGScriptElement: A.ScriptElement0, SVGAElement: A.SvgElement, SVGAnimateElement: A.SvgElement, SVGAnimateMotionElement: A.SvgElement, SVGAnimateTransformElement: A.SvgElement, SVGAnimationElement: A.SvgElement, SVGCircleElement: A.SvgElement, SVGClipPathElement: A.SvgElement, SVGDefsElement: A.SvgElement, SVGDescElement: A.SvgElement, SVGDiscardElement: A.SvgElement, SVGEllipseElement: A.SvgElement, SVGFEBlendElement: A.SvgElement, SVGFEColorMatrixElement: A.SvgElement, SVGFEComponentTransferElement: A.SvgElement, SVGFECompositeElement: A.SvgElement, SVGFEConvolveMatrixElement: A.SvgElement, SVGFEDiffuseLightingElement: A.SvgElement, SVGFEDisplacementMapElement: A.SvgElement, SVGFEDistantLightElement: A.SvgElement, SVGFEFloodElement: A.SvgElement, SVGFEFuncAElement: A.SvgElement, SVGFEFuncBElement: A.SvgElement, SVGFEFuncGElement: A.SvgElement, SVGFEFuncRElement: A.SvgElement, SVGFEGaussianBlurElement: A.SvgElement, SVGFEImageElement: A.SvgElement, SVGFEMergeElement: A.SvgElement, SVGFEMergeNodeElement: A.SvgElement, SVGFEMorphologyElement: A.SvgElement, SVGFEOffsetElement: A.SvgElement, SVGFEPointLightElement: A.SvgElement, SVGFESpecularLightingElement: A.SvgElement, SVGFESpotLightElement: A.SvgElement, SVGFETileElement: A.SvgElement, SVGFETurbulenceElement: A.SvgElement, SVGFilterElement: A.SvgElement, SVGForeignObjectElement: A.SvgElement, SVGGElement: A.SvgElement, SVGGeometryElement: A.SvgElement, SVGGraphicsElement: A.SvgElement, SVGImageElement: A.SvgElement, SVGLineElement: A.SvgElement, SVGLinearGradientElement: A.SvgElement, SVGMarkerElement: A.SvgElement, SVGMaskElement: A.SvgElement, SVGMetadataElement: A.SvgElement, SVGPathElement: A.SvgElement, SVGPatternElement: A.SvgElement, SVGPolygonElement: A.SvgElement, SVGPolylineElement: A.SvgElement, SVGRadialGradientElement: A.SvgElement, SVGRectElement: A.SvgElement, SVGSetElement: A.SvgElement, SVGStopElement: A.SvgElement, SVGStyleElement: A.SvgElement, SVGSVGElement: A.SvgElement, SVGSwitchElement: A.SvgElement, SVGSymbolElement: A.SvgElement, SVGTSpanElement: A.SvgElement, SVGTextContentElement: A.SvgElement, SVGTextElement: A.SvgElement, SVGTextPathElement: A.SvgElement, SVGTextPositioningElement: A.SvgElement, SVGTitleElement: A.SvgElement, SVGUseElement: A.SvgElement, SVGViewElement: A.SvgElement, SVGGradientElement: A.SvgElement, SVGComponentTransferFunctionElement: A.SvgElement, SVGFEDropShadowElement: A.SvgElement, SVGMPathElement: A.SvgElement, SVGElement: A.SvgElement});
+    hunkHelpers.setOrUpdateLeafTags({DOMError: true, MediaError: true, Navigator: true, NavigatorConcurrentHardware: true, NavigatorUserMediaError: true, OverconstrainedError: true, PositionError: true, GeolocationPositionError: true, Range: true, SVGAnimatedEnumeration: true, ArrayBuffer: true, ArrayBufferView: false, DataView: true, Float32Array: true, Float64Array: true, Int16Array: true, Int32Array: true, Int8Array: true, Uint16Array: true, Uint32Array: true, Uint8ClampedArray: true, CanvasPixelArray: true, Uint8Array: false, HTMLAudioElement: true, HTMLBRElement: true, HTMLContentElement: true, HTMLDListElement: true, HTMLDataElement: true, HTMLDataListElement: true, HTMLDetailsElement: true, HTMLDialogElement: true, HTMLEmbedElement: true, HTMLFieldSetElement: true, HTMLHRElement: true, HTMLHeadElement: true, HTMLHeadingElement: true, HTMLHtmlElement: true, HTMLIFrameElement: true, HTMLInputElement: true, HTMLLIElement: true, HTMLLabelElement: true, HTMLLegendElement: true, HTMLLinkElement: true, HTMLMapElement: true, HTMLMediaElement: true, HTMLMenuElement: true, HTMLMetaElement: true, HTMLMeterElement: true, HTMLModElement: true, HTMLOListElement: true, HTMLObjectElement: true, HTMLOptGroupElement: true, HTMLOptionElement: true, HTMLOutputElement: true, HTMLParagraphElement: true, HTMLParamElement: true, HTMLPictureElement: true, HTMLPreElement: true, HTMLProgressElement: true, HTMLQuoteElement: true, HTMLScriptElement: true, HTMLShadowElement: true, HTMLSlotElement: true, HTMLSourceElement: true, HTMLTableCaptionElement: true, HTMLTableCellElement: true, HTMLTableDataCellElement: true, HTMLTableHeaderCellElement: true, HTMLTableColElement: true, HTMLTextAreaElement: true, HTMLTimeElement: true, HTMLTitleElement: true, HTMLTrackElement: true, HTMLUListElement: true, HTMLUnknownElement: true, HTMLVideoElement: true, HTMLDirectoryElement: true, HTMLFontElement: true, HTMLFrameElement: true, HTMLFrameSetElement: true, HTMLMarqueeElement: true, HTMLElement: false, HTMLAnchorElement: true, HTMLAreaElement: true, HTMLBaseElement: true, Blob: true, File: true, HTMLBodyElement: true, HTMLButtonElement: true, HTMLCanvasElement: true, CanvasRenderingContext2D: true, CDATASection: true, CharacterData: true, Comment: true, ProcessingInstruction: true, Text: true, CSSStyleDeclaration: true, MSStyleCSSProperties: true, CSS2Properties: true, HTMLDivElement: true, XMLDocument: true, Document: false, DOMException: true, DOMImplementation: true, DOMRectReadOnly: false, MathMLElement: true, Element: false, AbortPaymentEvent: true, AnimationEvent: true, AnimationPlaybackEvent: true, ApplicationCacheErrorEvent: true, BackgroundFetchClickEvent: true, BackgroundFetchEvent: true, BackgroundFetchFailEvent: true, BackgroundFetchedEvent: true, BeforeInstallPromptEvent: true, BeforeUnloadEvent: true, BlobEvent: true, CanMakePaymentEvent: true, ClipboardEvent: true, CloseEvent: true, CustomEvent: true, DeviceMotionEvent: true, DeviceOrientationEvent: true, ErrorEvent: true, ExtendableEvent: true, ExtendableMessageEvent: true, FetchEvent: true, FontFaceSetLoadEvent: true, ForeignFetchEvent: true, GamepadEvent: true, HashChangeEvent: true, InstallEvent: true, MediaEncryptedEvent: true, MediaKeyMessageEvent: true, MediaQueryListEvent: true, MediaStreamEvent: true, MediaStreamTrackEvent: true, MessageEvent: true, MIDIConnectionEvent: true, MIDIMessageEvent: true, MutationEvent: true, NotificationEvent: true, PageTransitionEvent: true, PaymentRequestEvent: true, PaymentRequestUpdateEvent: true, PopStateEvent: true, PresentationConnectionAvailableEvent: true, PresentationConnectionCloseEvent: true, PromiseRejectionEvent: true, PushEvent: true, RTCDataChannelEvent: true, RTCDTMFToneChangeEvent: true, RTCPeerConnectionIceEvent: true, RTCTrackEvent: true, SecurityPolicyViolationEvent: true, SensorErrorEvent: true, SpeechRecognitionError: true, SpeechRecognitionEvent: true, SpeechSynthesisEvent: true, StorageEvent: true, SyncEvent: true, TrackEvent: true, TransitionEvent: true, WebKitTransitionEvent: true, VRDeviceEvent: true, VRDisplayEvent: true, VRSessionEvent: true, MojoInterfaceRequestEvent: true, USBConnectionEvent: true, IDBVersionChangeEvent: true, AudioProcessingEvent: true, OfflineAudioCompletionEvent: true, WebGLContextEvent: true, Event: false, InputEvent: false, SubmitEvent: false, EventTarget: false, HTMLFormElement: true, HTMLDocument: true, XMLHttpRequest: true, XMLHttpRequestUpload: true, XMLHttpRequestEventTarget: false, ImageData: true, HTMLImageElement: true, Location: true, MouseEvent: true, DragEvent: true, PointerEvent: true, WheelEvent: true, DocumentFragment: true, ShadowRoot: true, DocumentType: true, Node: false, NodeList: true, RadioNodeList: true, ProgressEvent: true, ResourceProgressEvent: true, HTMLSelectElement: true, HTMLSpanElement: true, Storage: true, HTMLStyleElement: true, HTMLTableElement: true, HTMLTableRowElement: true, HTMLTableSectionElement: true, HTMLTemplateElement: true, CompositionEvent: true, FocusEvent: true, KeyboardEvent: true, TextEvent: true, TouchEvent: true, UIEvent: false, Window: true, DOMWindow: true, DedicatedWorkerGlobalScope: true, ServiceWorkerGlobalScope: true, SharedWorkerGlobalScope: true, WorkerGlobalScope: true, Attr: true, ClientRect: true, DOMRect: true, NamedNodeMap: true, MozNamedAttrMap: true, IDBKeyRange: true, SVGScriptElement: true, SVGAElement: true, SVGAnimateElement: true, SVGAnimateMotionElement: true, SVGAnimateTransformElement: true, SVGAnimationElement: true, SVGCircleElement: true, SVGClipPathElement: true, SVGDefsElement: true, SVGDescElement: true, SVGDiscardElement: true, SVGEllipseElement: true, SVGFEBlendElement: true, SVGFEColorMatrixElement: true, SVGFEComponentTransferElement: true, SVGFECompositeElement: true, SVGFEConvolveMatrixElement: true, SVGFEDiffuseLightingElement: true, SVGFEDisplacementMapElement: true, SVGFEDistantLightElement: true, SVGFEFloodElement: true, SVGFEFuncAElement: true, SVGFEFuncBElement: true, SVGFEFuncGElement: true, SVGFEFuncRElement: true, SVGFEGaussianBlurElement: true, SVGFEImageElement: true, SVGFEMergeElement: true, SVGFEMergeNodeElement: true, SVGFEMorphologyElement: true, SVGFEOffsetElement: true, SVGFEPointLightElement: true, SVGFESpecularLightingElement: true, SVGFESpotLightElement: true, SVGFETileElement: true, SVGFETurbulenceElement: true, SVGFilterElement: true, SVGForeignObjectElement: true, SVGGElement: true, SVGGeometryElement: true, SVGGraphicsElement: true, SVGImageElement: true, SVGLineElement: true, SVGLinearGradientElement: true, SVGMarkerElement: true, SVGMaskElement: true, SVGMetadataElement: true, SVGPathElement: true, SVGPatternElement: true, SVGPolygonElement: true, SVGPolylineElement: true, SVGRadialGradientElement: true, SVGRectElement: true, SVGSetElement: true, SVGStopElement: true, SVGStyleElement: true, SVGSVGElement: true, SVGSwitchElement: true, SVGSymbolElement: true, SVGTSpanElement: true, SVGTextContentElement: true, SVGTextElement: true, SVGTextPathElement: true, SVGTextPositioningElement: true, SVGTitleElement: true, SVGUseElement: true, SVGViewElement: true, SVGGradientElement: true, SVGComponentTransferFunctionElement: true, SVGFEDropShadowElement: true, SVGMPathElement: true, SVGElement: false});
     A.NativeTypedArray.$nativeSuperclassTag = "ArrayBufferView";
     A._NativeTypedArrayOfDouble_NativeTypedArray_ListMixin.$nativeSuperclassTag = "ArrayBufferView";
     A._NativeTypedArrayOfDouble_NativeTypedArray_ListMixin_FixedLengthListMixin.$nativeSuperclassTag = "ArrayBufferView";
@@ -9802,6 +22950,9 @@
   };
   Function.prototype.call$1$1 = function(a) {
     return this(a);
+  };
+  Function.prototype.call$2$2 = function(a, b) {
+    return this(a, b);
   };
   convertAllToFastObject(holders);
   convertToFastObject($);

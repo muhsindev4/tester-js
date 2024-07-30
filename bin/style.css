@@ -111,20 +111,35 @@
 }
 
 /* Input container styling */
+.inputContainer {
+  background-color: white; /* Card background color */
+  border-radius: 10px; /* Rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+  padding: 15px; /* Space inside the card */
+  width: fit-content; /* Adjust width to fit content */
+  max-width: 100%; /* Ensure the card doesn't overflow its container */
+  margin: 10px; /* Space around the card */
+  position:absolute
+}
+
+/* Textarea styling within the card */
 .inputContainer textarea {
   padding: 5px;
   border-radius: 5px;
   border: 1px solid #6200ea;
   resize: none;
-  width: 200px;
+  width: 100%; /* Full width within the card */
   height: 60px;
+  box-sizing: border-box; /* Include padding and border in width and height */
 }
 
+/* Button styling within the card */
 .inputContainer button {
   background: none;
   border: none;
   cursor: pointer;
   color: #6200ea;
+  font-size: 16px; /* Adjust font size if needed */
 }
 
 .inputContainer button:hover {
@@ -138,4 +153,61 @@ canvas {
 
 .circle {
   fill: rgba(98, 0, 234, 0.7);
+}
+
+/* Circle styling */
+.circleDiv {
+  cursor: crosshair;
+}
+
+.circleDiv button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6200ea;
+}
+
+.circleDiv button:hover {
+  color: #3700b3;
+}
+
+/* Auth button styling */
+#authButton {
+  position: fixed;
+  top: 50%;
+  right: 60px;
+  transform: translateY(-50%);
+  padding: 10px;
+  background-color: #ff4500;
+  color: white;
+  border: none;
+  border-radius: 5px 0 0 5px;
+  cursor: pointer;
+  font-size: 24px;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#authButton:hover {
+  background-color: #d73000;
+}
+
+#authButton .hoverContent {
+  display: none;
+  background-color: white;
+  color: #ff4500;
+  padding: 5px 10px;
+  border-radius: 5px;
+  position: absolute;
+  top: 50%;
+  left: -120px;
+  transform: translateY(-50%);
+  white-space: nowrap;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+#authButton:hover .hoverContent {
+  display: block;
 }

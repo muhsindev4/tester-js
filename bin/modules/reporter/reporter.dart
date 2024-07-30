@@ -128,7 +128,7 @@ class Reporter {
           DivElement screenshotList = querySelector('#screenshotList') as DivElement;
           screenshotList.append(img); // Add the new screenshot to the list
           _screenshots.add(img); // Store the screenshot
-          print('Screenshot image data: $imageUrl');
+          print(imageUrl);
           _lazyShowPopup();
         });
         screenshotController.startSelection();

@@ -1,10 +1,8 @@
 import 'dart:async';
 import 'dart:html';
 import 'modules/canvas/canvas_controller.dart';
+import 'utils/const.dart';
 import 'modules/asana/auth_controller.dart';
-
-
-
 
 Future<void> main() async {
   AuthController authController = AuthController(
@@ -30,13 +28,21 @@ Future<void> main() async {
     ..id = 'feedbackButton'
     ..innerHtml = '<i class="bi bi-chat-right-dots-fill"></i>';
 
+  // Create the auth button
+  ButtonElement authButton = ButtonElement()
+    ..id = 'authButton'
+    ..innerHtml = '<img src="${Const.pluginAssets}/asana.png" alt="Asana Icon" />';
+
   // Add event listener to show the popup on click
   feedbackButton.onClick.listen((event) {
     _showPopup();
   });
 
-  // Add the button to the document body
+
+
+  // Add the buttons to the document body
   document.body!.append(feedbackButton);
+  document.body!.append(authButton);
 
   // Create the popup
   DivElement popup = DivElement()
@@ -77,18 +83,6 @@ void _showPopup() {
 void _hidePopup() {
   querySelector('#feedbackPopup')!.style.display = 'none';
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 auth(AuthController authController) async {
   if (window.location.href.contains('code=')) {

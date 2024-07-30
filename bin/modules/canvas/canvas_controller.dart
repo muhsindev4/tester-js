@@ -1,24 +1,28 @@
 import 'dart:html';
 import 'dart:math';
 import 'models/shape.dart';
-import '../../views/reporter/reporter.dart';
+import 'widget/tool_bar.dart';
+
+
 
 class CanvasController {
   CanvasElement? canvas;
   CanvasRenderingContext2D? context;
-  DivElement? toolbar;
+
   DivElement? reportPopup;
   List<Shape> shapes = [];
   List<DivElement> screenshots = [];
   int circleCount = 0;
   List<Map<String, dynamic>> commentsList = [];
   bool isDrawing = false;
-  String currentTool = '';
   Point? startPoint;
-  Reporter _reporter=Reporter();
+
+  ToolBar _toolBar=ToolBar();
+  String get currentTool =>_toolBar.currentTool;
+
 
   void showCanvas() {
-    canvas = CanvasElement(width: window.innerWidth, height:10000)
+    canvas = CanvasElement(width: window.innerWidth, height:document.documentElement!.scrollHeight)
       ..id = 'feedbackCanvas'
       ..style.position = 'absolute'
       ..style.top = '0'
@@ -29,46 +33,8 @@ class CanvasController {
 
     document.body!.append(canvas!);
 
-    // Optional: Add an event listener to handle window resize
+    _toolBar.createToolBar();
 
-
-    toolbar = DivElement()
-      ..id = 'canvasToolbar'
-      ..innerHtml = '''
-      <button id="drawRect"><i class="bi bi-square"></i></button>
-      <button id="drawArrow"><i class="bi bi-arrow-right"></i></button>
-      <button id="pinButton"><i class="bi bi-crosshair"></i></button>
-      <button id="reportButton"><i class="bi bi-file-earmark-text"></i> Report</button>
-    '''
-      ..style.position = 'fixed'
-      ..style.top = '10px'
-      ..style.left = '50%'
-      ..style.transform = 'translateX(-50%)'
-      ..style.backgroundColor = 'white'
-      ..style.padding = '10px'
-      ..style.borderRadius = '5px'
-      ..style.boxShadow = '0px 0px 10px rgba(0, 0, 0, 0.1)'
-      ..style.zIndex = '9999';
-
-    document.body!.append(toolbar!);
-
-    querySelector('#drawRect')!.onClick.listen((event) {
-      currentTool = 'rect';
-      event.stopPropagation();
-    });
-
-    querySelector('#drawArrow')!.onClick.listen((event) {
-      currentTool = 'arrow';
-      event.stopPropagation();
-    });
-
-    querySelector('#pinButton')!.onClick.listen((event) {
-      currentTool = 'pin';
-    });
-
-    querySelector('#reportButton')!.onClick.listen((event) {
-      _reporter.showReportPopup(commentsList);
-    });
 
     canvas!.onMouseDown.listen((MouseEvent event) {
       if (currentTool == 'rect' || currentTool == 'arrow') {
@@ -104,7 +70,6 @@ class CanvasController {
 
   void _drawShape(Point endPoint) {
     if (context == null || startPoint == null) return;
-
     if (currentTool == 'rect') {
       _drawRect(startPoint!, endPoint);
     } else if (currentTool == 'arrow') {
@@ -164,12 +129,16 @@ class CanvasController {
   void handleCanvasClick(MouseEvent event) {
     circleCount++;
 
+    // Use pageX and pageY to account for scrolling
+    final clickX = event.page.x;
+    final clickY = event.page.y;
+
     DivElement handleDiv = DivElement();
     DivElement circleDiv = DivElement()
       ..className = 'circleDiv'
       ..style.position = 'absolute'
-      ..style.left = '${event.client.x - 10}px'
-      ..style.top = '${event.client.y - 10}px'
+      ..style.left = '${clickX - 10}px'
+      ..style.top = '${clickY - 10}px'
       ..style.width = '20px'
       ..style.height = '20px'
       ..style.borderRadius = '50%'
@@ -188,8 +157,8 @@ class CanvasController {
 
     DivElement inputContainer = DivElement()
       ..className = 'inputContainer'
-      ..style.left = '${event.client.x + 15}px'
-      ..style.top = '${event.client.y - 10}px'
+      ..style.left = '${clickX + 15}px'
+      ..style.top = '${clickY - 10}px'
       ..style.zIndex = '10001'
       ..style.display = 'flex'
       ..style.alignItems = 'center'
@@ -220,6 +189,7 @@ class CanvasController {
     };
 
     commentsList.add(commentMap);
+    _toolBar.commentsList.add(commentMap);
 
     input.onInput.listen((_) {
       input.style.height = 'auto';
@@ -233,6 +203,7 @@ class CanvasController {
       circleCount--;
       handleDiv.remove();
       commentsList.remove(commentMap);
+      _toolBar.commentsList.remove(commentMap);
     });
 
     circleDiv.append(countText);
@@ -243,6 +214,8 @@ class CanvasController {
     handleDiv.append(inputContainer);
     document.body!.append(handleDiv);
   }
+
+
 
 
 
