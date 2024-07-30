@@ -8782,7 +8782,7 @@
               B.ButtonElement_methods.setInnerHtml$1(feedbackButton, '<i class="bi bi-chat-right-dots-fill"></i>');
               authButton = t1.createElement("button");
               authButton.id = "authButton";
-              B.ButtonElement_methods.setInnerHtml$1(authButton, '<img src="assets/asana.png" alt="Asana Icon" />');
+              B.ButtonElement_methods.setInnerHtml$1(authButton, '<img src="https://github.com/muhsindev4/tester-js/tree/master/bin/assets/asana.png" alt="Asana Icon" />');
               t2 = type$._ElementEventStreamImpl_MouseEvent;
               A._EventStreamSubscription$(feedbackButton, "click", t2._eval$1("~(1)?")._as(new A.main_closure()), false, t2._precomputed1);
               t1.body.appendChild(feedbackButton).toString;
