@@ -7966,7 +7966,7 @@
       var t1 = requestOptions.sourceStackTrace;
       if (t1 == null)
         t1 = A.StackTrace_current();
-      return new A.DioException(type, error, t1, message);
+      return new A.DioException(response, type, error, t1, message);
     },
     DioException_DioException$connectionTimeout(requestOptions, timeout) {
       return A.DioException$(null, "The request connection took longer than " + timeout.toString$0(0) + " and it was aborted. To get rid of this exception, try raising the RequestOptions.connectTimeout above the duration of " + timeout.toString$0(0) + string$._or_im, requestOptions, null, null, B.DioExceptionType_0);
@@ -7980,12 +7980,13 @@
     DioExceptionType: function DioExceptionType(t0) {
       this._name = t0;
     },
-    DioException: function DioException(t0, t1, t2, t3) {
+    DioException: function DioException(t0, t1, t2, t3, t4) {
       var _ = this;
-      _.type = t0;
-      _.error = t1;
-      _.stackTrace = t2;
-      _.message = t3;
+      _.response = t0;
+      _.type = t1;
+      _.error = t2;
+      _.stackTrace = t3;
+      _.message = t4;
     },
     DioMixin_listenCancelForAsyncTask(cancelToken, future, $T) {
       return future;
@@ -22675,18 +22676,15 @@
               t2.toString;
               t1 = t1._as(window.location).href;
               t1.toString;
-              htmlNote = "          <h1>Task Description</h1>\n        <p><strong>Web URL Path:</strong> <a href='" + t2 + '\' target="_blank">' + t1 + "</a></p>\n                   <h2>Screenshots</h2>\n            <p>Attached screenshot with marked points:</p>\n             <ol>\n         ";
+              htmlNote = "         <body>\n          <h1>Task Description</h1>\n        <strong>Web URL Path:</strong> <a href='" + t2 + '\' target="_blank">' + t1 + "</a>\n                   <h2>Attached screenshot with marked points:</h2>\n             <ol>\n         ";
               for (t1 = t3._commentsList, t2 = t1.length, _i = 0; _i < t1.length; t1.length === t2 || (0, A.throwConcurrentModificationError)(t1), ++_i) {
                 comment = t1[_i];
-                htmlNote += "                <li>" + A.S(comment.$index(0, "comment")) + ": " + A.S(comment.$index(0, "count")) + "</li>\n         ";
+                htmlNote += "                <li>" + A.S(comment.$index(0, "count")) + " : " + A.S(comment.$index(0, "comment")) + " </li>\n         ";
               }
-              htmlNote += "                </ol>\n         ";
-              for (t1 = imageUrls.length, _i = 0; _i < t1; ++_i)
-                htmlNote += '                 <img src="' + imageUrls[_i] + '">\n         ';
               t1 = new A.TaskController();
               t1.TaskController$0();
               $async$goto = 9;
-              return A._asyncAwait(t1.updateTaskHtmlNotes$2$htmlNotes$taskId(htmlNote, taskId), $async$call$1);
+              return A._asyncAwait(t1.updateTaskHtmlNotes$2$htmlNotes$taskId(htmlNote + "                </ol>\n                 </body>\n         ", taskId), $async$call$1);
             case 9:
               // returning from await.
             case 4:
@@ -23008,7 +23006,7 @@
           switch ($async$goto) {
             case 0:
               // Function start
-              A.print("TOken=" + A.S(window.localStorage.getItem("asana_token")));
+              A.print("Token=" + A.S(window.localStorage.getItem("asana_token")));
               A.print("taskId=" + taskId);
               A.print("htmlNotes=" + htmlNotes);
               t1 = type$.String;
@@ -23028,6 +23026,8 @@
                 $async$goto = 1;
                 break;
               } else {
+                if (res.statusCode === 400)
+                  A.print("Bad Request: " + A.S(res.data));
                 $async$returnValue = false;
                 // goto return
                 $async$goto = 1;
@@ -23042,7 +23042,14 @@
               $async$handler = 3;
               $async$exception = $async$currentError;
               e = A.unwrapException($async$exception);
-              A.print("Error: " + A.S(e));
+              if (e instanceof A.DioException)
+                if (e.response != null) {
+                  A.print("DioError Status Code: " + A.S(e.response.statusCode));
+                  A.print("DioError Response Data: " + A.S(e.response.data));
+                } else
+                  A.print("DioError Error: " + A.S(e.message));
+              else
+                A.print("Error: " + A.S(e));
               $async$returnValue = false;
               // goto return
               $async$goto = 1;

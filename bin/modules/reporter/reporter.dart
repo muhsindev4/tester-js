@@ -162,30 +162,36 @@ class Reporter {
 
 
          htmlNote=htmlNote+"""
+         <body>
           <h1>Task Description</h1>
-        <p><strong>Web URL Path:</strong> <a href='${window.location.href}' target="_blank">${window.location.href}</a></p>
+        <strong>Web URL Path:</strong> <a href='${window.location.href}' target="_blank">${window.location.href}</a>
          """;
 
          htmlNote=htmlNote+"""
-          <h2>Screenshots</h2>
-            <p>Attached screenshot with marked points:</p>
+          <h2>Attached screenshot with marked points:</h2>
              <ol>
          """;
          for (var comment in _commentsList) {
            htmlNote=htmlNote+"""
-                <li>${comment['comment']}: ${comment['count']}</li>
+                <li>${comment['count']} : ${comment['comment']} </li>
          """;
          }
+
+         // String imageHtml="";
+         // for (var image in imageUrls) {
+         //   imageHtml=imageHtml+"""
+         //        <img src="https://app.asana.com/app/asana/-/get_asset?asset_id=$image" alt="screenshot" data-asana-gid="$image" data-src-width="800" data-src-height="600">
+         // """;
+         // }
+         //
+         // htmlNote=htmlNote+imageHtml;
+
          htmlNote=htmlNote+"""
                 </ol>
+                 </body>
          """;
 
 
-         for (var image in imageUrls) {
-           htmlNote=htmlNote+"""
-                 <img src="$image">
-         """;
-         }
 
          final updateTask=await TaskController().updateTaskHtmlNotes(taskId: taskId, htmlNotes: htmlNote);
        }

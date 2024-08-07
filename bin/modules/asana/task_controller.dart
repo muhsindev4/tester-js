@@ -49,9 +49,10 @@ class TaskController {
     required String taskId,
     required String htmlNotes,
   }) async {
-    print("TOken=${AuthController.getAccessToken}");
+    print("Token=${AuthController.getAccessToken}");
     print("taskId=${taskId}");
     print("htmlNotes=${htmlNotes}");
+
     final data = json.encode({
       "data": {
         "html_notes": htmlNotes,
@@ -70,10 +71,26 @@ class TaskController {
       if (res.statusCode == 200) {
         return res.data;
       } else {
+        // Specific handling for status code 400
+        if (res.statusCode == 400) {
+          print("Bad Request: ${res.data}");
+        }
         return false;
       }
     } catch (e) {
-      print("Error: $e");
+      // Catch all other exceptions
+      if (e is DioException) {
+        // Handle DioError specifically
+        if (e.response != null) {
+          print("DioError Status Code: ${e.response!.statusCode}");
+          print("DioError Response Data: ${e.response!.data}");
+        } else {
+          print("DioError Error: ${e.message}");
+        }
+      } else {
+        // Handle general exceptions
+        print("Error: $e");
+      }
       return false;
     }
   }
