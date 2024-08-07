@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:html';
+import '../asana/task_controller.dart';
 import '../../modules/screenshot/screenshot_controller.dart';
 
 class Reporter {
@@ -134,8 +136,59 @@ class Reporter {
         screenshotController.startSelection();
       });
 
-      querySelector('#reportSubmitButton')!.onClick.listen((event) {
-        _hideReportPopup();
+      querySelector('#reportSubmitButton')!.onClick.listen((event) async {
+        final String title = (querySelector('#reportTitle') as InputElement).value!;
+         String description = (querySelector('#reportDescription') as TextAreaElement).value!;
+
+
+
+
+
+
+        _closeReporter();
+       final res=await TaskController().createTask(title: title, notes: description,);
+       if(res is bool){
+         //show a error message
+       }else{
+         String taskId=res['data']['gid'];
+         List<String>imageUrls=[];
+         String htmlNote="";
+         print("sad=${taskId}");
+         for( ImageElement screenshot in _screenshots){
+           final String base64Data = screenshot.src!.split(',').last;
+           final uploadImage=await TaskController().addAttachmentToTask(taskId: taskId, base64Image:base64Data,);
+           imageUrls.add(uploadImage['data']['gid']);
+         }
+
+
+         htmlNote=htmlNote+"""
+          <h1>Task Description</h1>
+        <p><strong>Web URL Path:</strong> <a href='${window.location.href}' target="_blank">${window.location.href}</a></p>
+         """;
+
+         htmlNote=htmlNote+"""
+          <h2>Screenshots</h2>
+            <p>Attached screenshot with marked points:</p>
+             <ol>
+         """;
+         for (var comment in _commentsList) {
+           htmlNote=htmlNote+"""
+                <li>${comment['comment']}: ${comment['count']}</li>
+         """;
+         }
+         htmlNote=htmlNote+"""
+                </ol>
+         """;
+
+
+         for (var image in imageUrls) {
+           htmlNote=htmlNote+"""
+                 <img src="$image">
+         """;
+         }
+
+         final updateTask=await TaskController().updateTaskHtmlNotes(taskId: taskId, htmlNotes: htmlNote);
+       }
         // Handle report submission
       });
 

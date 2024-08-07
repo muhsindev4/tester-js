@@ -14,6 +14,7 @@ class ToolBar {
       <button id="drawArrow"><i class="bi bi-arrow-right"></i></button>
       <button id="pinButton"><i class="bi bi-crosshair"></i></button>
       <button id="reportButton"><i class="bi bi-file-earmark-text"></i> Report</button>
+      <button id="removeToolbar"><i class="bi bi-x"></i></button>
     '''
       ..style.position = 'fixed'
       ..style.top = '10px'
@@ -45,5 +46,22 @@ class ToolBar {
       currentTool = "showReportBox";
       _reporter.showReportPopup(commentsList);
     });
+
+    querySelector('#removeToolbar')!.onClick.listen((event) {
+      removeToolbarAndCanvas();
+    });
+  }
+
+  void removeToolbarAndCanvas() {
+    DivElement? toolbar = querySelector('#canvasToolbar') as DivElement?;
+    CanvasElement? canvas = querySelector('#feedbackCanvas') as CanvasElement?;
+
+    if (toolbar != null) {
+      toolbar.remove();
+    }
+
+    if (canvas != null) {
+      canvas.remove();
+    }
   }
 }

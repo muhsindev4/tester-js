@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:dio/dio.dart';
-
+import 'dart:html';
 class AuthController {
   static const String authorizationEndpoint =
       'https://app.asana.com/-/oauth_authorize';
@@ -18,6 +18,9 @@ class AuthController {
   Dio _dio = Dio();
 
   AuthController({required this.clientId, required this.clientSecret, required this.redirectUri});
+
+
+  static get getAccessToken=>window.localStorage['asana_token'];
 
   String authorizationUrl([String? state]) {
     state ??= Random().nextInt(100000).toString();
@@ -51,6 +54,8 @@ class AuthController {
       refreshToken = result['refresh_token'];
       expiresIn = result['expires_in'];
       authorized = accessToken != null;
+      window.localStorage['asana_token'] = accessToken!;
+      window.localStorage['refresh_token'] = refreshToken!;
     } catch (e) {
       throw Exception("Error fetching token: $e");
     }

@@ -1,11 +1,15 @@
+#removeToolbar{
+  background:red
+}
+
 
 #authButton {
   position: fixed;
   top: 43%;
   right: 0;
-  transform: translateY(-50%);
+  transform: translateY(-70%);
   padding: 10px;
-  background-color: #6200ea;
+  background-color: #ef6868;
   color: white;
   border: none;
   border-radius: 5px 0 0 5px;
@@ -15,7 +19,7 @@
 }
 
 #authButton:hover {
-  background-color: #3700b3;
+  background-color: #f37e7e;
 }
 
 

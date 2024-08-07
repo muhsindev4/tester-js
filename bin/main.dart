@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:html';
 import 'modules/canvas/canvas_controller.dart';
-import 'utils/const.dart';
 import 'modules/asana/auth_controller.dart';
 
 Future<void> main() async {
@@ -31,11 +30,18 @@ Future<void> main() async {
   // Create the auth button
   ButtonElement authButton = ButtonElement()
     ..id = 'authButton'
-    ..innerHtml = '<img src="${Const.pluginAssets}/asana.png" alt="Asana Icon" />';
+    ..innerHtml = '<i class="bi bi-box-arrow-right"></i>';
 
   // Add event listener to show the popup on click
   feedbackButton.onClick.listen((event) {
     _showPopup();
+  });
+
+
+  // Add event listener to redirect
+  authButton.onClick.listen((event) {
+   final String redirectLink= authController.authorizationUrl();
+   window.location.href = redirectLink;
   });
 
 
@@ -92,10 +98,7 @@ auth(AuthController authController) async {
     if (code != null) {
       await authController.fetchToken(code);
       print("authController.accessToken!${authController.accessToken!}");
-      // Store token
-      window.localStorage['asana_token'] = authController.accessToken!;
       print("window.localStorage:-${window.localStorage['asana_token']}");
-      // exchangeCodeForToken(code);
     }
   }
 }
